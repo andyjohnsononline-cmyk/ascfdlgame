@@ -5,12 +5,14 @@ export default function Canvas({
   targetFrame,
   playerFrame,
   protectionFrame,
+  protectionGuide,
   shownProtection,
   anchorMarker,
   labels,
   showTarget = true,
   isCorrect = false,
   isShaking = false,
+  allowOverflow = false,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -85,13 +87,14 @@ export default function Canvas({
         border: '1px solid #2D3748',
         borderRadius: '4px',
         cursor: onPointerDown ? 'grab' : 'default',
+        overflow: allowOverflow ? 'visible' : 'hidden',
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
       {labels?.canvas && (
-        <span style={{ ...labelStyle('#4A5568'), top: 4, left: 6 }}>
+        <span style={{ ...labelStyle('#4A5568'), top: 4, left: 6, zIndex: 5 }}>
           {labels.canvas}
         </span>
       )}
@@ -101,11 +104,16 @@ export default function Canvas({
         <div style={frameStyle(targetFrame, 'rgba(74, 85, 104, 0.4)', true)} />
       )}
 
-      {/* Protection frame (cyan) */}
+      {/* Protection target guide (dashed cyan) */}
+      {protectionGuide && (
+        <div style={frameStyle(protectionGuide, 'rgba(79, 209, 197, 0.35)', true)} />
+      )}
+
+      {/* Protection frame (cyan, draggable — rendered behind the framing decision) */}
       {protectionFrame && (
-        <div style={frameStyle(protectionFrame, '#4FD1C5', false)}>
+        <div style={frameStyle(protectionFrame, isCorrect ? '#68D391' : '#4FD1C5', false)}>
           {labels?.protection && (
-            <span style={{ ...labelStyle('#4FD1C5'), top: -16, left: 0 }}>
+            <span style={{ ...labelStyle(isCorrect ? '#68D391' : '#4FD1C5'), top: -16, left: 0 }}>
               {labels.protection}
             </span>
           )}
@@ -123,12 +131,13 @@ export default function Canvas({
         </div>
       )}
 
-      {/* Player's active frame (amber) */}
+      {/* Player's active frame / framing decision (amber — rendered on top of protection) */}
       {playerFrame && (
         <div
           style={{
             ...frameStyle(playerFrame, isCorrect ? '#68D391' : '#F6AD55', false),
             pointerEvents: 'none',
+            zIndex: 2,
           }}
         >
           {labels?.frame && (
