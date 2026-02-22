@@ -1,3 +1,5 @@
+// Game design spec: see SPEC.md in repo root
+
 export const ZONE_NAMES = [
   'The Canvas',
   'The Intent',
@@ -257,6 +259,7 @@ export const LEVELS = [
     draggable: 'position',
     target: { width: 4448, height: 1862, x: 0, y: 617 },
     startFrame: { width: 4448, height: 1862, x: 0, y: 200 },
+    labels: { canvas: 'Canvas', frame: 'Framing Decision' },
     tolerance: 0.08,
     hint: 'Center the frame vertically. y = (3096 - 1862) / 2.',
     reveal: {
@@ -268,14 +271,16 @@ export const LEVELS = [
     id: 12,
     zone: 3,
     type: 'frame',
-    brief: 'The frame is centered. What\'s the anchor point?',
+    brief: 'The frame is centered. Drag the anchor marker to its top-left corner.',
     concept: 'anchor_point',
-    newConcept: null,
+    newConcept: 'Anchor Point',
     canvas: { width: 4448, height: 3096 },
-    draggable: 'anchor',
+    draggable: 'anchorMarker',
     target: { width: 4448, height: 1862, x: 0, y: 617 },
     startFrame: { width: 4448, height: 1862, x: 0, y: 617 },
+    anchorStart: { x: 0, y: 0 },
     anchorTarget: { x: 0, y: 617 },
+    labels: { canvas: 'Canvas', frame: 'Framing Decision' },
     tolerance: 0.08,
     hint: 'The anchor is at the top-left corner of the frame. y = (3096 - 1862) / 2 = 617.',
     reveal: {
@@ -293,6 +298,7 @@ export const LEVELS = [
     canvas: { width: 4448, height: 3096 },
     shownFrame: { width: 4448, height: 1862, x: 0, y: 0 },
     correctFrame: { width: 4448, height: 1862, x: 0, y: 617 },
+    labels: { canvas: 'Canvas', frame: 'Framing Decision' },
     options: [
       { text: 'Anchor Y is wrong', correct: true },
       { text: 'Width is wrong', correct: false },
@@ -309,12 +315,13 @@ export const LEVELS = [
     id: 14,
     zone: 3,
     type: 'frame',
-    brief: 'Now add 5% protection.',
+    brief: 'The amber frame is the decision. Drag the cyan protection area 5% larger around it.',
     concept: 'protection',
     newConcept: 'Protection',
     canvas: { width: 4448, height: 3096 },
     draggable: 'protection',
     target: { width: 4448, height: 1862, x: 0, y: 617 },
+    startFrame: { width: 4448, height: 1862, x: 0, y: 617 },
     protectionTarget: {
       width: Math.round(4448 * 1.05 / 2) * 2,
       height: Math.round(1862 * 1.05 / 2) * 2,
@@ -323,8 +330,9 @@ export const LEVELS = [
       width: 4448,
       height: 1862,
     },
+    labels: { canvas: 'Canvas', frame: 'Framing Decision', protection: 'Protection' },
     tolerance: 0.08,
-    hint: 'Protection = frame dimensions × 1.05. Drag it slightly larger than the amber frame.',
+    hint: 'Protection = frame dimensions × 1.05. Drag outward to grow the cyan rectangle beyond the amber frame.',
     reveal: {
       lines: '"protection": 0.05\n\n// on the framing intent\n// protection area is 5% larger\n// than the framing decision',
       highlightKeys: ['protection'],
@@ -341,6 +349,7 @@ export const LEVELS = [
     shownFrame: { width: 4448, height: 1862, x: 0, y: 617 },
     shownProtection: { width: 4000, height: 1672, x: 224, y: 712 },
     correctFrame: { width: 4448, height: 1862, x: 0, y: 617 },
+    labels: { canvas: 'Canvas', frame: 'Framing Decision', protection: 'Protection' },
     options: [
       { text: 'Protection should be larger than the frame', correct: true },
       { text: 'Protection should be 0', correct: false },
@@ -361,6 +370,7 @@ export const LEVELS = [
     concept: 'cross_camera',
     newConcept: null,
     canvas: { width: 6054, height: 3192 },
+    labels: { canvas: 'Canvas', frame: 'Framing Decision' },
     draggable: 'height',
     target: {
       width: 6054,

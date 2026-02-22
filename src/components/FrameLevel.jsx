@@ -359,6 +359,7 @@ function MatchLevel({ level, onCorrect }) {
 export default function FrameLevel({ level, onCorrect, showReveal }) {
   const [frame, setFrame] = useState(null);
   const [protection, setProtection] = useState(null);
+  const [anchorPos, setAnchorPos] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const dragStart = useRef(null);
@@ -370,6 +371,9 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     }
     if (level.startProtection) {
       setProtection({ ...level.startProtection });
+    }
+    if (level.anchorStart) {
+      setAnchorPos({ ...level.anchorStart });
     }
     setIsCorrect(false);
   }, [level.id]);
@@ -429,32 +433,32 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
   const canvasDims = level.canvas;
   const target = level.target;
 
-  const checkSnap = useCallback((currentFrame) => {
+  const checkSnap = useCallback((val) => {
     if (!target || isCorrect) return false;
     const draggable = level.draggable;
     const tol = level.tolerance || 0.08;
 
-    if (draggable === 'anchor') {
+    if (draggable === 'anchorMarker') {
       const at = level.anchorTarget;
       const yTol = canvasDims.height * tol;
-      return Math.abs(currentFrame.y - at.y) <= yTol;
+      return Math.abs(val.y - at.y) <= yTol && Math.abs(val.x - at.x) <= canvasDims.width * tol;
     }
 
     let match = true;
     if (draggable === 'width' || draggable === 'both') {
-      match = match && Math.abs(currentFrame.width - target.width) <= canvasDims.width * tol;
+      match = match && Math.abs(val.width - target.width) <= canvasDims.width * tol;
     }
     if (draggable === 'height' || draggable === 'both') {
-      match = match && Math.abs(currentFrame.height - target.height) <= canvasDims.height * tol;
+      match = match && Math.abs(val.height - target.height) <= canvasDims.height * tol;
     }
     if (draggable === 'position') {
-      match = match && Math.abs(currentFrame.y - target.y) <= canvasDims.height * tol;
+      match = match && Math.abs(val.y - target.y) <= canvasDims.height * tol;
     }
     if (draggable === 'protection') {
       const pt = level.protectionTarget;
       match =
-        Math.abs(currentFrame.width - pt.width) <= canvasDims.width * tol &&
-        Math.abs(currentFrame.height - pt.height) <= canvasDims.height * tol;
+        Math.abs(val.width - pt.width) <= canvasDims.width * tol &&
+        Math.abs(val.height - pt.height) <= canvasDims.height * tol;
     }
     return match;
   }, [target, level, canvasDims, isCorrect]);
@@ -465,10 +469,15 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     const xPct = (e.clientX - rect.left) / rect.width;
     const yPct = (e.clientY - rect.top) / rect.height;
     dragStart.current = { xPct, yPct };
-    frameAtDragStart.current = level.draggable === 'protection'
-      ? { ...(protection || level.startProtection) }
-      : { ...(frame || level.startFrame) };
-  }, [isCorrect, frame, protection, level]);
+
+    if (level.draggable === 'anchorMarker') {
+      frameAtDragStart.current = { ...(anchorPos || level.anchorStart) };
+    } else if (level.draggable === 'protection') {
+      frameAtDragStart.current = { ...(protection || level.startProtection) };
+    } else {
+      frameAtDragStart.current = { ...(frame || level.startFrame) };
+    }
+  }, [isCorrect, frame, protection, anchorPos, level]);
 
   const handlePointerMove = useCallback((e, rect) => {
     if (!isDragging || isCorrect || !dragStart.current) return;
@@ -481,12 +490,28 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     const draggable = level.draggable;
     const startF = frameAtDragStart.current;
 
+    if (draggable === 'anchorMarker') {
+      const newY = Math.round(startF.y + dyPct * canvasDims.height);
+      const clampedY = Math.max(0, Math.min(newY, canvasDims.height));
+      const newPos = { x: 0, y: clampedY };
+      setAnchorPos(newPos);
+      if (checkSnap(newPos)) {
+        setAnchorPos({ ...level.anchorTarget });
+        setIsCorrect(true);
+        setIsDragging(false);
+        setTimeout(() => onCorrect(), 400);
+      }
+      return;
+    }
+
     if (draggable === 'protection') {
       const dxPx = dxPct * canvasDims.width;
       const dyPx = dyPct * canvasDims.height;
       const avgD = (Math.abs(dxPx) + Math.abs(dyPx)) / 2;
-      const newW = Math.max(frame.width, Math.round((startF.width + avgD * 2) / 2) * 2);
-      const newH = Math.max(frame.height, Math.round((startF.height + avgD * 2) / 2) * 2);
+      const minW = level.target.width;
+      const minH = level.target.height;
+      const newW = Math.max(minW, Math.round((startF.width + avgD * 2) / 2) * 2);
+      const newH = Math.max(minH, Math.round((startF.height + avgD * 2) / 2) * 2);
       const p = { width: Math.min(newW, canvasDims.width), height: Math.min(newH, canvasDims.height) };
       setProtection(p);
       if (checkSnap(p)) {
@@ -512,24 +537,16 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
       const newY = Math.round(startF.y + dyPct * canvasDims.height);
       newFrame.y = Math.max(0, Math.min(newY, canvasDims.height - newFrame.height));
     }
-    if (draggable === 'anchor') {
-      const newY = Math.round(startF.y + dyPct * canvasDims.height);
-      newFrame.y = Math.max(0, Math.min(newY, canvasDims.height - newFrame.height));
-    }
 
     setFrame(newFrame);
 
     if (checkSnap(newFrame)) {
-      if (draggable === 'anchor') {
-        setFrame({ ...newFrame, y: level.anchorTarget.y });
-      } else {
-        setFrame({ ...target });
-      }
+      setFrame({ ...target });
       setIsCorrect(true);
       setIsDragging(false);
       setTimeout(() => onCorrect(), 400);
     }
-  }, [isDragging, isCorrect, level, canvasDims, frame, target, checkSnap, onCorrect, protection]);
+  }, [isDragging, isCorrect, level, canvasDims, frame, target, checkSnap, onCorrect, protection, anchorPos]);
 
   const handlePointerUp = useCallback(() => {
     setIsDragging(false);
@@ -550,7 +567,15 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
       }
     : null;
 
-  const readoutFrame = level.draggable === 'protection' ? protectionDisplay : currentFrame;
+  const currentAnchor = level.draggable === 'anchorMarker'
+    ? anchorPos || level.anchorStart
+    : null;
+
+  const readoutFrame = level.draggable === 'protection'
+    ? protectionDisplay
+    : level.draggable === 'anchorMarker'
+      ? currentAnchor
+      : currentFrame;
 
   return (
     <div>
@@ -559,7 +584,10 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
         targetFrame={target}
         playerFrame={displayFrame}
         protectionFrame={protectionCentered}
+        anchorMarker={currentAnchor}
+        labels={level.labels}
         isCorrect={isCorrect}
+        showTarget={level.draggable !== 'anchorMarker'}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -571,12 +599,17 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
       >
         {readoutFrame && (
           <>
-            {(level.draggable === 'position' || level.draggable === 'anchor') && (
-              <span>
-                y: <span style={{ color: '#F6AD55' }}>{Math.round(readoutFrame.y)}</span>
-              </span>
+            {(level.draggable === 'position' || level.draggable === 'anchorMarker') && (
+              <>
+                <span>
+                  x: <span style={{ color: '#F6AD55' }}>{Math.round(readoutFrame.x)}</span>
+                </span>
+                <span>
+                  y: <span style={{ color: '#F6AD55' }}>{Math.round(readoutFrame.y)}</span>
+                </span>
+              </>
             )}
-            {(level.draggable !== 'anchor') && (
+            {(level.draggable !== 'anchorMarker') && (
               <>
                 <span>
                   w: <span style={{ color: '#F6AD55' }}>{Math.round(readoutFrame.width)}</span>

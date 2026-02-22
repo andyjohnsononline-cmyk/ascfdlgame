@@ -62,6 +62,7 @@ export default function FixLevel({ level, onCorrect, onWrong, showReveal }) {
           canvasDims={level.canvas}
           playerFrame={isCorrect ? level.correctFrame : level.shownFrame}
           shownProtection={level.shownProtection}
+          labels={level.labels}
           isCorrect={isCorrect}
           isShaking={isShaking}
           showTarget={false}

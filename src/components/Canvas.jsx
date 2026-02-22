@@ -6,6 +6,8 @@ export default function Canvas({
   playerFrame,
   protectionFrame,
   shownProtection,
+  anchorMarker,
+  labels,
   showTarget = true,
   isCorrect = false,
   isShaking = false,
@@ -35,6 +37,19 @@ export default function Canvas({
       pointerEvents: 'none',
     };
   };
+
+  const labelStyle = (color) => ({
+    position: 'absolute',
+    fontSize: '9px',
+    fontFamily: 'var(--font-mono)',
+    fontWeight: 600,
+    letterSpacing: '0.05em',
+    textTransform: 'uppercase',
+    color,
+    opacity: 0.7,
+    pointerEvents: 'none',
+    whiteSpace: 'nowrap',
+  });
 
   const handlePointerDown = useCallback((e) => {
     if (!onPointerDown || !containerRef.current) return;
@@ -75,6 +90,12 @@ export default function Canvas({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
+      {labels?.canvas && (
+        <span style={{ ...labelStyle('#4A5568'), top: 4, left: 6 }}>
+          {labels.canvas}
+        </span>
+      )}
+
       {/* Target frame (dashed guide) */}
       {showTarget && targetFrame && (
         <div style={frameStyle(targetFrame, 'rgba(74, 85, 104, 0.4)', true)} />
@@ -82,12 +103,24 @@ export default function Canvas({
 
       {/* Protection frame (cyan) */}
       {protectionFrame && (
-        <div style={frameStyle(protectionFrame, '#4FD1C5', false)} />
+        <div style={frameStyle(protectionFrame, '#4FD1C5', false)}>
+          {labels?.protection && (
+            <span style={{ ...labelStyle('#4FD1C5'), top: -16, left: 0 }}>
+              {labels.protection}
+            </span>
+          )}
+        </div>
       )}
 
       {/* Shown protection (for fix levels — wrong protection) */}
       {shownProtection && (
-        <div style={frameStyle(shownProtection, '#FC8181', true)} />
+        <div style={frameStyle(shownProtection, '#FC8181', true)}>
+          {labels?.protection && (
+            <span style={{ ...labelStyle('#FC8181'), top: -16, left: 0 }}>
+              {labels.protection}
+            </span>
+          )}
+        </div>
       )}
 
       {/* Player's active frame (amber) */}
@@ -97,7 +130,38 @@ export default function Canvas({
             ...frameStyle(playerFrame, isCorrect ? '#68D391' : '#F6AD55', false),
             pointerEvents: 'none',
           }}
-        />
+        >
+          {labels?.frame && (
+            <span style={{
+              ...labelStyle(isCorrect ? '#68D391' : '#F6AD55'),
+              bottom: -16,
+              left: 0,
+            }}>
+              {labels.frame}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Anchor marker (crosshair) */}
+      {anchorMarker && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${toPercent(anchorMarker.x, 'x')}%`,
+            top: `${toPercent(anchorMarker.y, 'y')}%`,
+            transform: 'translate(-50%, -50%)',
+            transition: 'all 0.15s ease-out',
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}
+        >
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <line x1="14" y1="0" x2="14" y2="28" stroke={isCorrect ? '#68D391' : '#F6AD55'} strokeWidth="2" />
+            <line x1="0" y1="14" x2="28" y2="14" stroke={isCorrect ? '#68D391' : '#F6AD55'} strokeWidth="2" />
+            <circle cx="14" cy="14" r="6" stroke={isCorrect ? '#68D391' : '#F6AD55'} strokeWidth="2" fill="none" />
+          </svg>
+        </div>
       )}
 
       {children}
