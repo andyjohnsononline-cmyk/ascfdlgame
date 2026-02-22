@@ -27,6 +27,17 @@ export const ZONE_LEVEL_RANGES = [
   [28, 30],
 ];
 
+export const ZONE_DESCRIPTIONS = [
+  'A canvas is a pixel grid with width and height',
+  "The DP's creative choice — an aspect ratio",
+  'Canvas + Intent = pixel dimensions and anchor',
+  'Contexts tie canvases to framing decisions',
+  'UUID, version, and the full JSON structure',
+  'The real workflow from set to screen',
+];
+
+export const ZONE_EMOJIS = ['🎬', '🎞️', '📐', '🔗', '📄', '🏆'];
+
 export function getZoneForLevel(levelId) {
   for (let i = 0; i < ZONE_LEVEL_RANGES.length; i++) {
     const [start, end] = ZONE_LEVEL_RANGES[i];
@@ -37,6 +48,47 @@ export function getZoneForLevel(levelId) {
 
 export function isLastLevelInZone(levelId) {
   return ZONE_LEVEL_RANGES.some(([, end]) => end === levelId);
+}
+
+export function getLevelsForZone(zoneIndex) {
+  const [start, end] = ZONE_LEVEL_RANGES[zoneIndex];
+  return LEVELS.filter((l) => l.id >= start && l.id <= end);
+}
+
+export function getZoneLevelCount(zoneIndex) {
+  const [start, end] = ZONE_LEVEL_RANGES[zoneIndex];
+  return end - start + 1;
+}
+
+export function getZoneCompletedCount(zoneIndex, completedLevels) {
+  const [start, end] = ZONE_LEVEL_RANGES[zoneIndex];
+  let count = 0;
+  for (let id = start; id <= end; id++) {
+    if (completedLevels.has(id)) count++;
+  }
+  return count;
+}
+
+export function getFirstIncompleteLevelInZone(zoneIndex, completedLevels) {
+  const [start, end] = ZONE_LEVEL_RANGES[zoneIndex];
+  for (let id = start; id <= end; id++) {
+    if (!completedLevels.has(id)) return id;
+  }
+  return start;
+}
+
+export function isZoneComplete(zoneIndex, completedLevels) {
+  const [start, end] = ZONE_LEVEL_RANGES[zoneIndex];
+  for (let id = start; id <= end; id++) {
+    if (!completedLevels.has(id)) return false;
+  }
+  return true;
+}
+
+export function getLevelIndexInZone(levelId) {
+  const zi = getZoneForLevel(levelId);
+  const [start] = ZONE_LEVEL_RANGES[zi];
+  return levelId - start;
 }
 
 export const LEVELS = [
