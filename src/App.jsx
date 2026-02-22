@@ -1,13 +1,26 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { LEVELS, ZONE_NAMES, ZONE_REWARDS, ZONE_LEVEL_RANGES, getZoneForLevel, isLastLevelInZone } from './levels.js';
+import {
+  LEVELS,
+  ZONE_NAMES,
+  ZONE_REWARDS,
+  ZONE_LEVEL_RANGES,
+  getZoneForLevel,
+  isLastLevelInZone,
+  getZoneLevelCount,
+  getZoneCompletedCount,
+  getFirstIncompleteLevelInZone,
+  getLevelIndexInZone,
+} from './levels.js';
 import FrameLevel from './components/FrameLevel.jsx';
 import FixLevel from './components/FixLevel.jsx';
 import PickLevel from './components/PickLevel.jsx';
 import ZoneComplete from './components/ZoneComplete.jsx';
 import GameComplete from './components/GameComplete.jsx';
 import AboutOverlay from './components/AboutOverlay.jsx';
+import ZoneHub from './components/ZoneHub.jsx';
 
 export default function App() {
+  const [currentView, setCurrentView] = useState('hub');
   const [currentLevel, setCurrentLevel] = useState(1);
   const [streak, setStreak] = useState(0);
   const [completedLevels, setCompletedLevels] = useState(new Set());
@@ -17,6 +30,7 @@ export default function App() {
   const [showGameComplete, setShowGameComplete] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [streakBump, setStreakBump] = useState(false);
+  const [showHintText, setShowHintText] = useState(false);
   const hintTimerRef = useRef(null);
   const levelStartRef = useRef(Date.now());
 
@@ -27,6 +41,7 @@ export default function App() {
   useEffect(() => {
     setShowReveal(false);
     setHintVisible(false);
+    setShowHintText(false);
     levelStartRef.current = Date.now();
 
     if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
@@ -70,32 +85,50 @@ export default function App() {
 
   const handleZoneContinue = useCallback(() => {
     setShowZoneComplete(null);
-    const nextId = currentLevel + 1;
-    if (nextId <= totalLevels) {
-      setCurrentLevel(nextId);
-    }
-  }, [currentLevel, totalLevels]);
+    setCurrentView('hub');
+  }, []);
 
   const handleRestart = useCallback(() => {
-    setCurrentLevel(1);
-    setStreak(0);
-    setCompletedLevels(new Set());
-    setShowReveal(false);
     setShowGameComplete(false);
-    setShowZoneComplete(null);
+    setCurrentView('hub');
   }, []);
 
-  const goToZone = useCallback((zi) => {
-    const [start] = ZONE_LEVEL_RANGES[zi];
-    setCurrentLevel(start);
+  const goToHub = useCallback(() => {
+    setCurrentView('hub');
     setShowReveal(false);
   }, []);
 
-  const [showHintText, setShowHintText] = useState(false);
+  const enterZone = useCallback(
+    (zi) => {
+      const levelId = getFirstIncompleteLevelInZone(zi, completedLevels);
+      setCurrentLevel(levelId);
+      setCurrentView('playing');
+      setShowReveal(false);
+    },
+    [completedLevels]
+  );
+
+  if (currentView === 'hub') {
+    return (
+      <>
+        <ZoneHub
+          completedLevels={completedLevels}
+          onEnterZone={enterZone}
+          streak={streak}
+        />
+        {showAbout && (
+          <AboutOverlay onClose={() => setShowAbout(false)} />
+        )}
+      </>
+    );
+  }
 
   if (!level) return null;
 
-  const progressPct = ((currentLevel - 1) / totalLevels) * 100;
+  const zoneLevelCount = getZoneLevelCount(zoneIndex);
+  const zoneLevelIndex = getLevelIndexInZone(currentLevel);
+  const zoneCompleted = getZoneCompletedCount(zoneIndex, completedLevels);
+  const zoneProgressPct = (zoneCompleted / zoneLevelCount) * 100;
 
   return (
     <div
@@ -104,37 +137,23 @@ export default function App() {
     >
       {/* Top bar */}
       <header className="px-4 pt-4 pb-2">
-        {/* Zone dots */}
         <div className="flex items-center justify-between mb-2">
-          <div className="flex gap-1.5">
-            {ZONE_LEVEL_RANGES.map((range, zi) => {
-              const zoneComplete = range[1] <= Math.max(...completedLevels, 0);
-              const isCurrent = zi === zoneIndex;
-              return (
-                <button
-                  key={zi}
-                  onClick={() => zoneComplete ? goToZone(zi) : null}
-                  className="w-5 h-5 rounded-full transition-all flex items-center justify-center"
-                  style={{
-                    backgroundColor: zoneComplete
-                      ? '#68D391'
-                      : isCurrent
-                        ? '#F6AD55'
-                        : '#2D3748',
-                    cursor: zoneComplete ? 'pointer' : 'default',
-                    boxShadow: isCurrent ? '0 0 8px rgba(246, 173, 85, 0.5)' : 'none',
-                  }}
-                  title={ZONE_NAMES[zi]}
-                >
-                  {zoneComplete && (
-                    <span className="text-xs" style={{ color: '#0D1117' }}>✓</span>
-                  )}
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={goToHub}
+              className="text-sm font-medium transition-opacity hover:opacity-80"
+              style={{ color: '#A0AEC0' }}
+            >
+              ← Back
+            </button>
+            <span
+              className="text-sm font-semibold"
+              style={{ color: '#E2E8F0' }}
+            >
+              {ZONE_NAMES[zoneIndex]}
+            </span>
           </div>
 
-          {/* Streak + About */}
           <div className="flex items-center gap-3">
             <div
               className={`font-mono font-bold text-sm ${streakBump ? 'animate-streak-bump' : ''}`}
@@ -152,7 +171,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Progress bar */}
+        {/* Per-zone progress bar */}
         <div
           className="w-full h-1 rounded-full overflow-hidden"
           style={{ backgroundColor: '#2D3748' }}
@@ -160,7 +179,7 @@ export default function App() {
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{
-              width: `${progressPct}%`,
+              width: `${zoneProgressPct}%`,
               backgroundColor: '#F6AD55',
             }}
           />
@@ -176,13 +195,7 @@ export default function App() {
               className="text-xs font-medium"
               style={{ color: '#4A5568' }}
             >
-              Level {currentLevel} of {totalLevels}
-            </span>
-            <span
-              className="text-xs px-2 py-0.5 rounded-full"
-              style={{ backgroundColor: '#2D3748', color: '#A0AEC0' }}
-            >
-              {ZONE_NAMES[zoneIndex]}
+              Level {zoneLevelIndex + 1} of {zoneLevelCount}
             </span>
           </div>
 
@@ -255,7 +268,11 @@ export default function App() {
                 color: '#0D1117',
               }}
             >
-              {level.isGameEnd ? 'Finish' : 'Next →'}
+              {level.isGameEnd
+                ? 'Finish'
+                : isLastLevelInZone(currentLevel)
+                  ? 'Complete Zone'
+                  : 'Next →'}
             </button>
           </div>
         )}

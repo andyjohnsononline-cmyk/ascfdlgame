@@ -510,9 +510,11 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
       const avgD = (Math.abs(dxPx) + Math.abs(dyPx)) / 2;
       const minW = level.target.width;
       const minH = level.target.height;
+      const maxW = Math.round(canvasDims.width * 1.2);
+      const maxH = Math.round(canvasDims.height * 1.2);
       const newW = Math.max(minW, Math.round((startF.width + avgD * 2) / 2) * 2);
       const newH = Math.max(minH, Math.round((startF.height + avgD * 2) / 2) * 2);
-      const p = { width: Math.min(newW, canvasDims.width), height: Math.min(newH, canvasDims.height) };
+      const p = { width: Math.min(newW, maxW), height: Math.min(newH, maxH) };
       setProtection(p);
       if (checkSnap(p)) {
         setProtection({ ...level.protectionTarget });
@@ -558,13 +560,16 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
   const protectionDisplay = level.draggable === 'protection'
     ? protection || level.startProtection
     : null;
-  const protectionCentered = protectionDisplay
-    ? {
-        width: protectionDisplay.width,
-        height: protectionDisplay.height,
-        x: (canvasDims.width - protectionDisplay.width) / 2,
-        y: (canvasDims.height - protectionDisplay.height) / 2,
-      }
+  const centerRect = (dims) => ({
+    width: dims.width,
+    height: dims.height,
+    x: (canvasDims.width - dims.width) / 2,
+    y: (canvasDims.height - dims.height) / 2,
+  });
+  const protectionCentered = protectionDisplay ? centerRect(protectionDisplay) : null;
+
+  const protectionTargetGuide = level.draggable === 'protection' && level.protectionTarget
+    ? centerRect(level.protectionTarget)
     : null;
 
   const currentAnchor = level.draggable === 'anchorMarker'
@@ -577,17 +582,21 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
       ? currentAnchor
       : currentFrame;
 
+  const showTarget = level.draggable !== 'anchorMarker' && level.draggable !== 'protection';
+
   return (
     <div>
       <Canvas
         canvasDims={canvasDims}
-        targetFrame={target}
+        targetFrame={showTarget ? target : null}
         playerFrame={displayFrame}
         protectionFrame={protectionCentered}
+        protectionGuide={protectionTargetGuide}
         anchorMarker={currentAnchor}
         labels={level.labels}
         isCorrect={isCorrect}
-        showTarget={level.draggable !== 'anchorMarker'}
+        showTarget={showTarget}
+        allowOverflow={level.draggable === 'protection'}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
