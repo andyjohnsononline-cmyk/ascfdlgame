@@ -224,8 +224,8 @@ export default function CharacterPortrait({ character, expression = 'neutral', s
   const rows = PORTRAITS[character]?.[expression] || PORTRAITS[character]?.neutral;
   if (!palette || !rows) return null;
 
-  const sizeMap = { sm: 3, md: 5, lg: 8, xl: 10 };
-  const px = sizeMap[size] || PX;
+  const sizeMap = { sm: 3, md: 5, lg: 8, xl: 10, xxl: 14, env: 12 };
+  const px = typeof size === 'number' ? size : (sizeMap[size] || PX);
   const cols = rows[0].length;
   const w = cols * px;
   const h = rows.length * px;

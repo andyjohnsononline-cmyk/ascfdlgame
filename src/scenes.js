@@ -15,10 +15,10 @@ export const CHAPTER_BACKGROUNDS = [
 ];
 
 export const CHAPTER_DESCRIPTIONS = [
-  'When to use FDL, the Rule of Defaults, Camera Formats, and workflow coordination',
-  'Building an FDL on set: sensor, framing, protection, multi-camera, and anamorphic',
-  'Canvas Templates, fit methods, VFX pulls, and downstream framing',
-  'FDL validation, the 8-phase pipeline, rounding, alignment, and troubleshooting',
+  'MPS portal, Camera Format config, delivery specs, and coordinating the pipeline across departments',
+  'Building FDL on the DIT cart: sensor setup, framing, protection, multi-camera rigs, and anamorphic',
+  'Nuke templates, DaVinci Resolve, VFX plate pulls, fit methods, and downstream compositing',
+  'pyfdl validation, the 8-phase pipeline, rounding rules, alignment, and pipeline debugging',
 ];
 
 export const CHAPTER_REWARDS = [
@@ -123,7 +123,7 @@ export function getSceneIndexInChapter(sceneId) {
 export const SCENES = [
   // ═══════════════════════════════════════
   // CHAPTER 1: ROBIN — THE POST SUPERVISOR
-  // Production Office
+  // Production Office — MPS Portal, Delivery Specs
   // ═══════════════════════════════════════
   {
     id: 1,
@@ -131,12 +131,12 @@ export const SCENES = [
     character: 'robin',
     background: 'production_office',
     dialogue: [
-      { text: "Welcome to the production office. I'm Robin, Post Supervisor on this show.", expression: 'neutral' },
-      { text: "We've got a big problem. Footage is coming in from set, but the framing is all wrong in our deliveries.", expression: 'concerned' },
-      { text: "Let me ask you something about how MPS handles footage when there's no FDL...", expression: 'neutral' },
+      { text: "The showrunner just called. Our UHD deliveries from last night look wrong — the framing is stretched.", expression: 'concerned' },
+      { text: "I pulled up the MPS portal and checked the delivery specs. There's no FDL attached to any of these Camera Formats.", expression: 'concerned' },
+      { text: "Before I call Morgan on set, tell me: what does MPS do with footage when there's no FDL?", expression: 'neutral' },
     ],
     type: 'pick',
-    brief: 'No FDL was provided to MPS. What framing does it deliver?',
+    brief: 'No FDL was attached in the MPS portal. What framing does MPS deliver?',
     concept: 'rule_of_defaults',
     newConcept: 'Rule of Defaults',
     options: [
@@ -146,7 +146,7 @@ export const SCENES = [
       { text: 'The footage is delivered unprocessed', correct: false },
     ],
     hint: "Without an FDL, MPS assumes the full source resolution IS the framing intent.",
-    successDialogue: { text: "Exactly! That's the Rule of Defaults. Without an FDL, MPS just scales the full sensor into the delivery container. The DP's creative frame is completely lost.", expression: 'happy' },
+    successDialogue: { text: "That's the Rule of Defaults. MPS scales the full sensor into the delivery container — the DP's creative frame is lost. I need to get Morgan on the phone.", expression: 'happy' },
     reveal: {
       lines: '// MPS Rule of Defaults:\n// No FDL → full source dimensions\n// scaled into delivery container.\n// The DP\'s creative frame is lost.',
       highlightKeys: [],
@@ -159,11 +159,11 @@ export const SCENES = [
     character: 'robin',
     background: 'production_office',
     dialogue: [
-      { text: "Here's another situation. Mid-shoot, our B-cam switched to anamorphic lenses.", expression: 'neutral' },
-      { text: "I need to know what triggers a new Camera Format in MPS. This affects everything downstream.", expression: 'concerned' },
+      { text: "I just got the camera report from Morgan's Silverstack logs. Mid-day, B-cam switched from spherical to 1.3\u00d7 anamorphic.", expression: 'neutral' },
+      { text: "I need to add a new Camera Format in the MPS portal before tomorrow's dailies go out. What triggers that change?", expression: 'concerned' },
     ],
     type: 'pick',
-    brief: 'Mid-shoot, B-cam switches to anamorphic lenses. What triggers a new Camera Format in MPS?',
+    brief: 'B-cam switches to anamorphic mid-shoot. What triggers a new Camera Format in MPS?',
     concept: 'camera_format_trigger',
     newConcept: 'Camera Format',
     options: [
@@ -173,7 +173,7 @@ export const SCENES = [
       { text: 'Camera Formats are set once per project and never change', correct: false },
     ],
     hint: 'A Camera Format is a unique combination of 5 things: squeeze, resolution, codec, camera model, and camera letter.',
-    successDialogue: { text: "Right! A Camera Format is a unique combination of five attributes. Change any one of them and you need a new Camera Format entry.", expression: 'happy' },
+    successDialogue: { text: "Right. Five attributes define a Camera Format. The anamorphic swap changes the squeeze ratio — that's a new format I need to configure in MPS before ingest.", expression: 'happy' },
     reveal: {
       lines: '// Camera Format = unique combo of:\n// \u2022 Lens Squeeze Ratio\n// \u2022 Resolution\n// \u2022 Video Codec\n// \u2022 Source Camera (Model)\n// \u2022 Camera Letter',
       highlightKeys: [],
@@ -186,11 +186,11 @@ export const SCENES = [
     character: 'robin',
     background: 'production_office',
     dialogue: [
-      { text: "Let me show you what happened on our last delivery. The DP shot 2.39:1 on the Alexa LF, but nobody created an FDL.", expression: 'concerned' },
-      { text: "Take a look at what the UHD delivery looks like without one...", expression: 'neutral' },
+      { text: "Let me pull up the Resolve timeline from last night's conform. The DP shot 2.39:1 on the Alexa LF, but nobody created an FDL.", expression: 'concerned' },
+      { text: "The colorist just called — the UHD delivery master looks completely wrong. What happened?", expression: 'neutral' },
     ],
     type: 'pick',
-    brief: 'The DP shot 2.39:1 on Alexa LF (4448\u00d73096). No FDL was created. What does the UHD delivery look like?',
+    brief: 'DP shot 2.39:1 on Alexa LF (4448\u00d73096). No FDL created. What does the UHD delivery look like?',
     concept: 'missing_fdl_consequence',
     newConcept: null,
     options: [
@@ -200,7 +200,7 @@ export const SCENES = [
       { text: 'MPS automatically detects the intended aspect ratio', correct: false },
     ],
     hint: "Without an FDL, MPS doesn't know about the 2.39:1 intent. It delivers the full sensor.",
-    successDialogue: { text: "That's the harsh reality. Without an FDL, the DP's beautiful 2.39:1 composition gets squished into a full-sensor scale. We need to fix this.", expression: 'concerned' },
+    successDialogue: { text: "The DP's 2.39:1 scope composition is squished into full-sensor scale. The colorist sees it, the showrunner sees it, everyone sees wrong framing. This is why FDL matters.", expression: 'concerned' },
     reveal: {
       lines: '// Without FDL:\n// Source: 4448\u00d73096 (full sensor)\n// \u2192 Scaled to fit 3840\u00d72160\n// \u2192 DP\'s 2.39:1 intent is LOST\n//\n// With FDL:\n// Source frame: 4448\u00d71862 (2.39:1)\n// \u2192 Correctly extracted and scaled',
       highlightKeys: [],
@@ -213,26 +213,26 @@ export const SCENES = [
     character: 'robin',
     background: 'production_office',
     dialogue: [
-      { text: "To fix this, we need everyone doing their part. Let me explain who's responsible for what.", expression: 'neutral' },
-      { text: "Match each role to their FDL responsibility. This is how our team is organized.", expression: 'neutral' },
+      { text: "I'm building the workflow chart for our post team. I need everyone aligned — Morgan on set, me in the MPS portal, Quinn's VFX team pulling plates in Nuke.", expression: 'neutral' },
+      { text: "Match each role to what they're responsible for in the FDL pipeline. This is how we stay coordinated.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'Match each role to their FDL responsibility.',
+    brief: 'Match each role to their FDL responsibility in the pipeline.',
     concept: 'fdl_responsibilities',
     newConcept: null,
     subtype: 'connect',
     cards: [
-      { id: 'dit', label: 'DIT\nCreates FDL on set', slot: 'slot_creator' },
-      { id: 'postsup', label: 'Post Supervisor\nCamera Format config', slot: 'slot_config' },
-      { id: 'vfx', label: 'VFX / Finishing\nConsumes FDL', slot: 'slot_consumer' },
+      { id: 'dit', label: 'DIT (Morgan)\nCreates FDL on set', slot: 'slot_creator' },
+      { id: 'postsup', label: 'Post Sup (Robin)\nCamera Format in MPS', slot: 'slot_config' },
+      { id: 'vfx', label: 'VFX Sup (Quinn)\nPulls plates in Nuke', slot: 'slot_consumer' },
     ],
     slots: [
       { id: 'slot_creator', label: 'Creates the FDL', accepts: 'dit' },
       { id: 'slot_config', label: 'Camera Format setup', accepts: 'postsup' },
       { id: 'slot_consumer', label: 'Uses FDL for plates/delivery', accepts: 'vfx' },
     ],
-    hint: 'The DIT creates FDL on set. Post Sup or their vendor configures Camera Formats. VFX/finishing consumes the FDL.',
-    successDialogue: { text: "Perfect! Now everyone knows their role. Morgan creates the FDL on set, I handle Camera Format configuration, and Quinn's VFX team consumes it downstream.", expression: 'happy' },
+    hint: 'Morgan creates FDL on set with the Calculator. Robin configures Camera Formats in MPS. Quinn consumes the FDL for VFX plate pulls.',
+    successDialogue: { text: "That's our pipeline. Morgan creates on set, I configure in MPS, Quinn pulls plates in Nuke. Everyone depends on everyone else.", expression: 'happy' },
     reveal: {
       lines: '// FDL Workflow Roles:\n// DIT \u2192 Creates FDL (on set)\n// Post Sup \u2192 Camera Format config\n// VFX/Finishing \u2192 Consumes FDL',
       highlightKeys: [],
@@ -245,11 +245,11 @@ export const SCENES = [
     character: 'robin',
     background: 'production_office',
     dialogue: [
-      { text: "Now let's get the workflow order straight. In MPS, the sequence matters.", expression: 'neutral' },
-      { text: "Put these steps in the correct order. Get this wrong and the whole pipeline breaks.", expression: 'concerned' },
+      { text: "Before any footage hits the MPS portal, I need the pipeline configured in the right order. One step out of sequence and the dailies break.", expression: 'neutral' },
+      { text: "Put these MPS workflow steps in the correct order. Get this wrong and we're re-processing everything.", expression: 'concerned' },
     ],
     type: 'frame',
-    brief: 'Put the MPS workflow in the correct order.',
+    brief: 'Arrange the MPS workflow steps in the correct order.',
     concept: 'mps_workflow_order',
     newConcept: 'MPS Workflow',
     subtype: 'connect',
@@ -266,7 +266,7 @@ export const SCENES = [
       { id: 'step4', label: 'Step 4', accepts: 'ingest' },
     ],
     hint: 'Project Settings come first. Camera Formats must be configured before footage can be processed.',
-    successDialogue: { text: "That's the right order! Setup first, then Camera Formats, then FDL creation on set, and finally ingest. Now let me quiz you on one more thing...", expression: 'happy' },
+    successDialogue: { text: "That's the order. Project setup, Camera Format config, FDL creation on set, then ingest. I'll have the MPS portal ready before Morgan's drives arrive.", expression: 'happy' },
     reveal: {
       lines: '// MPS Pipeline:\n// 1. Project Setup (settings)\n// 2. Camera Format Config\n// 3. FDL Creation (on set)\n// 4. Footage Ingest \u2192 processing',
       highlightKeys: [],
@@ -279,11 +279,12 @@ export const SCENES = [
     character: 'robin',
     background: 'production_office',
     dialogue: [
-      { text: "Last question for my chapter. Our show has three cameras, each with different setups.", expression: 'neutral' },
-      { text: "A-cam is an Alexa 35 with spherical lenses. B-cam is also Alexa 35 but with 1.3x anamorphic. C-cam is a drone.", expression: 'neutral' },
+      { text: "I'm looking at the camera report for tomorrow. Three cameras, three different configurations.", expression: 'neutral' },
+      { text: "A-cam: Alexa 35, spherical. B-cam: Alexa 35, 1.3\u00d7 anamorphic. C-cam: a DJI drone shooting ProRes.", expression: 'neutral' },
+      { text: "How many Camera Formats do I need to configure in the MPS portal?", expression: 'neutral' },
     ],
     type: 'pick',
-    brief: 'A show has: A-cam Alexa 35 (spherical), B-cam Alexa 35 (1.3\u00d7 anamorphic), C-cam drone. How many Camera Formats minimum?',
+    brief: 'A-cam Alexa 35 (spherical), B-cam Alexa 35 (1.3\u00d7 anamorphic), C-cam DJI drone. How many Camera Formats?',
     concept: 'camera_format_count',
     newConcept: null,
     options: [
@@ -293,7 +294,7 @@ export const SCENES = [
       { text: '5 \u2014 each camera letter needs multiple formats', correct: false },
     ],
     hint: 'A-cam and B-cam differ by squeeze ratio AND camera letter. The drone differs by model, resolution, and codec.',
-    successDialogue: { text: "Three formats, exactly right! Now you understand my world. Time to visit Morgan on set — they need to build the actual FDL.", expression: 'happy' },
+    successDialogue: { text: "Three formats. I'll configure all three in MPS tonight. Now head to set — Morgan needs help building the actual FDL on the DIT cart.", expression: 'happy' },
     reveal: {
       lines: '// Camera Format breakdown:\n// A: Alexa35, 1.0\u00d7, ARRIRAW, A\n// B: Alexa35, 1.3\u00d7, ARRIRAW, B\n// C: Drone,   1.0\u00d7, ProRes,  C\n// = 3 unique Camera Formats',
       highlightKeys: [],
@@ -304,7 +305,7 @@ export const SCENES = [
 
   // ═══════════════════════════════════════
   // CHAPTER 2: MORGAN — THE DIT
-  // On Set
+  // On Set — Silverstack, LiveGrade, FDL Creator
   // ═══════════════════════════════════════
   {
     id: 7,
@@ -312,12 +313,12 @@ export const SCENES = [
     character: 'morgan',
     background: 'on_set',
     dialogue: [
-      { text: "Hey! I'm Morgan, the DIT. Robin sent you my way — good, I could use the help.", expression: 'neutral' },
-      { text: "We need to build an FDL from scratch. Step one: define the camera sensor as a Canvas.", expression: 'neutral' },
-      { text: "Our A-cam is the ARRI Alexa LF. Drag the frame to match the full sensor: 4448 \u00d7 3096.", expression: 'neutral' },
+      { text: "Robin sent you — good. I'm at my DIT cart and the AD just called first shot. I've got Silverstack running for backup verification and the Framing Calculator open.", expression: 'neutral' },
+      { text: "First thing: I need to define our A-cam sensor as a Canvas in the FDL. The Alexa LF shoots 4448 \u00d7 3096.", expression: 'neutral' },
+      { text: "Drag the frame to match the full sensor dimensions. This is the foundation of everything.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'Step 1: Define Camera Format. Set the ARRI Alexa LF sensor: 4448 \u00d7 3096.',
+    brief: 'Define the ARRI Alexa LF sensor canvas in the Framing Calculator: 4448 \u00d7 3096.',
     concept: 'canvas_sensor_setup',
     newConcept: 'Canvas',
     canvas: { width: 4448, height: 3096 },
@@ -326,7 +327,7 @@ export const SCENES = [
     startFrame: { width: 2200, height: 1500, x: 0, y: 0 },
     tolerance: 0.08,
     hint: 'The canvas represents the full sensor. Match both width (4448) and height (3096).',
-    successDialogue: { text: "The canvas is set. That's our full sensor — every pixel the Alexa LF captures. Now let's frame the DP's creative intent inside it.", expression: 'happy' },
+    successDialogue: { text: "Canvas is set. That's every pixel the Alexa LF captures. Silverstack confirms the resolution matches the ARRIRAW files coming off the mags.", expression: 'happy' },
     reveal: {
       lines: '"canvas": {\n  "id": "alexa_lf",\n  "dimensions": {\n    "width": 4448,\n    "height": 3096\n  }\n}',
       highlightKeys: ['dimensions', 'width', 'height'],
@@ -339,11 +340,11 @@ export const SCENES = [
     character: 'morgan',
     background: 'on_set',
     dialogue: [
-      { text: "The DP just called for '2.39 scope.' That's our creative frame.", expression: 'neutral' },
-      { text: "I need you to frame the 2.39:1 aspect ratio inside the sensor. Drag the frame to match.", expression: 'neutral' },
+      { text: "The DP is at the monitor with LiveGrade running. She calls out: '2.39 scope.' That's our creative frame.", expression: 'neutral' },
+      { text: "I need to set this in the Framing Calculator and make sure the LUT on my reference monitor matches. Frame the 2.39:1 inside the sensor.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: "The DP says \"2.39 scope.\" Frame it within the sensor.",
+    brief: "The DP calls '2.39 scope' at video village. Frame it within the Alexa LF sensor.",
     concept: 'framing_decision_239',
     newConcept: 'Framing Decision',
     canvas: { width: 4448, height: 3096 },
@@ -352,7 +353,7 @@ export const SCENES = [
     startFrame: { width: 4448, height: 3096, x: 0, y: 0 },
     tolerance: 0.08,
     hint: 'Height = 4448 / 2.39 \u2248 1862. Center vertically: y = (3096 \u2212 1862) / 2 = 617.',
-    successDialogue: { text: "That's the Framing Decision — the exact pixel rectangle the audience will see. 4448 wide, 1862 tall, centered in the sensor.", expression: 'happy' },
+    successDialogue: { text: "That's the Framing Decision — 4448\u00d71862, centered. The audience will see exactly this rectangle. My reference monitor now shows the correct frame lines.", expression: 'happy' },
     reveal: {
       lines: '"framing_decision": {\n  "dimensions": {\n    "width": 4448, "height": 1862\n  },\n  "anchor_point": { "x": 0, "y": 617 }\n}',
       highlightKeys: ['dimensions', 'anchor_point'],
@@ -365,11 +366,11 @@ export const SCENES = [
     character: 'morgan',
     background: 'on_set',
     dialogue: [
-      { text: "The DP also wants a 5% protection zone for stabilization in post.", expression: 'neutral' },
-      { text: "Drag outward to expand the protection boundary around the framing decision.", expression: 'neutral' },
+      { text: "The DP just told me she wants 5% protection for stabilization. The editor and finishing house in Resolve will need that extra headroom.", expression: 'neutral' },
+      { text: "Drag outward to expand the protection boundary around the framing decision. This is critical for post.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'The DP wants 5% protection for stabilization in post. Add the protection zone.',
+    brief: 'DP requests 5% protection for Resolve stabilization. Set the protection zone.',
     concept: 'protection_zone',
     newConcept: 'Protection',
     canvas: { width: 4448, height: 3096 },
@@ -384,7 +385,7 @@ export const SCENES = [
     labels: { canvas: 'SENSOR', frame: 'FRAMING 2.39:1', protection: 'PROTECTION' },
     tolerance: 0.08,
     hint: 'Protection = frame dimensions \u00d7 1.05. Drag outward to expand the cyan protection zone.',
-    successDialogue: { text: "Protection zone is locked. Post can now stabilize up to 5% without losing any of the DP's frame. Important: protection is never auto-filled!", expression: 'happy' },
+    successDialogue: { text: "Protection locked. The finishing house can stabilize up to 5% in Resolve without cutting into the DP's frame. And remember: protection is never auto-filled by the pipeline.", expression: 'happy' },
     reveal: {
       lines: '"framing_intent": {\n  "aspect_ratio": {\n    "width": 2.39, "height": 1\n  },\n  "protection": 0.05\n}',
       highlightKeys: ['protection', 'aspect_ratio'],
@@ -397,11 +398,11 @@ export const SCENES = [
     character: 'morgan',
     background: 'on_set',
     dialogue: [
-      { text: "We've got a second camera now — B-cam Sony Venice 2. Same 2.39:1 framing intent.", expression: 'neutral' },
-      { text: "I need to wire both cameras to the same intent using Contexts. Help me connect them.", expression: 'neutral' },
+      { text: "The gaffer just told me B-cam is set up. It's a Sony Venice 2 — different sensor, same 2.39:1 framing intent from the DP.", expression: 'neutral' },
+      { text: "I need to wire both cameras to the same intent using FDL Contexts. Each camera gets its own context but they share the framing intent.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'B-cam is Sony Venice 2 (6054\u00d73192). Same 2.39:1 intent. Build both contexts.',
+    brief: 'B-cam Venice 2 (6054\u00d73192) joins A-cam. Same 2.39:1 intent. Build both contexts.',
     concept: 'multi_camera_fdl',
     newConcept: 'Context',
     subtype: 'connect',
@@ -415,8 +416,8 @@ export const SCENES = [
       { id: 'ctx2_canvas', label: 'Context 2: canvas_id', accepts: 'venice' },
       { id: 'shared_intent', label: 'Shared: framing_intent_id', accepts: 'intent' },
     ],
-    hint: "Each camera gets its own context. Both reference the same framing intent (2.39:1).",
-    successDialogue: { text: "Two contexts, one shared intent. The audience sees the same 2.39:1 composition from both cameras, even though the sensors are completely different sizes.", expression: 'happy' },
+    hint: "Each camera gets its own context referencing its canvas. Both contexts share the same framing intent (2.39:1).",
+    successDialogue: { text: "Two contexts, one shared intent. Different sensors, same composition. My Silverstack checksum logs will track both cameras, and the FDL keeps them aligned.", expression: 'happy' },
     reveal: {
       lines: '"contexts": [\n  { "canvas_id": "alexa_lf", ... },\n  { "canvas_id": "venice_2", ... }\n]\n// Both reference "scope_239"',
       highlightKeys: ['canvas_id', 'framing_intent_id'],
@@ -429,11 +430,11 @@ export const SCENES = [
     character: 'morgan',
     background: 'on_set',
     dialogue: [
-      { text: "Plot twist — B-cam is switching to anamorphic 1.3\u00d7 squeeze lenses for the next scene.", expression: 'concerned' },
-      { text: "I need you to set the anamorphic squeeze factor. Use the slider.", expression: 'neutral' },
+      { text: "The 1st AC just radioed me — B-cam is swapping to 1.3\u00d7 anamorphic lenses for the next scene. I need to update the FDL before the next take.", expression: 'concerned' },
+      { text: "Robin will need a new Camera Format in MPS for this. Set the anamorphic squeeze factor.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'B-cam switches to anamorphic 1.3\u00d7 squeeze lenses. Set the squeeze factor.',
+    brief: 'B-cam swaps to 1.3\u00d7 anamorphic. Update the squeeze factor before the next take.',
     concept: 'anamorphic_squeeze',
     newConcept: 'Anamorphic',
     subtype: 'anamorphic',
@@ -441,7 +442,7 @@ export const SCENES = [
     squeezeValue: 1.3,
     framingFrame: { width: 4448, height: 1862, x: 0, y: 617 },
     hint: 'Set the squeeze to 1.3. The frame desqueezes horizontally to show the true field of view.',
-    successDialogue: { text: "1.3\u00d7 squeeze locked in. The horizontal field of view is wider than what the sensor captures — that's the magic of anamorphic.", expression: 'happy' },
+    successDialogue: { text: "1.3\u00d7 squeeze set. I'll radio Robin that B-cam needs a new Camera Format in MPS. The desqueezed field of view is 5782 pixels wide — that's the magic of anamorphic.", expression: 'happy' },
     reveal: {
       lines: '"anamorphic_squeeze": 1.3\n\n// Normalized width = 4448 \u00d7 1.3\n// = 5782 (true horizontal FoV)',
       highlightKeys: ['anamorphic_squeeze'],
@@ -454,11 +455,11 @@ export const SCENES = [
     character: 'morgan',
     background: 'on_set',
     dialogue: [
-      { text: "Last step on my end — every FDL file needs a proper header with metadata.", expression: 'neutral' },
-      { text: "Fill in the version and creator. The UUID is auto-generated.", expression: 'neutral' },
+      { text: "That's a wrap on set for today. Last thing — I'm exporting the FDL from the Framing Calculator. Every file needs a proper header.", expression: 'neutral' },
+      { text: "Fill in the version and creator. The UUID is auto-generated. This metadata travels with the FDL to Robin, Quinn, and the finishing house.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'Every FDL needs a header. Fill in the metadata.',
+    brief: 'Export the FDL from the Framing Calculator. Fill in the header metadata.',
     concept: 'fdl_header',
     newConcept: 'FDL File',
     subtype: 'fillHeader',
@@ -468,7 +469,7 @@ export const SCENES = [
       { key: 'fdl_creator', placeholder: 'DIT name or tool', freeText: true },
     ],
     hint: 'The current FDL version is 1.0. The UUID is auto-generated. Creator identifies who made the file.',
-    successDialogue: { text: "FDL is complete! I'll send this to Robin for Camera Format configuration. Now Quinn needs it for VFX plates — head to the VFX suite!", expression: 'happy' },
+    successDialogue: { text: "FDL exported. I'm sending it to Robin for MPS configuration and copying Quinn's team for VFX plates. Head to the VFX suite — Quinn's waiting.", expression: 'happy' },
     reveal: {
       lines: '{\n  "uuid": "urn:uuid:...",\n  "version": { "major": 1, "minor": 0 },\n  "fdl_creator": "Netflix Calculator"\n}',
       highlightKeys: ['uuid', 'version', 'fdl_creator'],
@@ -479,7 +480,7 @@ export const SCENES = [
 
   // ═══════════════════════════════════════
   // CHAPTER 3: QUINN — THE VFX SUPERVISOR
-  // VFX Suite
+  // VFX Suite — Nuke, Resolve, VFX Pulls
   // ═══════════════════════════════════════
   {
     id: 13,
@@ -487,11 +488,11 @@ export const SCENES = [
     character: 'quinn',
     background: 'vfx_suite',
     dialogue: [
-      { text: "I'm Quinn, VFX Supervisor. Morgan's FDL just came through, and I need to set up our plate pipeline.", expression: 'neutral' },
-      { text: "We need 4K DCI plates from the Alexa LF source. What FDL element defines this output transform?", expression: 'neutral' },
+      { text: "Morgan's FDL just landed on our shared drive. I've got Nuke open and the comp team is waiting for plate specs.", expression: 'neutral' },
+      { text: "We need 4K DCI VFX plates from the Alexa LF source. What FDL element do I use to define this output transform?", expression: 'neutral' },
     ],
     type: 'pick',
-    brief: 'VFX needs 4K DCI plates from Alexa LF source. What FDL element defines the output transform?',
+    brief: 'The comp team needs 4K DCI plates. What FDL element defines the output transform for Nuke?',
     concept: 'canvas_template_intro',
     newConcept: 'Canvas Template',
     options: [
@@ -501,7 +502,7 @@ export const SCENES = [
       { text: 'An ACES Input Device Transform (IDT)', correct: false },
     ],
     hint: 'Canvas Templates define how to map source framing geometry to a new output resolution.',
-    successDialogue: { text: "Canvas Templates are how we define output formats. They take the source geometry and map it to our target resolution.", expression: 'happy' },
+    successDialogue: { text: "Canvas Templates are how I tell the pipeline to transform Morgan's source into our Nuke-ready plates. They map source geometry to target resolution.", expression: 'happy' },
     reveal: {
       lines: '"canvas_templates": [{\n  "id": "vfx_pull_4k",\n  "label": "VFX Pull 4K DCI",\n  "target_dimensions": {\n    "width": 4096, "height": 2160\n  }\n}]',
       highlightKeys: ['canvas_templates', 'target_dimensions'],
@@ -514,11 +515,11 @@ export const SCENES = [
     character: 'quinn',
     background: 'vfx_suite',
     dialogue: [
-      { text: "Now I need to configure the VFX pull pipeline. Two critical settings.", expression: 'neutral' },
-      { text: "What source layer do we fit, and how much extra area do we preserve for compositing?", expression: 'neutral' },
+      { text: "I'm setting up the Nuke template for our VFX pull pipeline. Two settings in the Canvas Template are critical.", expression: 'neutral' },
+      { text: "Which source layer do I fit into the target, and how much extra area do I preserve for compositing and paint work?", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'Configure the VFX pull: what source layer gets fitted, and what extra area to preserve?',
+    brief: 'Configure the Nuke VFX pull: what source layer gets fitted, and what to preserve for comp?',
     concept: 'vfx_pipeline_config',
     newConcept: 'fit_source',
     subtype: 'pipelineConfig',
@@ -532,8 +533,8 @@ export const SCENES = [
       { id: 'canvas.dimensions', label: 'Canvas (full sensor)' },
       { id: 'canvas.effective_dimensions', label: 'Effective Canvas', correct: true },
     ],
-    hint: "Fit the framing decision (the DP's creative frame). Preserve the effective canvas so VFX has extra pixels for compositing.",
-    successDialogue: { text: "Fit the framing decision, preserve the effective canvas. That gives us the DP's frame plus extra pixels for paint and compositing.", expression: 'happy' },
+    hint: "Fit the framing decision (the DP's creative frame). Preserve the effective canvas so the comp team has extra pixels.",
+    successDialogue: { text: "Fit the framing decision, preserve the effective canvas. My compositors get the DP's frame plus extra pixels for paint, roto, and sky work.", expression: 'happy' },
     reveal: {
       lines: '"fit_source":\n  "framing_decision.dimensions"\n"preserve_from_source_canvas":\n  "canvas.effective_dimensions"',
       highlightKeys: ['fit_source', 'preserve_from_source_canvas'],
@@ -546,11 +547,11 @@ export const SCENES = [
     character: 'quinn',
     background: 'vfx_suite',
     dialogue: [
-      { text: "There are two fit methods we use for VFX: fit_all and fill. They behave very differently.", expression: 'neutral' },
-      { text: "Tap each one to see what happens to the source frame. This is critical to understand.", expression: 'concerned' },
+      { text: "My lead compositor in Nuke is asking about fit_all vs fill. If I get this wrong, we lose edge pixels on every sky replacement shot.", expression: 'concerned' },
+      { text: "Tap each method to see what happens to the source frame in the target. This is the difference between usable plates and wasted renders.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'Two fit methods for VFX plates: fit_all vs fill. Tap each to see the result.',
+    brief: 'VFX plates for Nuke: fit_all vs fill. Tap each to see the result on the source frame.',
     concept: 'fit_methods_vfx',
     newConcept: 'Fit Method',
     subtype: 'sideBySide',
@@ -576,7 +577,7 @@ export const SCENES = [
       },
     ],
     hint: 'fit_all ensures nothing is cropped (may letterbox). fill crops to fill the target completely.',
-    successDialogue: { text: "For VFX plates, always use fit_all. We can't lose a single pixel — cropped pixels are gone forever.", expression: 'happy' },
+    successDialogue: { text: "For VFX plates: always fit_all. Cropped pixels are gone forever — you can't comp what you can't see. I'll set this in our Nuke template.", expression: 'happy' },
     reveal: {
       lines: '// For VFX plates, use fit_all:\n// \u2192 Preserves ALL framing pixels\n// \u2192 May letterbox in the container\n//\n// fill would CROP the source\n// \u2192 Lost pixels can\'t be recovered',
       highlightKeys: ['fit_method'],
@@ -589,11 +590,11 @@ export const SCENES = [
     character: 'quinn',
     background: 'vfx_suite',
     dialogue: [
-      { text: "My team needs extra pixels beyond the 2.39:1 frame for a sky replacement shot.", expression: 'concerned' },
-      { text: "There's an FDL setting that gives us those extra pixels. Do you know which one?", expression: 'neutral' },
+      { text: "The comp team needs extra pixels beyond the 2.39:1 frame for a sky replacement shot. In Nuke, they need to paint and extend beyond the visible frame.", expression: 'concerned' },
+      { text: "There's an FDL Canvas Template setting that includes those extra pixels in the output. Which one?", expression: 'neutral' },
     ],
     type: 'pick',
-    brief: 'VFX needs extra pixels beyond the 2.39:1 frame for sky replacements. What FDL setting provides this?',
+    brief: 'Nuke compositors need extra pixels beyond the 2.39:1 frame for sky work. What FDL setting?',
     concept: 'preserve_from_source',
     newConcept: null,
     options: [
@@ -603,7 +604,7 @@ export const SCENES = [
       { text: 'Create a separate FDL file for VFX', correct: false },
     ],
     hint: 'preserve_from_source_canvas includes additional pixel area from a larger source layer in the output.',
-    successDialogue: { text: "That's it! preserve_from_source_canvas gives us the pixels beyond the frame boundary for compositing work.", expression: 'happy' },
+    successDialogue: { text: "preserve_from_source_canvas gives us pixels beyond the frame boundary. The Nuke compositors can paint, roto, and extend without running out of image.", expression: 'happy' },
     reveal: {
       lines: '"preserve_from_source_canvas":\n  "canvas.effective_dimensions"\n\n// Includes pixels beyond the frame\n// for compositing and paint work',
       highlightKeys: ['preserve_from_source_canvas'],
@@ -616,11 +617,11 @@ export const SCENES = [
     character: 'quinn',
     background: 'vfx_suite',
     dialogue: [
-      { text: "Time for some math. I need the scale factor for our VFX pull.", expression: 'neutral' },
-      { text: "Source frame is 4448\u00d71862, target is 3840\u00d72160, using fit_all. Which ratio do we use?", expression: 'neutral' },
+      { text: "I'm configuring the Nuke Reformat node for our VFX pull. I need the scale factor to set up the transform correctly.", expression: 'neutral' },
+      { text: "Source frame is 4448\u00d71862, target is 3840\u00d72160, using fit_all. Which ratio drives the scale?", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: "VFX pull: source frame 4448\u00d71862, target 3840\u00d72160, fit_all. What's the scale factor?",
+    brief: "Nuke Reformat: source 4448\u00d71862, target 3840\u00d72160, fit_all. What's the scale factor?",
     concept: 'scale_factor_vfx',
     newConcept: 'Scale Factor',
     subtype: 'scaleFactor',
@@ -632,7 +633,7 @@ export const SCENES = [
       { label: 'Height ratio: 2160 \u00f7 1862 = 1.1600', value: 1.16, correct: false },
     ],
     hint: 'fit_all uses the SMALLER ratio so the source fits entirely. min(0.8633, 1.16) = 0.8633.',
-    successDialogue: { text: "0.8633 — the smaller ratio, because fit_all means everything must fit. We scale by width, and the height naturally follows.", expression: 'happy' },
+    successDialogue: { text: "0.8633 — the width ratio wins because fit_all takes the smaller of the two. I'll set this in the Nuke Reformat node and lock the template.", expression: 'happy' },
     reveal: {
       lines: '// scale = min(target_w/source_w,\n//             target_h/source_h)\n// = min(3840/4448, 2160/1862)\n// = min(0.8633, 1.1600)\n// = 0.8633',
       highlightKeys: ['scale'],
@@ -645,11 +646,11 @@ export const SCENES = [
     character: 'quinn',
     background: 'vfx_suite',
     dialogue: [
-      { text: "We have a problem! The VFX plates arrived cropped — pixels are missing from the edges.", expression: 'concerned' },
-      { text: "Something is wrong with the pipeline config. Can you diagnose it?", expression: 'concerned' },
+      { text: "The comp lead just messaged me — the EXR plates from last night's batch render are cropped. Pixels are missing from the edges.", expression: 'concerned' },
+      { text: "Something is wrong with the Nuke template config. I need to diagnose it before we waste another night of render farm time.", expression: 'concerned' },
     ],
     type: 'fix',
-    brief: 'The VFX plates arrived cropped \u2014 pixels are missing from the edges. Diagnose the config.',
+    brief: 'Nuke EXR plates are cropped \u2014 pixels missing from edges. Diagnose the template config.',
     concept: 'fix_vfx_crop',
     newConcept: null,
     canvas: { width: 3840, height: 2160 },
@@ -663,7 +664,7 @@ export const SCENES = [
       { text: 'preserve_from_source_canvas is missing', correct: false },
     ],
     hint: '"fill" crops to fill the target completely. "fit_all" preserves all source pixels.',
-    successDialogue: { text: "Found it! Someone set fill instead of fit_all. Fill crops to fill the target, destroying pixels. I'll get this fixed immediately.", expression: 'happy' },
+    successDialogue: { text: "Found it — someone set fill instead of fit_all in the Nuke template. Fill crops to fill the target, destroying pixels. I'm fixing this and re-queuing the renders.", expression: 'happy' },
     reveal: {
       lines: '// "fill" caused cropping!\n// Fix: "fit_method": "fit_all"\n//\n// fit_all \u2192 source fits entirely\n// fill \u2192 source fills target (crops)',
       highlightKeys: ['fit_method'],
@@ -674,7 +675,7 @@ export const SCENES = [
 
   // ═══════════════════════════════════════
   // CHAPTER 4: SAGE — THE FDL EXPERT
-  // Control Room
+  // Control Room — pyfdl, JSON Validators, Spec
   // ═══════════════════════════════════════
   {
     id: 19,
@@ -682,11 +683,11 @@ export const SCENES = [
     character: 'sage',
     background: 'control_room',
     dialogue: [
-      { text: "I'm Sage. I've been validating FDL files for years. The others have done their part — now I need to make sure everything holds together.", expression: 'neutral' },
-      { text: "This FDL just came through and something is broken. Can you spot the error?", expression: 'concerned' },
+      { text: "I ran Morgan's FDL through pyfdl's validator and it threw a reference error. Robin, Morgan, and Quinn have all done their part — now I need to make sure the data holds together.", expression: 'neutral' },
+      { text: "Look at this JSON output. The validator flagged a broken reference. Can you spot it?", expression: 'concerned' },
     ],
     type: 'fix',
-    brief: 'This FDL is broken. Find the error.',
+    brief: 'pyfdl validator flagged a reference error. Find the broken reference in the JSON.',
     concept: 'fix_canvas_ref',
     newConcept: 'Reference Integrity',
     canvas: null,
@@ -698,7 +699,7 @@ export const SCENES = [
       { text: 'The UUID is missing from the header', correct: false },
     ],
     hint: 'Compare the canvas id to the canvas_id in the context \u2014 they must match exactly.',
-    successDialogue: { text: "Sharp eyes. The context references 'VENICE_FF' but the canvas is 'VENICE_FF_6K'. IDs must be exact string matches — no partial matching.", expression: 'happy' },
+    successDialogue: { text: "The context references 'VENICE_FF' but the canvas is 'VENICE_FF_6K'. pyfdl catches this because IDs must be exact string matches. No fuzzy matching.", expression: 'happy' },
     reveal: {
       lines: '// Canvas id:   "VENICE_FF_6K"\n// Context refs: "VENICE_FF"  \u2190 MISMATCH\n//\n// Fix: "canvas_id": "VENICE_FF_6K"\n// IDs must be exact string matches.',
       highlightKeys: ['canvas_id'],
@@ -711,11 +712,11 @@ export const SCENES = [
     character: 'sage',
     background: 'control_room',
     dialogue: [
-      { text: "Another broken FDL. This one has a subtle error in the framing_intent_id.", expression: 'neutral' },
-      { text: "Look carefully at the IDs. The devil is in the details.", expression: 'neutral' },
+      { text: "Another FDL from a different show. pyfdl's validator passed it, but when Quinn's Nuke template tried to resolve the framing_intent_id, it failed silently.", expression: 'neutral' },
+      { text: "Look carefully at the IDs. Sometimes validators can't catch what a human eye can.", expression: 'neutral' },
     ],
     type: 'fix',
-    brief: 'Another broken FDL. The framing_intent_id has a subtle error.',
+    brief: 'Nuke template failed to resolve framing_intent_id. Find the subtle ID error.',
     concept: 'fix_intent_ref',
     newConcept: null,
     canvas: null,
@@ -727,7 +728,7 @@ export const SCENES = [
       { text: 'The decision dimensions are missing', correct: false },
     ],
     hint: 'Look carefully at the numbers: 239 vs 293. Transposed digits.',
-    successDialogue: { text: "239 became 293 — transposed digits. This kind of typo can break an entire pipeline. Always validate your ID references.", expression: 'happy' },
+    successDialogue: { text: "239 became 293 — transposed digits. This is why I always run pyfdl validation AND manually inspect the JSON. Typos like this break entire Nuke pipelines.", expression: 'happy' },
     reveal: {
       lines: '// Intent id:    "scope_239"\n// Decision refs: "scope_293"  \u2190 TYPO\n//\n// Fix: "framing_intent_id": "scope_239"\n// Always validate ID references!',
       highlightKeys: ['framing_intent_id'],
@@ -740,9 +741,9 @@ export const SCENES = [
     character: 'sage',
     background: 'control_room',
     dialogue: [
-      { text: "Now let me teach you the 8-phase template pipeline. This is how Canvas Templates are applied.", expression: 'neutral' },
-      { text: "The first five phases are: Derive, Populate, Fill Gaps, Scale Factor, then Normalize/Scale/Round.", expression: 'neutral' },
-      { text: "What comes next?", expression: 'neutral' },
+      { text: "Let me walk you through the 8-phase template pipeline. This is what pyfdl, the Framing Calculator, and every conforming implementation must follow.", expression: 'neutral' },
+      { text: "The first five phases: Derive, Populate, Fill Gaps, Scale Factor, then Normalize/Scale/Round.", expression: 'neutral' },
+      { text: "What comes next? Quinn's Nuke template depends on getting this right.", expression: 'neutral' },
     ],
     type: 'pick',
     brief: 'The 8-phase template pipeline: what comes after "Normalize, Scale, Round"?',
@@ -755,7 +756,7 @@ export const SCENES = [
       { text: 'Derive Configuration', correct: false },
     ],
     hint: 'The pipeline: Derive \u2192 Populate \u2192 Fill Gaps \u2192 Scale Factor \u2192 Normalize/Scale/Round \u2192 Output Size \u2192 Offsets \u2192 Crop.',
-    successDialogue: { text: "Output Size & Alignment, then Apply Offsets, then Crop to Visible. Eight phases, in that exact order.", expression: 'happy' },
+    successDialogue: { text: "Output Size & Alignment, then Apply Offsets, then Crop to Visible. Eight phases, in order. pyfdl implements this exact sequence — and so must any tool that processes FDL.", expression: 'happy' },
     reveal: {
       lines: 'Phase 1: Derive Configuration\nPhase 2: Populate Source Geometry\nPhase 3: Fill Hierarchy Gaps\nPhase 4: Calculate Scale Factor\nPhase 5: Normalize, Scale, Round\nPhase 6: Output Size & Alignment  \u2190\nPhase 7: Apply Offsets to Anchors\nPhase 8: Crop to Visible',
       highlightKeys: [],
@@ -768,11 +769,11 @@ export const SCENES = [
     character: 'sage',
     background: 'control_room',
     dialogue: [
-      { text: "Phase 5 involves rounding. After scaling, we get fractional pixel values.", expression: 'neutral' },
-      { text: "1862 \u00d7 0.8633 = 1607.7 pixels. The spec says: round to even, round up. What's the answer?", expression: 'neutral' },
+      { text: "Phase 5 involves rounding. After scaling in pyfdl, we get fractional pixel values. Nuke and Resolve can't render half-pixels.", expression: 'neutral' },
+      { text: "1862 \u00d7 0.8633 = 1607.7 pixels. The FDL spec says: round to even, round up. What's the answer?", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: "After scaling: 1862 \u00d7 0.8633 = 1607.7. Round to even, up. What's the result?",
+    brief: "pyfdl scaling: 1862 \u00d7 0.8633 = 1607.7. Round to even, up. What's the result?",
     concept: 'rounding_rules',
     newConcept: 'Rounding',
     subtype: 'roundingPick',
@@ -784,7 +785,7 @@ export const SCENES = [
       { value: 1610, label: '1610' },
     ],
     hint: 'Round to even means the result must be divisible by 2. "Up" means round up. 1608 is even and \u2265 1607.7.',
-    successDialogue: { text: "1608. It must be even (divisible by 2) and we round up. 1607 is odd, so the next even number up is 1608.", expression: 'happy' },
+    successDialogue: { text: "1608. Must be even (divisible by 2) and we round up. 1607 is odd, next even up is 1608. This matters for Nuke Reformat nodes and Resolve timeline resolution.", expression: 'happy' },
     reveal: {
       lines: '"round": {\n  "even": "even",\n  "mode": "up"\n}\n// 1607.7 \u2192 round up to even \u2192 1608\n// (1607 is odd, next even up = 1608)',
       highlightKeys: ['round', 'even', 'mode'],
@@ -797,11 +798,11 @@ export const SCENES = [
     character: 'sage',
     background: 'control_room',
     dialogue: [
-      { text: "Phase 6: alignment. Our scaled frame is 3840\u00d71608 and needs to sit inside a 3840\u00d72160 container.", expression: 'neutral' },
-      { text: "Let's align it. Try center/center first, then right/bottom.", expression: 'neutral' },
+      { text: "Phase 6: alignment. The scaled frame is 3840\u00d71608 and needs to sit inside a 3840\u00d72160 delivery container for the finishing house.", expression: 'neutral' },
+      { text: "In Resolve, this determines where the letterbox sits. Try center/center first, then right/bottom.", expression: 'neutral' },
     ],
     type: 'frame',
-    brief: 'Delivery: the scaled frame is 3840\u00d71608 in a 3840\u00d72160 container. Align it.',
+    brief: 'Resolve delivery: scaled frame 3840\u00d71608 in 3840\u00d72160 container. Align it.',
     concept: 'alignment_methods',
     newConcept: 'Alignment',
     subtype: 'alignment',
@@ -812,7 +813,7 @@ export const SCENES = [
       { h: 'right', v: 'bottom', label: 'right / bottom' },
     ],
     hint: 'Center alignment places the frame equally between edges. Right/bottom pushes it to the corner.',
-    successDialogue: { text: "You've got the alignment down. Center/center is the most common, but sometimes finishing requires specific placement.", expression: 'happy' },
+    successDialogue: { text: "Center/center is the standard for most deliveries. The finishing house in Resolve will match this alignment in their timeline. Sometimes specific placement is needed for VFX.", expression: 'happy' },
     reveal: {
       lines: '"alignment_method_horizontal": "center"\n"alignment_method_vertical": "center"\n\n// center/center: y = (2160\u22121608)/2 = 276\n// right/bottom: x = 0, y = 552',
       highlightKeys: ['alignment_method_horizontal', 'alignment_method_vertical'],
@@ -825,11 +826,11 @@ export const SCENES = [
     character: 'sage',
     background: 'control_room',
     dialogue: [
-      { text: "One final puzzle. The output shows a protection area, but the source FDL never defined one.", expression: 'concerned' },
-      { text: "This should never happen. What went wrong?", expression: 'concerned' },
+      { text: "One final puzzle. Quinn's Nuke output shows a protection area in the rendered EXRs, but the source FDL from Morgan never defined one.", expression: 'concerned' },
+      { text: "This should never happen. Something in the pipeline is auto-generating data that doesn't exist. What went wrong?", expression: 'concerned' },
     ],
     type: 'fix',
-    brief: "The output shows a protection area, but the source FDL never defined one. What's wrong?",
+    brief: "Nuke output shows protection, but Morgan's FDL never defined it. What's wrong?",
     concept: 'protection_sacred',
     newConcept: null,
     canvas: { width: 3840, height: 2160 },
@@ -843,7 +844,7 @@ export const SCENES = [
       { text: 'The template is generating protection correctly', correct: false },
     ],
     hint: 'Protection dimensions are sacred \u2014 they must be explicitly defined in the source FDL, never auto-generated.',
-    successDialogue: { text: "Protection is sacred — it is NEVER auto-filled. If it wasn't in the source FDL, it should be zero in the output. This is a pipeline bug that needs fixing.", expression: 'happy' },
+    successDialogue: { text: "Protection is sacred — NEVER auto-filled. If Morgan's FDL didn't define it, the output must show zero. This is a pipeline bug in the Nuke template that needs fixing immediately.", expression: 'happy' },
     reveal: {
       lines: '// Protection is NEVER auto-filled.\n// If not defined in the source FDL,\n// it stays ZERO in the output.\n//\n// This is a pipeline bug \u2014 protection\n// must come from the original FDL.',
       highlightKeys: ['protection'],

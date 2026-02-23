@@ -10,6 +10,7 @@ export default function DialogueBox({
   lines = [],
   onComplete,
   showAdvanceIndicator = true,
+  compact = false,
   children,
 }) {
   const [lineIndex, setLineIndex] = useState(0);
@@ -77,23 +78,25 @@ export default function DialogueBox({
         {CHARACTER_NAMES[character] || character}
       </div>
 
-      <div className="flex gap-4 items-start">
-        <div className="flex-shrink-0 animate-portrait-in">
-          <div
-            className="p-1"
-            style={{
-              border: '2px solid #5a4432',
-              background: '#1a1008',
-            }}
-          >
-            <CharacterPortrait character={character} expression={expression} size="lg" />
+      <div className={`flex gap-4 items-start ${compact ? '' : ''}`}>
+        {!compact && (
+          <div className="flex-shrink-0 animate-portrait-in">
+            <div
+              className="p-1"
+              style={{
+                border: '2px solid #5a4432',
+                background: '#1a1008',
+              }}
+            >
+              <CharacterPortrait character={character} expression={expression} size="lg" />
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="flex-1 min-h-[60px] flex flex-col justify-between">
+        <div className="flex-1 min-h-[48px] flex flex-col justify-between">
           <p
             className="text-sm leading-relaxed"
-            style={{ color: '#f5f0e1', minHeight: '3em' }}
+            style={{ color: '#f5f0e1', minHeight: compact ? '2em' : '3em' }}
           >
             {displayedText}
             {!isLineComplete && (
