@@ -723,7 +723,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <ConnectLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -732,7 +732,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <FillHeaderLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -741,7 +741,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <PickDefaultLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -750,7 +750,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <LayerSelectLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -759,7 +759,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <SideBySideLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -768,7 +768,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <ScaleFactorLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -777,7 +777,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <RoundingPickLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -786,7 +786,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <AlignmentLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -795,7 +795,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <AnamorphicLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -804,7 +804,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     return (
       <div>
         <PipelineConfigLevel level={level} onCorrect={onCorrect} />
-        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+        <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
       </div>
     );
   }
@@ -1024,7 +1024,7 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
         )}
       </div>
 
-      <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} />
+      <JsonReveal lines={level.reveal.lines} highlightKeys={level.reveal.highlightKeys} visible={showReveal} docRef={level.docRef} />
     </div>
   );
 }

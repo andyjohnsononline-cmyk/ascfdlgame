@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react';
-import CharacterPortrait, { CHARACTER_NAMES } from './CharacterPortrait.jsx';
+import CharacterPortrait, { CHARACTER_NAMES, CHARACTER_ROLES, CHARACTER_COLORS } from './CharacterPortrait.jsx';
+import {
+  CHAPTER_CHARACTERS,
+  CHAPTER_RESOURCES,
+  getResourceById,
+} from '../scenes.js';
 
 const ALL_CHARACTERS = ['robin', 'morgan', 'quinn', 'sage'];
-
-const RESOURCE_LINKS = [
-  { label: 'ASC FDL Spec', url: 'https://github.com/ascmitc/fdl' },
-  { label: 'Implementer Guide', url: 'https://ascmitc.github.io/fdl/dev/FDL_Template_Implementer_Guide/' },
-  { label: 'ASC FDL Page', url: 'https://theasc.com/society/ascmitc/asc-framing-decision-list' },
-  { label: 'Netflix MPS', url: 'https://partnerhelp.netflixstudios.com/hc/en-us/articles/48547314676115' },
-  { label: 'Framing Calculator', url: 'https://production-technology-tools.netflixstudios.com/calculators' },
-  { label: 'pyfdl', url: 'https://apetrynet.github.io/pyfdl/' },
-];
 
 export default function GameComplete({ totalScenes, streak, onRestart }) {
   const [show, setShow] = useState(false);
@@ -113,23 +109,48 @@ export default function GameComplete({ totalScenes, streak, onRestart }) {
           >
             LEARN MORE
           </h3>
-          <div className="flex flex-wrap justify-center gap-2">
-            {RESOURCE_LINKS.map((link) => (
-              <a
-                key={link.url}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs px-2.5 py-1 font-medium transition-opacity hover:opacity-80"
-                style={{
-                  color: '#8b6914',
-                  border: '2px solid #d4c09a',
-                  background: '#f5eed8',
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
+          <div className="space-y-3">
+            {ALL_CHARACTERS.map((char, ci) => {
+              const resources = CHAPTER_RESOURCES[ci];
+              return (
+                <div key={char} className="pixel-panel p-3" style={{ background: '#f5eed8' }}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <CharacterPortrait character={char} expression="happy" size={24} />
+                    <div>
+                      <p className="font-pixel text-[7px]" style={{ color: CHARACTER_COLORS[char].primary }}>
+                        {CHARACTER_NAMES[char]}
+                      </p>
+                      <p className="text-[10px]" style={{ color: '#7a6350' }}>
+                        {CHARACTER_ROLES[char]}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {resources.primary.map((resId) => {
+                      const res = getResourceById(resId);
+                      if (!res) return null;
+                      return (
+                        <a
+                          key={resId}
+                          href={res.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[10px] px-2 py-1 font-medium transition-opacity hover:opacity-80"
+                          style={{
+                            color: CHARACTER_COLORS[char].primary,
+                            border: `1px solid ${CHARACTER_COLORS[char].primary}40`,
+                            background: `${CHARACTER_COLORS[char].primary}10`,
+                          }}
+                        >
+                          <span style={{ fontSize: '10px' }}>&#x1F4D6;</span>
+                          {res.label}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

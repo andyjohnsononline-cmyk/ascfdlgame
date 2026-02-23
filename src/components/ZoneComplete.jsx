@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import CharacterPortrait, { CHARACTER_NAMES } from './CharacterPortrait.jsx';
 
-export default function ZoneComplete({ chapterIndex, reward, character, onContinue }) {
+export default function ZoneComplete({ chapterIndex, reward, character, onContinue, onChapterSelect }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -50,6 +50,15 @@ export default function ZoneComplete({ chapterIndex, reward, character, onContin
         >
           CONTINUE
         </button>
+        {onChapterSelect && (
+          <button
+            onClick={onChapterSelect}
+            className="block mx-auto mt-3 text-xs px-4 py-2 transition-opacity hover:opacity-80"
+            style={{ color: '#8D6E63' }}
+          >
+            Chapter Select
+          </button>
+        )}
       </div>
       </div>
     </div>

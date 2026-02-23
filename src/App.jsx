@@ -266,7 +266,13 @@ export default function App() {
 
             <div className="flex items-center gap-3">
               <div
-                className={`font-mono font-bold text-sm ${streakBump ? 'animate-streak-bump' : ''}`}
+                className="font-mono text-xs"
+                style={{ color: '#8D6E63', fontFamily: 'var(--font-pixel)', fontSize: '9px' }}
+              >
+                {completedScenes.size}/{totalScenes}
+              </div>
+              <div
+                className={`font-mono font-bold text-sm flex items-center gap-1 ${streakBump ? 'animate-streak-bump' : ''}`}
                 style={{
                   color: streak > 0 ? '#E8A946' : '#8D6E63',
                   textShadow: streak > 0 ? '1px 1px 0 #5D3A1A' : 'none',
@@ -274,6 +280,7 @@ export default function App() {
                   fontSize: '10px',
                 }}
               >
+                {streak > 0 && <span style={{ fontSize: '12px' }}>&#x1F525;</span>}
                 {streak}
               </div>
             </div>
@@ -334,6 +341,15 @@ export default function App() {
                   lines={scene.dialogue}
                   onComplete={handleDialogueComplete}
                 />
+                {completedScenes.has(currentScene) && (
+                  <button
+                    onClick={handleDialogueComplete}
+                    className="mt-2 text-xs px-3 py-1.5 transition-opacity hover:opacity-80"
+                    style={{ color: '#8D6E63', border: '1px solid #D7CCC8' }}
+                  >
+                    Skip to challenge &rarr;
+                  </button>
+                )}
               </div>
             )}
 
@@ -441,7 +457,15 @@ export default function App() {
                     Need a hint?
                   </button>
                 )
-              ) : null}
+              ) : (
+                <div className="flex items-center gap-2 h-6">
+                  <span
+                    className="block w-2 h-2 animate-pulse"
+                    style={{ backgroundColor: '#D7CCC8', borderRadius: '0' }}
+                  />
+                  <span className="text-xs" style={{ color: '#BCAAA4' }}>Hint loading...</span>
+                </div>
+              )}
             </div>
           )}
         </main>
@@ -454,6 +478,10 @@ export default function App() {
           chapterIndex={showChapterComplete}
           character={CHAPTER_CHARACTERS[showChapterComplete]}
           onContinue={handleChapterContinue}
+          onChapterSelect={() => {
+            setShowChapterComplete(null);
+            setShowChapterSelect(true);
+          }}
         />
       )}
 

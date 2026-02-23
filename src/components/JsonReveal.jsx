@@ -1,4 +1,4 @@
-export default function JsonReveal({ lines, highlightKeys = [], visible }) {
+export default function JsonReveal({ lines, highlightKeys = [], visible, docRef }) {
   if (!visible || !lines) return null;
 
   const highlightLine = (line) => {
@@ -113,6 +113,24 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
           </div>
         ))}
       </div>
+
+      {docRef && (
+        <a
+          href={docRef.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-xs font-medium mt-2 px-3 py-1.5 transition-opacity hover:opacity-80"
+          style={{
+            color: '#6D4C41',
+            border: '2px solid #D7CCC8',
+            background: '#FFF8E7',
+          }}
+        >
+          <span style={{ fontSize: '14px' }}>&#x1F4D6;</span>
+          {docRef.label}
+          <span style={{ color: '#8D6E63' }}>&rarr;</span>
+        </a>
+      )}
     </div>
   );
 }
