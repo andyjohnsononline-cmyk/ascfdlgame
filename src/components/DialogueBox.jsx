@@ -6,24 +6,29 @@ const TICK_MS = 30;
 
 export default function DialogueBox({
   character,
-  expression = 'neutral',
-  text,
-  onAdvance,
+  expression: defaultExpression = 'neutral',
+  lines = [],
+  onComplete,
   showAdvanceIndicator = true,
   children,
 }) {
+  const [lineIndex, setLineIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
-  const [isComplete, setIsComplete] = useState(false);
+  const [isLineComplete, setIsLineComplete] = useState(false);
   const indexRef = useRef(0);
   const timerRef = useRef(null);
 
+  const currentLine = lines[lineIndex];
+  const text = currentLine?.text || '';
+  const expression = currentLine?.expression || defaultExpression;
+
   useEffect(() => {
     setDisplayedText('');
-    setIsComplete(false);
+    setIsLineComplete(false);
     indexRef.current = 0;
 
     if (!text) {
-      setIsComplete(true);
+      setIsLineComplete(true);
       return;
     }
 
@@ -31,7 +36,7 @@ export default function DialogueBox({
       indexRef.current += CHARS_PER_TICK;
       if (indexRef.current >= text.length) {
         setDisplayedText(text);
-        setIsComplete(true);
+        setIsLineComplete(true);
         clearInterval(timerRef.current);
       } else {
         setDisplayedText(text.slice(0, indexRef.current));
@@ -39,17 +44,19 @@ export default function DialogueBox({
     }, TICK_MS);
 
     return () => clearInterval(timerRef.current);
-  }, [text]);
+  }, [lineIndex, text]);
 
   const handleClick = useCallback(() => {
-    if (!isComplete) {
+    if (!isLineComplete) {
       clearInterval(timerRef.current);
       setDisplayedText(text);
-      setIsComplete(true);
-    } else if (onAdvance) {
-      onAdvance();
+      setIsLineComplete(true);
+    } else if (lineIndex < lines.length - 1) {
+      setLineIndex(lineIndex + 1);
+    } else if (onComplete) {
+      onComplete();
     }
-  }, [isComplete, text, onAdvance]);
+  }, [isLineComplete, text, lineIndex, lines.length, onComplete]);
 
   return (
     <div
@@ -79,7 +86,7 @@ export default function DialogueBox({
             style={{ color: '#f5f0e1', minHeight: '3em' }}
           >
             {displayedText}
-            {!isComplete && (
+            {!isLineComplete && (
               <span
                 className="inline-block w-2 ml-0.5"
                 style={{
@@ -94,7 +101,7 @@ export default function DialogueBox({
 
           {children}
 
-          {isComplete && showAdvanceIndicator && !children && (
+          {isLineComplete && showAdvanceIndicator && !children && (
             <div className="text-right mt-1">
               <span
                 className="font-pixel text-xs animate-advance-bounce inline-block"
