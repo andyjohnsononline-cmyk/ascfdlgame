@@ -24,11 +24,29 @@ export default function GameComplete({ totalLevels, streak, onRestart }) {
           FDL CERTIFIED
         </h1>
         <p
-          className="text-lg mb-8 leading-relaxed"
+          className="text-lg mb-6 leading-relaxed"
           style={{ color: '#E2E8F0' }}
         >
-          You understand the ASC Framing Decision List!
+          You understand the ASC Framing Decision List and the Template Application Pipeline!
         </p>
+
+        <div
+          className="rounded-lg p-4 mb-6 flex justify-around"
+          style={{ backgroundColor: '#1C2333', border: '1px solid #2D3748' }}
+        >
+          <div className="text-center">
+            <p className="text-2xl font-bold font-mono" style={{ color: '#68D391' }}>{totalLevels}</p>
+            <p className="text-xs" style={{ color: '#A0AEC0' }}>Levels</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold font-mono" style={{ color: '#F6AD55' }}>🔥 {streak}</p>
+            <p className="text-xs" style={{ color: '#A0AEC0' }}>Best Streak</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold font-mono" style={{ color: '#4FD1C5' }}>6</p>
+            <p className="text-xs" style={{ color: '#A0AEC0' }}>Zones</p>
+          </div>
+        </div>
 
         <div
           className="rounded-lg p-6 mb-8 text-left"
@@ -42,15 +60,20 @@ export default function GameComplete({ totalLevels, streak, onRestart }) {
           </h3>
           <ul className="space-y-2 text-sm" style={{ color: '#A0AEC0' }}>
             {[
-              'What a Canvas is and how it maps to a camera sensor',
-              'What a Framing Intent is and how aspect ratios work',
+              'The four-level geometry hierarchy',
+              'What anchor points are and how they position each layer',
+              'Framing Intents and how aspect ratios work',
               'How Framing Decisions are calculated',
-              'What protection percentages do',
-              'How Contexts wire it all together',
-              'How the same intent works across different cameras',
+              'Protection dimensions — and that they\'re never auto-filled',
+              'How Contexts wire canvases to framing decisions',
               'What a complete FDL JSON file looks like',
-              'How to spot and fix common FDL errors',
-              'How delivery canvases extend the pipeline',
+              'Canvas Templates and what they control',
+              'How fit_source determines which layer drives scaling',
+              'The four fit methods and when to use each',
+              'Scale factors, rounding strategies, and alignment',
+              'PAD, CROP, and FIT output modes',
+              'How anamorphic squeeze affects the pipeline',
+              'The 8-phase template application pipeline',
             ].map((item, i) => (
               <li key={i} className="flex gap-2">
                 <span style={{ color: '#68D391' }}>✓</span>

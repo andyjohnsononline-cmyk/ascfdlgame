@@ -10,6 +10,7 @@ import {
   getZoneCompletedCount,
   getFirstIncompleteLevelInZone,
   getLevelIndexInZone,
+  isZoneComplete,
 } from './levels.js';
 import FrameLevel from './components/FrameLevel.jsx';
 import FixLevel from './components/FixLevel.jsx';
@@ -17,12 +18,11 @@ import PickLevel from './components/PickLevel.jsx';
 import ZoneComplete from './components/ZoneComplete.jsx';
 import GameComplete from './components/GameComplete.jsx';
 import AboutOverlay from './components/AboutOverlay.jsx';
-import ZoneHub from './components/ZoneHub.jsx';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('hub');
   const [currentLevel, setCurrentLevel] = useState(1);
   const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
   const [completedLevels, setCompletedLevels] = useState(new Set());
   const [showReveal, setShowReveal] = useState(false);
   const [hintVisible, setHintVisible] = useState(false);
@@ -32,7 +32,6 @@ export default function App() {
   const [streakBump, setStreakBump] = useState(false);
   const [showHintText, setShowHintText] = useState(false);
   const hintTimerRef = useRef(null);
-  const levelStartRef = useRef(Date.now());
 
   const level = LEVELS.find((l) => l.id === currentLevel);
   const zoneIndex = getZoneForLevel(currentLevel);
@@ -42,7 +41,6 @@ export default function App() {
     setShowReveal(false);
     setHintVisible(false);
     setShowHintText(false);
-    levelStartRef.current = Date.now();
 
     if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
     hintTimerRef.current = setTimeout(() => {
@@ -56,7 +54,11 @@ export default function App() {
 
   const handleCorrect = useCallback(() => {
     setShowReveal(true);
-    setStreak((s) => s + 1);
+    setStreak((s) => {
+      const next = s + 1;
+      setBestStreak((b) => Math.max(b, next));
+      return next;
+    });
     setStreakBump(true);
     setTimeout(() => setStreakBump(false), 300);
     setCompletedLevels((prev) => new Set([...prev, currentLevel]));
@@ -85,43 +87,30 @@ export default function App() {
 
   const handleZoneContinue = useCallback(() => {
     setShowZoneComplete(null);
-    setCurrentView('hub');
-  }, []);
+    const nextZone = zoneIndex + 1;
+    if (nextZone < ZONE_LEVEL_RANGES.length) {
+      const nextLevelId = getFirstIncompleteLevelInZone(nextZone, completedLevels);
+      setCurrentLevel(nextLevelId);
+    }
+  }, [zoneIndex, completedLevels]);
 
   const handleRestart = useCallback(() => {
     setShowGameComplete(false);
-    setCurrentView('hub');
+    setCurrentLevel(1);
+    setCompletedLevels(new Set());
+    setStreak(0);
+    setBestStreak(0);
   }, []);
 
-  const goToHub = useCallback(() => {
-    setCurrentView('hub');
-    setShowReveal(false);
-  }, []);
-
-  const enterZone = useCallback(
+  const navigateToZone = useCallback(
     (zi) => {
+      if (!isZoneComplete(zi, completedLevels)) return;
       const levelId = getFirstIncompleteLevelInZone(zi, completedLevels);
       setCurrentLevel(levelId);
-      setCurrentView('playing');
       setShowReveal(false);
     },
     [completedLevels]
   );
-
-  if (currentView === 'hub') {
-    return (
-      <>
-        <ZoneHub
-          completedLevels={completedLevels}
-          onEnterZone={enterZone}
-          streak={streak}
-        />
-        {showAbout && (
-          <AboutOverlay onClose={() => setShowAbout(false)} />
-        )}
-      </>
-    );
-  }
 
   if (!level) return null;
 
@@ -138,20 +127,31 @@ export default function App() {
       {/* Top bar */}
       <header className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={goToHub}
-              className="text-sm font-medium transition-opacity hover:opacity-80"
-              style={{ color: '#A0AEC0' }}
-            >
-              ← Back
-            </button>
-            <span
-              className="text-sm font-semibold"
-              style={{ color: '#E2E8F0' }}
-            >
-              {ZONE_NAMES[zoneIndex]}
-            </span>
+          {/* Zone dots */}
+          <div className="flex items-center gap-2">
+            {ZONE_LEVEL_RANGES.map((_, zi) => {
+              const complete = isZoneComplete(zi, completedLevels);
+              const isCurrent = zi === zoneIndex;
+              return (
+                <button
+                  key={zi}
+                  onClick={() => navigateToZone(zi)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    isCurrent ? 'animate-zone-pulse' : ''
+                  }`}
+                  style={{
+                    backgroundColor: complete
+                      ? '#68D391'
+                      : isCurrent
+                        ? '#F6AD55'
+                        : '#2D3748',
+                    cursor: complete ? 'pointer' : 'default',
+                    transform: isCurrent ? 'scale(1.2)' : 'scale(1)',
+                  }}
+                  title={ZONE_NAMES[zi]}
+                />
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-3">
@@ -195,7 +195,19 @@ export default function App() {
               className="text-xs font-medium"
               style={{ color: '#4A5568' }}
             >
-              Level {zoneLevelIndex + 1} of {zoneLevelCount}
+              Level {currentLevel} of {totalLevels}
+            </span>
+            <span
+              className="text-xs"
+              style={{ color: '#2D3748' }}
+            >
+              •
+            </span>
+            <span
+              className="text-xs font-medium"
+              style={{ color: '#4A5568' }}
+            >
+              {ZONE_NAMES[zoneIndex]}
             </span>
           </div>
 
@@ -317,7 +329,7 @@ export default function App() {
       {showGameComplete && (
         <GameComplete
           totalLevels={totalLevels}
-          streak={streak}
+          streak={bestStreak}
           onRestart={handleRestart}
         />
       )}

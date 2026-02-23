@@ -1,31 +1,55 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 
 export default function Canvas({
   canvasDims,
   targetFrame,
   playerFrame,
+  effectiveFrame,
   protectionFrame,
   protectionGuide,
   shownProtection,
   anchorMarker,
   labels,
   showTarget = true,
+  showCanvasOutline = false,
   isCorrect = false,
   isShaking = false,
   allowOverflow = false,
+  layers,
+  selectedLayer,
+  onLayerSelect,
   onPointerDown,
   onPointerMove,
   onPointerUp,
   children,
 }) {
   const containerRef = useRef(null);
+  const [staggerReady, setStaggerReady] = useState([]);
 
-  const toPercent = useCallback((px, axis) => {
-    const total = axis === 'x' ? canvasDims.width : canvasDims.height;
-    return (px / total) * 100;
-  }, [canvasDims]);
+  const hasHierarchy = !!(effectiveFrame || protectionFrame || (labels && (labels.effective || labels.protection)));
+  useEffect(() => {
+    if (!hasHierarchy && !layers) return;
+    const layerCount = layers ? 4 : 3;
+    const timers = [];
+    for (let i = 0; i < layerCount; i++) {
+      timers.push(
+        setTimeout(() => {
+          setStaggerReady((prev) => [...prev, i]);
+        }, 100 * (i + 1))
+      );
+    }
+    return () => timers.forEach(clearTimeout);
+  }, [hasHierarchy, layers]);
 
-  const frameStyle = (frame, color, dashed = false) => {
+  const toPercent = useCallback(
+    (px, axis) => {
+      const total = axis === 'x' ? canvasDims.width : canvasDims.height;
+      return (px / total) * 100;
+    },
+    [canvasDims]
+  );
+
+  const frameStyle = (frame, color, dashed = false, extra = {}) => {
     if (!frame) return null;
     return {
       position: 'absolute',
@@ -37,6 +61,7 @@ export default function Canvas({
       boxSizing: 'border-box',
       transition: 'all 0.25s ease-out',
       pointerEvents: 'none',
+      ...extra,
     };
   };
 
@@ -53,28 +78,72 @@ export default function Canvas({
     whiteSpace: 'nowrap',
   });
 
-  const handlePointerDown = useCallback((e) => {
-    if (!onPointerDown || !containerRef.current) return;
-    e.preventDefault();
-    containerRef.current.setPointerCapture(e.pointerId);
-    const rect = containerRef.current.getBoundingClientRect();
-    onPointerDown(e, rect);
-  }, [onPointerDown]);
+  const handlePointerDown = useCallback(
+    (e) => {
+      if (!onPointerDown || !containerRef.current) return;
+      e.preventDefault();
+      containerRef.current.setPointerCapture(e.pointerId);
+      const rect = containerRef.current.getBoundingClientRect();
+      onPointerDown(e, rect);
+    },
+    [onPointerDown]
+  );
 
-  const handlePointerMove = useCallback((e) => {
-    if (!onPointerMove || !containerRef.current) return;
-    e.preventDefault();
-    const rect = containerRef.current.getBoundingClientRect();
-    onPointerMove(e, rect);
-  }, [onPointerMove]);
+  const handlePointerMove = useCallback(
+    (e) => {
+      if (!onPointerMove || !containerRef.current) return;
+      e.preventDefault();
+      const rect = containerRef.current.getBoundingClientRect();
+      onPointerMove(e, rect);
+    },
+    [onPointerMove]
+  );
 
-  const handlePointerUp = useCallback((e) => {
-    if (!onPointerUp) return;
-    e.preventDefault();
-    onPointerUp(e);
-  }, [onPointerUp]);
+  const handlePointerUp = useCallback(
+    (e) => {
+      if (!onPointerUp) return;
+      e.preventDefault();
+      onPointerUp(e);
+    },
+    [onPointerUp]
+  );
 
   const aspectRatio = canvasDims.width / canvasDims.height;
+
+  const isLayerSelectMode = !!layers;
+
+  const layerDefs = isLayerSelectMode
+    ? [
+        {
+          key: 'canvas',
+          frame: { width: canvasDims.width, height: canvasDims.height, x: 0, y: 0 },
+          color: 'rgba(74, 85, 104, 0.6)',
+          label: 'CANVAS',
+          pathLabel: 'canvas.dimensions',
+        },
+        {
+          key: 'effective',
+          frame: layers.effective || effectiveFrame,
+          color: '#718096',
+          label: 'EFFECTIVE',
+          pathLabel: 'canvas.effective_dimensions',
+        },
+        {
+          key: 'protection',
+          frame: layers.protection || protectionFrame,
+          color: '#4FD1C5',
+          label: 'PROTECTION',
+          pathLabel: 'protection_dimensions',
+        },
+        {
+          key: 'framing',
+          frame: layers.framing,
+          color: '#F6AD55',
+          label: 'FRAMING',
+          pathLabel: 'framing_decision.dimensions',
+        },
+      ].filter((l) => l.frame)
+    : null;
 
   return (
     <div
@@ -93,10 +162,27 @@ export default function Canvas({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
+      {/* Canvas label */}
       {labels?.canvas && (
-        <span style={{ ...labelStyle('#4A5568'), top: 4, left: 6, zIndex: 5 }}>
+        <span style={{ ...labelStyle('rgba(74, 85, 104, 0.6)'), top: 4, left: 6, zIndex: 5 }}>
           {labels.canvas}
         </span>
+      )}
+
+      {/* Effective canvas (dotted gray) */}
+      {effectiveFrame && !isLayerSelectMode && (
+        <div
+          style={{
+            ...frameStyle(effectiveFrame, '#718096', true),
+            opacity: staggerReady.includes(0) ? 1 : 0,
+          }}
+        >
+          {labels?.effective && (
+            <span style={{ ...labelStyle('#718096'), top: 4, left: 4 }}>
+              {labels.effective}
+            </span>
+          )}
+        </div>
       )}
 
       {/* Target frame (dashed guide) */}
@@ -109,9 +195,14 @@ export default function Canvas({
         <div style={frameStyle(protectionGuide, 'rgba(79, 209, 197, 0.35)', true)} />
       )}
 
-      {/* Protection frame (cyan, draggable — rendered behind the framing decision) */}
-      {protectionFrame && (
-        <div style={frameStyle(protectionFrame, isCorrect ? '#68D391' : '#4FD1C5', false)}>
+      {/* Protection frame (cyan) */}
+      {protectionFrame && !isLayerSelectMode && (
+        <div
+          style={{
+            ...frameStyle(protectionFrame, isCorrect ? '#68D391' : '#4FD1C5', false),
+            opacity: staggerReady.includes(1) ? 1 : 0,
+          }}
+        >
           {labels?.protection && (
             <span style={{ ...labelStyle(isCorrect ? '#68D391' : '#4FD1C5'), top: -16, left: 0 }}>
               {labels.protection}
@@ -131,8 +222,8 @@ export default function Canvas({
         </div>
       )}
 
-      {/* Player's active frame / framing decision (amber — rendered on top of protection) */}
-      {playerFrame && (
+      {/* Player's active frame / framing decision (amber) */}
+      {playerFrame && !isLayerSelectMode && (
         <div
           style={{
             ...frameStyle(playerFrame, isCorrect ? '#68D391' : '#F6AD55', false),
@@ -141,16 +232,70 @@ export default function Canvas({
           }}
         >
           {labels?.frame && (
-            <span style={{
-              ...labelStyle(isCorrect ? '#68D391' : '#F6AD55'),
-              bottom: -16,
-              left: 0,
-            }}>
+            <span
+              style={{
+                ...labelStyle(isCorrect ? '#68D391' : '#F6AD55'),
+                bottom: -16,
+                left: 0,
+              }}
+            >
               {labels.frame}
             </span>
           )}
         </div>
       )}
+
+      {/* Layer-select mode: tappable layers */}
+      {isLayerSelectMode &&
+        layerDefs.map((layer, idx) => {
+          const isSelected = selectedLayer === layer.key;
+          const borderColor = isSelected ? '#FFFFFF' : layer.color;
+          const borderWidth = isSelected ? 3 : 2;
+          return (
+            <div
+              key={layer.key}
+              onClick={(e) => {
+                e.stopPropagation();
+                onLayerSelect?.(layer.key);
+              }}
+              style={{
+                ...frameStyle(layer.frame, borderColor, layer.key === 'effective'),
+                border: `${borderWidth}px ${layer.key === 'effective' ? 'dotted' : 'solid'} ${borderColor}`,
+                pointerEvents: 'auto',
+                cursor: 'pointer',
+                zIndex: idx + 1,
+                opacity: staggerReady.includes(idx) ? 1 : 0,
+                backgroundColor: isSelected ? `${layer.color}15` : 'transparent',
+              }}
+            >
+              <span
+                style={{
+                  ...labelStyle(isSelected ? '#FFFFFF' : layer.color),
+                  top: 4,
+                  left: 4,
+                  opacity: 1,
+                }}
+              >
+                {layer.label}
+              </span>
+              {isSelected && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: 4,
+                    left: 4,
+                    fontSize: '10px',
+                    fontFamily: 'var(--font-mono)',
+                    color: '#F6AD55',
+                    opacity: 0.9,
+                  }}
+                >
+                  {layer.pathLabel}
+                </span>
+              )}
+            </div>
+          );
+        })}
 
       {/* Anchor marker (crosshair) */}
       {anchorMarker && (

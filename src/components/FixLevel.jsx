@@ -7,40 +7,18 @@ export default function FixLevel({ level, onCorrect, onWrong, showReveal }) {
   const [disabledOptions, setDisabledOptions] = useState(new Set());
   const [isCorrect, setIsCorrect] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
-  const [foundBugs, setFoundBugs] = useState(new Set());
 
   useEffect(() => {
     setSelected(null);
     setDisabledOptions(new Set());
     setIsCorrect(false);
     setIsShaking(false);
-    setFoundBugs(new Set());
   }, [level.id]);
 
   const handleOption = (option, index) => {
     if (isCorrect || disabledOptions.has(index)) return;
 
     setSelected(index);
-
-    if (level.multiFix) {
-      if (option.correct) {
-        const next = new Set(foundBugs);
-        next.add(option.bugIndex);
-        setFoundBugs(next);
-        setDisabledOptions(new Set([...disabledOptions, index]));
-        const totalBugs = level.bugs.length;
-        if (next.size >= totalBugs) {
-          setIsCorrect(true);
-          setTimeout(() => onCorrect(), 400);
-        }
-      } else {
-        setIsShaking(true);
-        setDisabledOptions(new Set([...disabledOptions, index]));
-        if (onWrong) onWrong();
-        setTimeout(() => setIsShaking(false), 400);
-      }
-      return;
-    }
 
     if (option.correct) {
       setIsCorrect(true);
@@ -80,12 +58,6 @@ export default function FixLevel({ level, onCorrect, onWrong, showReveal }) {
           }}
         >
           {level.shownJson}
-        </div>
-      )}
-
-      {level.multiFix && (
-        <div className="text-xs mb-2 font-medium" style={{ color: '#A0AEC0' }}>
-          Found {foundBugs.size} of {level.bugs.length} bugs
         </div>
       )}
 
