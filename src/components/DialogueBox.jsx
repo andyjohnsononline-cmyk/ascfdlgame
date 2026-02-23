@@ -46,7 +46,7 @@ export default function DialogueBox({
     return () => clearInterval(timerRef.current);
   }, [lineIndex, text]);
 
-  const handleClick = useCallback(() => {
+  const handleAdvance = useCallback(() => {
     if (!isLineComplete) {
       clearInterval(timerRef.current);
       setDisplayedText(text);
@@ -58,10 +58,20 @@ export default function DialogueBox({
     }
   }, [isLineComplete, text, lineIndex, lines.length, onComplete]);
 
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleAdvance();
+    }
+  }, [handleAdvance]);
+
   return (
     <div
       className="dialogue-box relative p-4 pt-6 animate-dialogue-up cursor-pointer select-none"
-      onClick={handleClick}
+      onClick={handleAdvance}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
     >
       <div className="dialogue-nameplate">
         {CHARACTER_NAMES[character] || character}

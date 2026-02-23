@@ -482,4 +482,63 @@ Include these in the game (accessible from chapter select or end screen):
 
 ---
 
+## QUALITY OF LIFE
+
+### Progress Persistence
+
+Progress is saved to `localStorage` automatically after each completed scene. Saved data includes `completedScenes`, `bestStreak`, and `currentScene`. On return visits, the game restores the player's progress seamlessly. A "Reset Progress" button is available at the bottom of the chapter select screen (with confirmation). This departs from the original "no localStorage" constraint — losing all progress on a page refresh was the worst QoL issue for a web game.
+
+### Mobile Viewport & Safe Areas
+
+- **Viewport:** `viewport-fit=cover` enables edge-to-edge rendering on notched devices
+- **Safe area insets:** Body padding uses `env(safe-area-inset-*)` for iPhone notch/Dynamic Island
+- **Overscroll:** `overscroll-behavior: none` prevents pull-to-refresh and rubber-banding
+- **PWA-ready:** `apple-mobile-web-app-capable` and `theme-color` meta tags included
+
+### Touch Targets
+
+All interactive elements enforce a 44×44px minimum touch target per Apple HIG:
+- Range slider thumbs: 44×44px
+- Chapter dots button: wrapped with 44px minimum height hit area
+- Close button: 44×44px minimum size
+- All `pixel-pill` and `btn-primary` buttons already meet the minimum via padding
+
+### Font Loading
+
+- `Press Start 2P` (the pixel font critical to the visual identity) is preloaded via `<link rel="preload">`
+- All Google Fonts load with `display=swap` to prevent invisible text (FOIT)
+
+### Keyboard Navigation
+
+- **Dialogue:** Enter or Space advances dialogue / completes typewriter
+- **Escape:** Returns to chapter select from any scene
+- **Focus rings:** Visible `focus-visible` outlines on all interactive elements (`.pixel-pill`, `.pixel-btn`, `.btn-primary`) for keyboard and assistive technology users
+- All option buttons are native `<button>` elements with proper focus management
+
+### Scene Transitions
+
+A brief fade transition (`scene-transition` animation, 0.4s) plays between scenes when the player advances via the Next button. This replaces the previous instant cut and gives the player a sense of progression.
+
+### Hint Timer
+
+The 12-second hint timer starts when the player enters the **challenge** phase, not when the scene loads. This ensures the timer doesn't tick down while the player is reading dialogue.
+
+### Resource Links
+
+The six ASC FDL resource links from the spec are accessible in two locations:
+- **Chapter select screen:** "Resources" section at the bottom
+- **Game complete screen:** "Learn More" section before the Play Again button
+
+All links open in a new tab (`target="_blank"` with `rel="noopener noreferrer"`).
+
+### Scrollable Overlays
+
+The `GameComplete` and `ZoneComplete` overlay modals use `overflow-y: auto` with a flex-centered inner container, ensuring they scroll properly on small screens (e.g., iPhone SE) where the content exceeds the viewport height.
+
+### JSON Reveal Overflow
+
+The `JsonReveal` component uses `overflow-x: auto` to handle long JSON lines on narrow screens, preventing horizontal layout overflow.
+
+---
+
 *Build it warm. Build it cozy. Make every tap feel like an adventure.*
