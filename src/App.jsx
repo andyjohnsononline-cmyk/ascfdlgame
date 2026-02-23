@@ -18,6 +18,7 @@ import PickLevel from './components/PickLevel.jsx';
 import ZoneComplete from './components/ZoneComplete.jsx';
 import GameComplete from './components/GameComplete.jsx';
 import AboutOverlay from './components/AboutOverlay.jsx';
+import ZonePicker from './components/ZonePicker.jsx';
 
 export default function App() {
   const [currentLevel, setCurrentLevel] = useState(1);
@@ -29,6 +30,7 @@ export default function App() {
   const [showZoneComplete, setShowZoneComplete] = useState(null);
   const [showGameComplete, setShowGameComplete] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [showZonePicker, setShowZonePicker] = useState(false);
   const [streakBump, setStreakBump] = useState(false);
   const [showHintText, setShowHintText] = useState(false);
   const hintTimerRef = useRef(null);
@@ -61,8 +63,14 @@ export default function App() {
     });
     setStreakBump(true);
     setTimeout(() => setStreakBump(false), 300);
-    setCompletedLevels((prev) => new Set([...prev, currentLevel]));
-  }, [currentLevel]);
+    setCompletedLevels((prev) => {
+      const next = new Set([...prev, currentLevel]);
+      if (next.size === totalLevels) {
+        setTimeout(() => setShowGameComplete(true), 600);
+      }
+      return next;
+    });
+  }, [currentLevel, totalLevels]);
 
   const handleWrong = useCallback(() => {
     setStreak(0);
@@ -102,15 +110,11 @@ export default function App() {
     setBestStreak(0);
   }, []);
 
-  const navigateToZone = useCallback(
-    (zi) => {
-      if (!isZoneComplete(zi, completedLevels)) return;
-      const levelId = getFirstIncompleteLevelInZone(zi, completedLevels);
-      setCurrentLevel(levelId);
-      setShowReveal(false);
-    },
-    [completedLevels]
-  );
+  const handleSelectLevel = useCallback((levelId) => {
+    setCurrentLevel(levelId);
+    setShowReveal(false);
+    setShowZonePicker(false);
+  }, []);
 
   if (!level) return null;
 
@@ -128,31 +132,38 @@ export default function App() {
       <header className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-2">
           {/* Zone dots */}
-          <div className="flex items-center gap-2">
+          <button
+            className="flex items-center gap-2"
+            onClick={() => setShowZonePicker(true)}
+            title="Choose a level"
+          >
             {ZONE_LEVEL_RANGES.map((_, zi) => {
               const complete = isZoneComplete(zi, completedLevels);
+              const partial = !complete && getZoneCompletedCount(zi, completedLevels) > 0;
               const isCurrent = zi === zoneIndex;
               return (
-                <button
+                <span
                   key={zi}
-                  onClick={() => navigateToZone(zi)}
-                  className={`w-3 h-3 rounded-full transition-all ${
+                  className={`block w-3 h-3 rounded-full transition-all ${
                     isCurrent ? 'animate-zone-pulse' : ''
                   }`}
                   style={{
                     backgroundColor: complete
                       ? '#68D391'
-                      : isCurrent
+                      : partial
                         ? '#F6AD55'
-                        : '#2D3748',
-                    cursor: complete ? 'pointer' : 'default',
+                        : isCurrent
+                          ? '#F6AD55'
+                          : '#2D3748',
+                    cursor: 'pointer',
                     transform: isCurrent ? 'scale(1.2)' : 'scale(1)',
+                    opacity: !complete && !partial && !isCurrent ? 0.5 : 1,
                   }}
                   title={ZONE_NAMES[zi]}
                 />
               );
             })}
-          </div>
+          </button>
 
           <div className="flex items-center gap-3">
             <div
@@ -203,12 +214,13 @@ export default function App() {
             >
               •
             </span>
-            <span
-              className="text-xs font-medium"
-              style={{ color: '#4A5568' }}
+            <button
+              onClick={() => setShowZonePicker(true)}
+              className="text-xs font-medium hover:opacity-80 transition-opacity"
+              style={{ color: '#4A5568', cursor: 'pointer' }}
             >
               {ZONE_NAMES[zoneIndex]}
-            </span>
+            </button>
           </div>
 
           {level.newConcept && (
@@ -331,6 +343,15 @@ export default function App() {
           totalLevels={totalLevels}
           streak={bestStreak}
           onRestart={handleRestart}
+        />
+      )}
+
+      {showZonePicker && (
+        <ZonePicker
+          completedLevels={completedLevels}
+          currentLevel={currentLevel}
+          onSelectLevel={handleSelectLevel}
+          onClose={() => setShowZonePicker(false)}
         />
       )}
 

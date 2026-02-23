@@ -158,11 +158,11 @@ A quick multiple-choice or match question. Never more than 4 options. Used spari
 
 ---
 
-## PROGRESSION: 30 LEVELS, 6 ZONES — NON-LINEAR
+## PROGRESSION: 36 LEVELS, 6 ZONES — NON-LINEAR
 
-The game uses a **hub-based** design. A Zone Hub (map screen) is the home view. All 6 zones are visible and tappable from the start — no gating, no prerequisites. Players can enter any zone, play through its levels sequentially, then return to the hub. Progress in each zone is tracked independently.
+The game uses a **zone picker overlay** accessible from the zone dots or zone name in the header. All 6 zones and all 36 levels are visible and tappable from the start — no gating, no prerequisites. Players can jump to any level in any zone at any time. The default "Next" flow advances sequentially within a zone, but the picker lets the player break out at will. Progress is tracked per-level independently.
 
-Each zone introduces ONE big concept. Every level should be completable in under 45 seconds. Total game time: ~15-20 minutes for a focused player who completes all zones.
+Each zone introduces ONE big concept. Six levels per zone. Every level should be completable in under 45 seconds. Total game time: ~18-22 minutes for a focused player who completes all zones.
 
 ### ZONE 1: "THE CANVAS" (Levels 1-5)
 
@@ -279,27 +279,19 @@ Load from Google Fonts CDN:
 
 The ENTIRE game fits in a single scrollable column. No side panels, no split views.
 
-**Zone Hub (home view):**
+**Zone Picker Overlay (opened by tapping zone dots or zone name):**
 
 ```
 ┌─────────────────────────┐
-│  FRAME IT       🔥 5 ℹ️ │  ← Title, streak, about
+│  Choose a Level       ✕ │
 │                         │
-│  Choose a Track         │  ← Heading
+│  🎬 The Geometry  4/6   │  ← Zone header + progress
+│  [1✓][2✓][3✓][4✓][5][6]│  ← Level buttons (all tappable)
 │                         │
-│  ┌───────────────────┐  │
-│  │ 🎬 The Canvas     │  │  ← Zone card (tappable)
-│  │ A pixel grid...   │  │     Short description
-│  │ ████░░░░ 3/5      │  │     Per-zone progress bar
-│  └───────────────────┘  │
+│  🎞️ Intents      0/6   │
+│  [1] [2] [3] [4] [5][6]│  ← Green=done, amber=current
 │                         │
-│  ┌───────────────────┐  │
-│  │ 🎞️ The Intent     │  │
-│  │ The DP's choice.. │  │
-│  │ ░░░░░░░░ 0/5      │  │
-│  └───────────────────┘  │
-│                         │
-│  (... 4 more cards ...) │
+│  (... 4 more zones ...) │
 │                         │
 └─────────────────────────┘
 ```
@@ -308,10 +300,10 @@ The ENTIRE game fits in a single scrollable column. No side panels, no split vie
 
 ```
 ┌─────────────────────────┐
-│  ← Back   The Canvas 🔥5│  ← Back to hub, zone name, streak
-│  ████████░░░░░░ 3/5     │  ← Per-zone progress bar
+│  ●●●●○○  Zone Name 🔥5 │  ← Zone dots (tappable → picker), streak
+│  ████████░░░░░░ 3/6     │  ← Per-zone progress bar
 │                         │
-│  Level 3 of 5           │  ← Level within zone (not "of 30")
+│  Level 3 of 36          │  ← Level number, zone name (tappable)
 │  "Which of these is..." │  ← Brief (big, readable)
 │                         │
 │  ┌───────────────────┐  │
@@ -362,11 +354,11 @@ On success, the bottom half smoothly expands to reveal:
 
 ### Key UI Elements
 
-**Zone Hub (home screen):**
-Six zone cards in a scrollable column. Each card shows: zone emoji, name, one-line description, and a progress bar (X/Y levels completed). Completed zones show a checkmark badge. All zones are tappable regardless of progress in other zones. Tapping enters the zone at the first incomplete level (or first level if replaying).
+**Zone Dots (always visible at top):**
+Six dots in a row. Filled green = completed zone. Amber = partially completed or current zone. Dark gray = untouched. Tapping the dots opens the Zone Picker overlay. The zone name in the header is also tappable to open the picker.
 
-**Back to Map (in-zone header):**
-A "← Back" button in the top-left returns to the Zone Hub at any time during play.
+**Zone Picker Overlay:**
+A scrollable overlay showing all 6 zones with their 6 level buttons. Each level is always tappable regardless of completion state. Completed levels show a green checkmark. The current level is highlighted amber. Tapping any level jumps directly to it.
 
 **Streak Counter (top right):**
 "🔥 7" — counts consecutive correct answers. Resets on wrong answer. Purely motivational.
@@ -421,15 +413,15 @@ After every correct answer, shows ONLY the 2-6 lines of JSON relevant to what th
 Use React `useState`. Keep it dead simple.
 
 ```javascript
-const [currentView, setCurrentView] = useState('hub');        // 'hub' | 'playing'
-const [currentLevel, setCurrentLevel] = useState(1);          // 1-30
+const [currentLevel, setCurrentLevel] = useState(1);          // 1-36
 const [streak, setStreak] = useState(0);                      // consecutive correct
 const [completedLevels, setCompletedLevels] = useState(new Set());
 const [showReveal, setShowReveal] = useState(false);          // JSON reveal visible
 const [hintVisible, setHintVisible] = useState(false);
+const [showZonePicker, setShowZonePicker] = useState(false);  // zone picker overlay
 ```
 
-The `currentView` controls whether the player sees the Zone Hub or is playing a level. All 6 zones are always accessible from the hub. Per-zone progress is derived from `completedLevels`. No stars, no scores, no XP systems. Just: which levels are done, and what's your current streak. Streaks are the only dopamine number.
+All 6 zones and 36 levels are always accessible via the zone picker overlay. Per-zone progress is derived from `completedLevels`. No stars, no scores, no XP systems. Just: which levels are done, and what's your current streak. Streaks are the only dopamine number. Game completion triggers when all 36 levels are in `completedLevels`, regardless of order.
 
 **No localStorage, no sessionStorage.** State lives in React memory only.
 
@@ -437,7 +429,7 @@ The `currentView` controls whether the player sees the Zone Hub or is playing a 
 
 ## LEVEL DATA STRUCTURE
 
-Every level is a compact object. The coding agent should define all 30 in a single `LEVELS` array.
+Every level is a compact object. The coding agent should define all 36 in a single `LEVELS` array.
 
 ```javascript
 const LEVELS = [
@@ -482,7 +474,7 @@ const LEVELS = [
       highlightKeys: ["y"]
     }
   },
-  // ... etc for all 30 levels
+  // ... etc for all 36 levels
 ];
 ```
 
@@ -494,7 +486,7 @@ const LEVELS = [
 
 - **Single React .jsx file** using Tailwind CSS utility classes
 - Load `IBM Plex Sans` and `JetBrains Mono` from Google Fonts CDN
-- All 30 levels defined as data in a constant array
+- All 36 levels defined as data in a constant array
 - Total file should be manageable — the game logic is simple because there are only 3 level types
 - Default export a single component
 
@@ -532,7 +524,7 @@ When the player's frame edge is within `tolerance` (default 8%) of the target ed
 
 ## WHAT SUCCESS LOOKS LIKE
 
-A DIT or post supervisor picks up the game on their phone during a coffee break. They pick whichever track interests them first, jump around between zones, and in 15-20 minutes they've completed all 30 levels. They now understand:
+A DIT or post supervisor picks up the game on their phone during a coffee break. They pick whichever zone interests them first via the zone picker, jump around between zones, and in 18-22 minutes they've completed all 36 levels. They now understand:
 
 - What a Canvas is and how it maps to a camera sensor
 - What a Framing Intent is and how aspect ratios work
@@ -544,7 +536,7 @@ A DIT or post supervisor picks up the game on their phone during a coffee break.
 - How to spot and fix common FDL errors
 - How delivery canvases extend the pipeline
 
-They didn't read a spec. They didn't watch a presentation. They played a game for 15 minutes, and now they GET IT.
+They didn't read a spec. They didn't watch a presentation. They played a game for 20 minutes, and now they GET IT.
 
 ---
 
