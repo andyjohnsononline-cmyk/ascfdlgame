@@ -10,87 +10,63 @@ import {
 } from '../levels.js';
 
 const ZONE_CLUSTERS = [
-  // Zone 1 – Ring / pentagon (top-left)
+  // Zone 1 – Post Supervisor (top-left)
   [
-    { x: 130, y: 85 },
-    { x: 215, y: 85 },
-    { x: 250, y: 155 },
-    { x: 195, y: 215 },
-    { x: 110, y: 195 },
-    { x: 95, y: 130 },
+    { x: 130, y: 155 },
+    { x: 210, y: 120 },
+    { x: 280, y: 160 },
+    { x: 260, y: 240 },
+    { x: 175, y: 265 },
+    { x: 115, y: 220 },
   ],
-  // Zone 2 – Arc / crescent (top-right)
+  // Zone 2 – DIT (top-right)
   [
-    { x: 535, y: 115 },
-    { x: 585, y: 80 },
-    { x: 645, y: 85 },
-    { x: 700, y: 130 },
-    { x: 680, y: 205 },
-    { x: 600, y: 215 },
+    { x: 520, y: 140 },
+    { x: 595, y: 110 },
+    { x: 675, y: 135 },
+    { x: 690, y: 215 },
+    { x: 615, y: 255 },
+    { x: 530, y: 225 },
   ],
-  // Zone 3 – Zigzag cluster (mid-left)
+  // Zone 3 – VFX Supervisor (bottom-left)
   [
-    { x: 75, y: 375 },
-    { x: 145, y: 395 },
-    { x: 95, y: 445 },
-    { x: 175, y: 465 },
-    { x: 235, y: 435 },
-    { x: 205, y: 375 },
+    { x: 110, y: 505 },
+    { x: 190, y: 475 },
+    { x: 265, y: 510 },
+    { x: 255, y: 590 },
+    { x: 170, y: 620 },
+    { x: 100, y: 575 },
   ],
-  // Zone 4 – Diamond / triangular (mid-right)
+  // Zone 4 – FDL Expert (bottom-right)
   [
-    { x: 575, y: 370 },
-    { x: 660, y: 375 },
-    { x: 700, y: 440 },
-    { x: 645, y: 505 },
-    { x: 555, y: 490 },
-    { x: 535, y: 415 },
-  ],
-  // Zone 5 – W-scatter (bottom-left)
-  [
-    { x: 105, y: 640 },
-    { x: 155, y: 690 },
-    { x: 120, y: 740 },
-    { x: 195, y: 715 },
-    { x: 265, y: 745 },
-    { x: 245, y: 675 },
-  ],
-  // Zone 6 – Hex cluster (bottom-right)
-  [
-    { x: 535, y: 670 },
-    { x: 620, y: 660 },
-    { x: 670, y: 715 },
-    { x: 635, y: 775 },
-    { x: 550, y: 775 },
-    { x: 510, y: 720 },
+    { x: 530, y: 490 },
+    { x: 610, y: 465 },
+    { x: 685, y: 495 },
+    { x: 695, y: 575 },
+    { x: 620, y: 610 },
+    { x: 535, y: 565 },
   ],
 ];
 
 const ZONE_CENTERS = [
-  { x: 166, y: 144 },
-  { x: 624, y: 138 },
-  { x: 154, y: 414 },
-  { x: 612, y: 432 },
-  { x: 181, y: 701 },
-  { x: 587, y: 719 },
+  { x: 195, y: 193 },
+  { x: 604, y: 180 },
+  { x: 182, y: 546 },
+  { x: 612, y: 533 },
 ];
 
 const ZONE_LABEL_POS = [
-  { x: 170, y: 258 },
-  { x: 620, y: 260 },
-  { x: 155, y: 510 },
-  { x: 615, y: 550 },
-  { x: 185, y: 792 },
-  { x: 585, y: 822 },
+  { x: 195, y: 310 },
+  { x: 604, y: 300 },
+  { x: 182, y: 665 },
+  { x: 612, y: 655 },
 ];
 
 const CROSS_LINKS = [
   [0, 3],
-  [1, 5],
-  [0, 4],
-  [2, 5],
   [1, 4],
-  [0, 3],
+  [0, 4],
+  [1, 3],
 ];
 
 function bezierPath(x1, y1, x2, y2, curveFactor = 0.25) {
@@ -111,10 +87,10 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
       seed = (seed * 1664525 + 1013904223) & 0x7fffffff;
       return seed / 0x7fffffff;
     };
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 100; i++) {
       result.push({
         x: rand() * 800,
-        y: rand() * 900,
+        y: rand() * 780,
         r: 0.4 + rand() * 1.2,
         opacity: 0.06 + rand() * 0.2,
       });
@@ -156,7 +132,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
             className="text-sm font-bold tracking-wide uppercase"
             style={{ color: '#4A5568' }}
           >
-            Star Map
+            Choose a Role
           </h2>
         )}
       </div>
@@ -173,7 +149,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
       )}
 
       <svg
-        viewBox="0 0 800 900"
+        viewBox="0 0 800 780"
         className="w-full h-full"
         preserveAspectRatio="xMidYMid meet"
         onClick={(e) => e.stopPropagation()}
@@ -209,7 +185,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
               <stop
                 offset="0%"
                 stopColor={isZoneComplete(zi, completedLevels) ? '#68D391' : '#EDAB68'}
-                stopOpacity="0.1"
+                stopOpacity="0.12"
               />
               <stop
                 offset="50%"
@@ -235,22 +211,57 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
           <circle key={`neb${zi}`} cx={c.x} cy={c.y} r={160} fill={`url(#nebula-${zi})`} />
         ))}
 
-        {/* Inter-zone dashed connectors */}
-        {ZONE_CLUSTERS.slice(0, -1).map((zone, zi) => {
-          const from = zone[zone.length - 1];
-          const to = ZONE_CLUSTERS[zi + 1][0];
-          return (
-            <path
-              key={`iz${zi}`}
-              d={bezierPath(from.x, from.y, to.x, to.y, zi % 2 === 0 ? 0.12 : -0.12)}
-              fill="none"
-              stroke="#2D3748"
-              strokeWidth="1"
-              strokeDasharray="6 4"
-              opacity="0.35"
-            />
-          );
-        })}
+        {/* Workflow flow lines between zones (top-left→top-right, top-left→bottom-left, etc.) */}
+        {/* Horizontal: Zone 1 → Zone 2 */}
+        <path
+          d={bezierPath(280, 200, 520, 185, 0.08)}
+          fill="none"
+          stroke="#2D3748"
+          strokeWidth="1"
+          strokeDasharray="6 4"
+          opacity="0.35"
+        />
+        {/* Vertical: Zone 1 → Zone 3 */}
+        <path
+          d={bezierPath(195, 270, 182, 470, 0.08)}
+          fill="none"
+          stroke="#2D3748"
+          strokeWidth="1"
+          strokeDasharray="6 4"
+          opacity="0.35"
+        />
+        {/* Horizontal: Zone 3 → Zone 4 */}
+        <path
+          d={bezierPath(265, 555, 530, 535, 0.08)}
+          fill="none"
+          stroke="#2D3748"
+          strokeWidth="1"
+          strokeDasharray="6 4"
+          opacity="0.35"
+        />
+        {/* Vertical: Zone 2 → Zone 4 */}
+        <path
+          d={bezierPath(610, 260, 615, 460, 0.08)}
+          fill="none"
+          stroke="#2D3748"
+          strokeWidth="1"
+          strokeDasharray="6 4"
+          opacity="0.35"
+        />
+        {/* Diagonal: Zone 2 → Zone 3 */}
+        <path
+          d={bezierPath(530, 230, 265, 500, -0.06)}
+          fill="none"
+          stroke="#2D3748"
+          strokeWidth="0.8"
+          strokeDasharray="4 6"
+          opacity="0.2"
+        />
+
+        {/* Workflow labels on connectors */}
+        <text x="400" y="375" textAnchor="middle" fill="#2D3748" fontSize="10" fontFamily="'IBM Plex Sans', sans-serif" fontWeight="600" opacity="0.6">
+          PRODUCTION WORKFLOW
+        </text>
 
         {/* Per-zone groups */}
         {ZONE_CLUSTERS.map((zone, zi) => {
@@ -283,7 +294,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                 );
               })}
 
-              {/* Cross-link path (one per zone, adds web-like feel) */}
+              {/* Cross-link path */}
               {(() => {
                 const [a, b] = CROSS_LINKS[zi];
                 return (
@@ -304,7 +315,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                 y={labelPos.y}
                 textAnchor="middle"
                 fill={zoneDone ? '#68D391' : '#A0AEC0'}
-                fontSize="11"
+                fontSize="12"
                 fontFamily="'IBM Plex Sans', sans-serif"
                 fontWeight="600"
                 opacity="0.9"
@@ -313,7 +324,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
               </text>
               <text
                 x={labelPos.x}
-                y={labelPos.y + 15}
+                y={labelPos.y + 16}
                 textAnchor="middle"
                 fill={zoneDone ? '#68D391' : '#4A5568'}
                 fontSize="10"
@@ -350,7 +361,6 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                     }}
                     style={{ cursor: 'pointer' }}
                   >
-                    {/* Animated pulse ring for current level */}
                     {isCurrent && (
                       <circle
                         cx={node.x}
@@ -375,10 +385,8 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                       </circle>
                     )}
 
-                    {/* Invisible hit area */}
                     <circle cx={node.x} cy={node.y} r={24} fill="transparent" />
 
-                    {/* Visible node */}
                     <circle
                       cx={node.x}
                       cy={node.y}
@@ -390,7 +398,6 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                       opacity={isDone || isCurrent ? 1 : 0.75}
                     />
 
-                    {/* Level number */}
                     <text
                       x={node.x}
                       y={node.y + 1}
@@ -405,7 +412,6 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                       {ni + 1}
                     </text>
 
-                    {/* Type badge below node */}
                     <text
                       x={node.x}
                       y={node.y + 28}
