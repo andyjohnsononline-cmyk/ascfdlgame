@@ -23,9 +23,10 @@ export default function AboutOverlay({ onClose }) {
         </div>
 
         <p className="text-sm mb-4 leading-relaxed" style={{ color: '#A0AEC0' }}>
-          An interactive game to learn the ASC Framing Decision List —
-          the industry standard for communicating creative framing from set to screen,
-          including the Canvas Template application pipeline.
+          Learn the ASC Framing Decision List from four production perspectives:
+          Post Supervisor, DIT, VFX Supervisor, and FDL Expert.
+          Understand when to use FDL, how to build one, how it drives
+          downstream VFX and delivery, and how to troubleshoot the pipeline.
         </p>
 
         <h3 className="font-semibold mb-2 text-sm tracking-wide" style={{ color: '#4FD1C5' }}>
@@ -67,6 +68,28 @@ export default function AboutOverlay({ onClose }) {
           </li>
           <li>
             <a
+              href="https://partnerhelp.netflixstudios.com/hc/en-us/articles/48547314676115-Technical-Specifications-for-Image-and-Sound-Processing-in-MPS-Media-Production-Suite"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#EDAB68' }}
+              className="hover:underline"
+            >
+              Netflix MPS Technical Specifications
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://production-technology-tools.netflixstudios.com/calculators"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#EDAB68' }}
+              className="hover:underline"
+            >
+              Netflix Framing & Resolution Calculator
+            </a>
+          </li>
+          <li>
+            <a
               href="https://apetrynet.github.io/pyfdl/"
               target="_blank"
               rel="noopener noreferrer"
@@ -75,11 +98,6 @@ export default function AboutOverlay({ onClose }) {
             >
               pyfdl Python Toolkit
             </a>
-          </li>
-          <li>
-            <span style={{ color: '#A0AEC0' }}>
-              Netflix Framing Working Resolution Calculator — search online
-            </span>
           </li>
         </ul>
       </div>

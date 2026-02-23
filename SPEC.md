@@ -6,7 +6,7 @@
 
 ## PHILOSOPHY: DUOLINGO, NOT A TEXTBOOK
 
-This game teaches the ASC Framing Decision List the way Duolingo teaches Spanish — tiny bites, instant feedback, one concept at a time, dopamine on every correct answer. The player should be able to pick it up with zero prior knowledge and understand the entire FDL spec within 20 minutes of play.
+This game teaches the ASC Framing Decision List from four production perspectives — Post Supervisor, DIT, VFX Supervisor, and FDL Expert. Tiny bites, instant feedback, one concept at a time, dopamine on every correct answer. Every scenario is grounded in real production workflows, referencing Netflix MPS (Media Production Suite) specs and tools.
 
 **Design Axioms:**
 1. Every level takes 15-45 seconds to complete
@@ -120,135 +120,116 @@ RED Komodo 6K:            6144 × 3240
 2.39:1  — Scope (anamorphic theatrical)
 ```
 
+### Netflix MPS Integration
+
+The game references Netflix MPS (Media Production Suite) workflow concepts:
+
+- **Rule of Defaults:** If no FDL is provided, MPS delivers full source dimensions scaled to the delivery container
+- **Camera Formats:** A unique combo of lens squeeze, resolution, codec, camera model, and camera letter
+- **FDL in MPS:** The only way to attach framing decisions in the Netflix database
+- **Workflow order:** Project Setup → Camera Format Config → FDL Creation → Footage Ingest
+
+Reference: [Netflix MPS Technical Specifications](https://partnerhelp.netflixstudios.com/hc/en-us/articles/48547314676115)
+Tool: [Netflix Framing & Resolution Calculator](https://production-technology-tools.netflixstudios.com/calculators)
+
 ---
 
 ## GAME DESIGN
 
-### One Screen, One Mechanic: The Framing Puzzle
+### Role-Based Learning
 
-The entire game is ONE repeating mechanic with escalating complexity. No mode switches, no separate "quiz" screens. Just this:
-
-> **You see a dark rectangle (the canvas). A target frame is shown as a dashed outline. You drag a bright frame line to match it. When you nail it, the JSON that describes what you just did is revealed with a satisfying animation.**
-
-That's it. That's the whole game. The complexity comes from what the level asks you to do BEFORE or AFTER the visual puzzle.
+The game is organized around four production roles. Each zone teaches FDL from a specific perspective, with scenarios grounded in real workflow decisions.
 
 ### The Loop (every level)
 
 ```
-1. BRIEF ────── One sentence of context (max 15 words) + a tiny "NEW CONCEPT" chip if applicable
-2. DO ─────────  Interact: drag frame, tap answer, fill in a value
-3. REVEAL ───── Show/highlight the FDL JSON that maps to what you just did
-4. REWARD ───── Stars + sound + streak counter + XP bar nudge
-5. NEXT ─────── Tap to advance to the next level within the zone
-                 (last level in zone → Zone Complete → return to Hub)
+1. BRIEF ────── One sentence of production context + a "NEW CONCEPT" chip if applicable
+2. DO ─────────  Interact: drag frame, tap answer, fill in a value, connect cards to slots
+3. REVEAL ───── Show/highlight the FDL JSON or workflow insight
+4. REWARD ───── Streak counter + progress bar nudge
+5. NEXT ─────── Advance to next level or complete zone
 ```
 
 ### Level Types (only three)
 
 **TYPE A: "Frame It"** (visual → JSON)
-Player drags/resizes a frame line on a canvas to hit a target. On success, the corresponding JSON property is highlighted. This is the primary mechanic — ~60% of levels.
+Player drags/resizes a frame line on a canvas, connects cards to slots, fills in values, configures pipeline options, or sets anamorphic squeeze. On success, the corresponding JSON is revealed. ~60% of levels.
+
+Subtypes: default drag, connect, fillHeader, pickDefault, layerSelect, sideBySide, scaleFactor, roundingPick, alignment, anamorphic, pipelineConfig.
 
 **TYPE B: "Fix It"** (spot the error)
-Player sees a canvas where the frame is WRONG (visually obvious — way off center, wrong ratio, etc.) plus 2-4 tappable options for what's broken. Tap the right one. Fast and satisfying. ~25% of levels.
+Player sees broken JSON or a misconfigured canvas, plus 2-4 tappable options for what's wrong. ~20% of levels.
 
 **TYPE C: "Pick It"** (concept check)
-A quick multiple-choice or match question. Never more than 4 options. Used sparingly to anchor vocabulary. ~15% of levels.
-
-### NO OTHER MECHANICS. Three types. That's the constraint.
+A quick multiple-choice question. Never more than 4 options. Used to anchor concepts. ~20% of levels.
 
 ---
 
-## PROGRESSION: 36 LEVELS, 6 ZONES — NON-LINEAR
+## PROGRESSION: 24 LEVELS, 4 ZONES — NON-LINEAR
 
-The game opens to a **Star Map landing screen** — a full-screen constellation-style zone picker showing all 6 zones and 36 levels. The player's first action is choosing where to begin. There is no close button on the landing screen; the player must tap a level to start. Once they've selected their first level, the Star Map becomes a standard overlay (with a close button) accessible from the zone dots or zone name in the header.
+The game opens to a **constellation-style zone picker** showing all 4 zones and 24 levels. The player's first action is choosing where to begin. All zones and levels are visible and tappable from the start — no gating.
 
-All 6 zones and all 36 levels are visible and tappable from the start — no gating, no prerequisites. Players can jump to any level in any zone at any time. The default "Next" flow advances sequentially within a zone, but the picker lets the player break out at will. Progress is tracked per-level independently.
+Each zone represents a production role. Six levels per zone. Every level should be completable in under 45 seconds. Total game time: ~12-16 minutes.
 
-Each zone introduces ONE big concept. Six levels per zone. Every level should be completable in under 45 seconds. Total game time: ~18-22 minutes for a focused player who completes all zones.
+### ZONE 1: "THE POST SUPERVISOR" (Levels 1-6)
 
-### ZONE 1: "THE CANVAS" (Levels 1-5)
+**What you learn:** When and why to use FDL, the MPS Rule of Defaults, Camera Format setup, and workflow coordination.
 
-**What you learn:** A canvas is a pixel grid. It has width and height. That's the container.
+| # | Type | Scenario | Key Concept |
+|---|------|----------|-------------|
+| 1 | C | No FDL was provided to MPS. What does it deliver? | Rule of Defaults: full source scaled to container |
+| 2 | C | Mid-shoot, B-cam switches to anamorphic. What triggers a new Camera Format? | Camera Format = unique combo of 5 attributes |
+| 3 | C | DP shot 2.39:1 but no FDL. What does UHD delivery look like? | Visual consequence of missing FDL |
+| 4 | A | Match each role to their FDL responsibility | DIT creates, Post Sup configures, VFX consumes |
+| 5 | A | Put the MPS workflow in correct order | Project Setup → Camera Format → FDL → Ingest |
+| 6 | C | 3 cameras with different setups. How many Camera Formats? | Counting distinct format combos |
 
-| # | Type | Brief | Player Does | JSON Revealed |
-|---|------|-------|-------------|---------------|
-| 1 | A | "This is a camera sensor. It's 4448 pixels wide." | Drag the right edge of a rectangle to match a width marker | `"dimensions": { "width": 4448 }` |
-| 2 | A | "The sensor is 3096 pixels tall." | Drag the bottom edge to match a height marker | `"dimensions": { "width": 4448, "height": 3096 }` |
-| 3 | C | "Which of these is a real camera resolution?" | Pick "4448 × 3096" from 4 options | Full `canvas` object shown |
-| 4 | A | "Different camera: Sony Venice." | Resize a canvas to 6054 × 3192 (shown as target outline) | Second canvas object |
-| 5 | C | "A Canvas in FDL represents…" | Pick "The full pixel recording area" from 4 options | Canvas definition recap |
+**Zone 1 reward:** "📋 You know when and why to use FDL!"
 
-**Zone 1 reward:** "🎬 You know what a Canvas is!" — badge animation
+### ZONE 2: "THE DIT" (Levels 7-12)
 
-### ZONE 2: "THE INTENT" (Levels 6-10)
+**What you learn:** Building an FDL on set — sensor setup, framing decisions, protection, multi-camera contexts, anamorphic squeeze, and FDL file metadata.
 
-**What you learn:** A Framing Intent is the DP's creative choice — an aspect ratio. It's abstract (no pixels).
+| # | Type | Scenario | Key Concept |
+|---|------|----------|-------------|
+| 7 | A | Define Camera Format: set the Alexa LF sensor 4448×3096 | Canvas = physical sensor |
+| 8 | A | DP says "2.39 scope." Frame it within the sensor | Framing Decision from DP intent |
+| 9 | A | DP wants 5% protection for stabilization | Protection zone calculation |
+| 10 | A | B-cam Sony Venice 2, same intent. Build both contexts | Multi-camera FDL with shared intent |
+| 11 | A | B-cam switches to anamorphic 1.3× squeeze | Anamorphic desqueeze |
+| 12 | A | Fill in the FDL header: version, creator | FDL file metadata |
 
-| # | Type | Brief | Player Does | JSON Revealed |
-|---|------|-------|-------------|---------------|
-| 6 | A | "The DP wants widescreen: 2.39:1" | Canvas is shown. Drag a horizontal frame line to make it look like a 2.39 letterbox (height adjusts, width stays full) | `"aspect_ratio": { "width": 2.39, "height": 1 }` |
-| 7 | A | "Now try 1.78:1 — standard HD" | Same mechanic, different ratio. Frame is much taller. | aspect_ratio for 16:9 |
-| 8 | C | "Which is wider: 2.39:1 or 1.85:1?" | Tap one of two visual frame previews | Brief ratio comparison |
-| 9 | A | "Match all four ratios" | Four small canvases, four labeled frames. Drag each label to the right canvas: 1.33, 1.78, 1.85, 2.39 | All four aspect_ratio objects |
-| 10 | C | "A Framing Intent is…" | Pick "The DP's creative framing goal, independent of camera" from 4 options | Full framing_intent object |
+**Zone 2 reward:** "🎬 You can build an FDL from set!"
 
-**Zone 2 reward:** "🎞️ You speak the DP's language!"
+### ZONE 3: "THE VFX SUPERVISOR" (Levels 13-18)
 
-### ZONE 3: "THE DECISION" (Levels 11-17)
+**What you learn:** Canvas Templates, fit methods, VFX pull configuration, preserve_from_source_canvas, scale factors, and diagnosing downstream issues.
 
-**What you learn:** When you combine a Canvas + Framing Intent, you get a Framing Decision — actual pixel dimensions and an anchor point. This is where the math happens.
+| # | Type | Scenario | Key Concept |
+|---|------|----------|-------------|
+| 13 | C | VFX needs 4K DCI plates. What FDL element defines the output? | Canvas Template introduction |
+| 14 | A | Configure the VFX pull: fit_source and preserve | Pipeline configuration |
+| 15 | A | fit_all vs fill: tap each to see the result | Fit methods for VFX |
+| 16 | C | VFX needs extra pixels for sky replacements. What setting? | preserve_from_source_canvas |
+| 17 | A | Calculate the scale factor for a VFX pull | Scale factor math |
+| 18 | B | VFX plates arrived cropped. Diagnose the config error | fill vs fit_all diagnosis |
 
-| # | Type | Brief | Player Does | JSON Revealed |
-|---|------|-------|-------------|---------------|
-| 11 | A | "2.39:1 on a 4448×3096 sensor. Where does the frame go?" | The correct frame outline is shown faintly. Player drags the bright frame to match. It only moves vertically (width is locked to full canvas). | `"dimensions": { "width": 4448, "height": 1862 }` |
-| 12 | A | "The frame is centered. What's the anchor point?" | A crosshair appears at top-left (0,0). Player drags an anchor marker to the top-left corner of the frame. Y-coordinate updates live. | `"anchor_point": { "x": 0, "y": 617 }` |
-| 13 | B | "Something's wrong with this frame." | Frame is shown shoved to the top of the canvas (anchor y=0). Options: "Anchor Y is wrong" / "Width is wrong" / "Aspect ratio is wrong" / "Canvas is wrong" | Corrected anchor_point |
-| 14 | A | "Now add 5% protection." | Frame decision is shown (amber). Player drags a SECOND slightly larger frame (green) around it. Protection = frame × 1.05. | `"protection": 0.05` on the intent + `protection_dimensions` on the decision |
-| 15 | B | "The protection area is SMALLER than the frame. That's wrong. Why?" | Options: "Protection should be larger than the frame" / "Protection should be 0" / "Canvas is too small" / "Aspect ratio is inverted" | Corrected protection |
-| 16 | A | "Same intent, different camera: Sony Venice 6054×3192." | Player frames 2.39:1 on Venice. Different pixel values, same visual result. | New framing_decision for Venice |
-| 17 | C | "Two cameras, same intent. The framing decisions have…" | Pick "Different pixel values but the same aspect ratio" from 4 options | Side-by-side comparison |
+**Zone 3 reward:** "🎞️ You understand FDL for VFX plates!"
 
-**Zone 3 reward:** "📐 You can calculate framing decisions!"
+### ZONE 4: "THE FDL EXPERT" (Levels 19-24)
 
-### ZONE 4: "THE CONTEXT" (Levels 18-22)
+**What you learn:** FDL validation, the 8-phase template pipeline, rounding rules, alignment, and troubleshooting sacred rules.
 
-**What you learn:** Contexts tie canvases to framing decisions. They're the glue. IDs reference each other.
+| # | Type | Scenario | Key Concept |
+|---|------|----------|-------------|
+| 19 | B | This FDL has a broken canvas_id reference | ID reference mismatch |
+| 20 | B | The framing_intent_id has a subtle typo | Reference integrity |
+| 21 | C | 8-phase pipeline: what comes after Scale and Round? | Pipeline phase ordering |
+| 22 | A | 1862 × 0.8633 = 1607.7. Round to even, up | Rounding rules |
+| 23 | A | Scaled frame 3840×1608 in 3840×2160 container. Align it | Alignment methods |
+| 24 | B | Protection appears in output but was never defined. Why? | Protection is never auto-filled |
 
-| # | Type | Brief | Player Does | JSON Revealed |
-|---|------|-------|-------------|---------------|
-| 18 | A | "Connect the dots: canvas → framing decision." | Three floating cards: Canvas, Framing Intent, Framing Decision. Player drags lines to connect them (intent→decision, canvas+decision→context). | `"canvas_id": "...", "framing_intent_id": "..."` |
-| 19 | B | "This FDL is broken. The context references a canvas that doesn't exist." | Show the JSON with `canvas_id: "VENICE_FF"` but the canvas is named `"VENICE_FF_6K"`. Options highlight the mismatched IDs. | Corrected canvas_id |
-| 20 | A | "Two cameras, one intent. Build both contexts." | Two canvases shown side by side. Player already built one context (Zone 3). Now tap to assign the correct canvas_id for a second context. | Two context objects in the FDL |
-| 21 | C | "A Context in FDL represents…" | Pick "How framing works on a specific canvas" from 4 options | Context definition |
-| 22 | B | "The framing_intent_id in this decision is misspelled." | Spot the typo in the JSON. Tap the broken field. | Corrected reference |
-
-**Zone 4 reward:** "🔗 You understand how FDL connects everything!"
-
-### ZONE 5: "THE FILE" (Levels 23-27)
-
-**What you learn:** The top-level FDL structure — uuid, version, default_framing_intent, and how all the pieces nest together.
-
-| # | Type | Brief | Player Does | JSON Revealed |
-|---|------|-------|-------------|---------------|
-| 23 | A | "Every FDL file needs a header." | Player fills in three fields: uuid (auto-generated, just tap to confirm), version (pick "1.0"), fdl_creator (type anything). | Top-level FDL fields |
-| 24 | A | "Set the default framing intent." | Dropdown with the intents they've built. Pick one. | `"default_framing_intent": "scope_239"` |
-| 25 | A | "Assemble the full file." | All the pieces they've built across the game are shown as cards. Drag them into the correct slots in a JSON skeleton: framing_intents[], canvases[], contexts[]. | Complete FDL JSON |
-| 26 | B | "This FDL has 3 bugs. Find them." | A complete ~30 line FDL with three errors: wrong version format, missing canvas_id in a context, and framing decision dimensions that don't match the intent's ratio. Tap each error. | All three fixes |
-| 27 | C | "What file format is an FDL?" | Pick "JSON" from 4 options (JSON, XML, CSV, YAML). | `.fdl` file extension note |
-
-**Zone 5 reward:** "📄 You can read and write FDL files!"
-
-### ZONE 6: "THE PIPELINE" (Levels 28-30)
-
-**What you learn:** Why all of this matters — the real workflow from set to screen.
-
-| # | Type | Brief | Player Does | JSON Revealed |
-|---|------|-------|-------------|---------------|
-| 28 | A | "The show delivers in UHD 3840×2160. Add a delivery canvas." | Player adds a new canvas with UHD dimensions, then sees the framing decision automatically calculated for it. | Delivery canvas + context |
-| 29 | A | "Final challenge: 2 cameras, 1 intent, 1 delivery. Build the whole FDL." | A mini assembly challenge. The building blocks are pre-made — player just wires them together correctly by assigning IDs. ~60 seconds. | Complete multi-camera FDL |
-| 30 | C | "You get an FDL from the camera department. What does it tell you?" | Pick "Exactly how to frame the image in your application" — which is the actual purpose of the spec. | 🎬 GAME COMPLETE |
-
-**Zone 6 reward:** Full-screen celebration. "🏆 FDL CERTIFIED — You understand the ASC Framing Decision List!" Show total stats.
+**Zone 4 reward:** "🏆 FDL EXPERT — You can troubleshoot the entire pipeline!"
 
 ---
 
@@ -284,34 +265,27 @@ Load from Google Fonts CDN:
 
 The ENTIRE game fits in a single scrollable column. No side panels, no split views.
 
-**Star Map Landing Screen (first launch — no close button):**
+**Zone Picker Landing Screen (first launch — no close button):**
 
 ```
 ┌─────────────────────────┐
 │  Frame It               │  ← Title with amber text-glow
 │  The ASC FDL Game       │  ← Subtitle
 │                         │
-│    ╭─╮  ╭─╮            │
-│   ╭─╮╰──╯╭─╮  ╭─╮     │  ← Constellation nodes (zones)
-│   ╰─╯    ╰─╯──╯╭─╮    │     with nebula glow behind
-│          ╭─╮    ╰─╯    │
-│    ╭─╮──╯╭─╮           │
-│    ╰─╯   ╰─╯           │
+│   📋 Post Sup   🎬 DIT  │
+│    ╭─╮ ╭─╮    ╭─╮ ╭─╮  │  ← 4 role-based zone clusters
+│    ╰─╯ ╰─╯    ╰─╯ ╰─╯  │     with production workflow
+│    ╭─╮ ╭─╮    ╭─╮ ╭─╮  │     connectors between them
+│    ╰─╯ ╰─╯    ╰─╯ ╰─╯  │
 │                         │
-│    Tap any level        │  ← Bottom prompt (fades in)
+│   🎞️ VFX Sup  🏆 Expert │
+│    ╭─╮ ╭─╮    ╭─╮ ╭─╮  │
+│    ╰─╯ ╰─╯    ╰─╯ ╰─╯  │
+│    ╭─╮ ╭─╮    ╭─╮ ╭─╮  │
+│    ╰─╯ ╰─╯    ╰─╯ ╰─╯  │
+│                         │
+│    Tap any level        │  ← Bottom prompt
 │    to begin             │
-└─────────────────────────┘
-```
-
-**Star Map Overlay (after first level selected — has close button):**
-
-```
-┌─────────────────────────┐
-│  Star Map             ✕ │
-│                         │
-│  (same constellation    │
-│   layout as landing)    │
-│                         │
 └─────────────────────────┘
 ```
 
@@ -319,74 +293,48 @@ The ENTIRE game fits in a single scrollable column. No side panels, no split vie
 
 ```
 ┌─────────────────────────┐
-│  ●●●●○○  Zone Name 🔥5 │  ← Zone dots (glow on active), streak
-│  ████████░░░░░░         │  ← Gradient progress bar with glow edge
+│  ●●●●  Zone Name   🔥5 │  ← 4 zone dots, streak
+│  ████████░░░░░░         │  ← Gradient progress bar
 │                         │
 │ ┌─── glass card ──────┐ │
-│ │ Level 3 of 36       │ │  ← Level number, zone name (tappable)
-│ │ "Which of these..." │ │  ← Brief (big, readable)
+│ │ Level 3 of 24       │ │  ← Level number, zone name
+│ │ NEW: Rule of Defaults│ │  ← Concept chip
+│ │ "No FDL was..."     │ │  ← Brief (production scenario)
 │ │                     │ │
-│ │ ┌─────────────────┐ │ │
-│ │ │                 │ │ │  ← Canvas (inner shadow, gradient border)
-│ │ │  ┌───────────┐  │ │ │  ← Target frame (dashed)
-│ │ │  │  ═══════  │  │ │ │  ← Player's frame (amber, draggable)
-│ │ │  └───────────┘  │ │ │
-│ │ └─────────────────┘ │ │
-│ │                     │ │
-│ │ ↕ y: 617  w: 4448   │ │  ← Live coordinate readout
+│ │ [Option pills or    │ │
+│ │  canvas or connect  │ │  ← Interaction area
+│ │  interface]         │ │
 │ └─────────────────────┘ │
 │                         │
-│  [ NEXT → ]  ← gradient │  ← Primary button (amber gradient + glow)
-│                         │
+│  [ NEXT → ]             │
 └─────────────────────────┘
-```
-
-On success, the bottom half smoothly expands to reveal:
-
-```
-│  ✓ CORRECT              │  ← Green flash
-│                         │
-│  ┌─ JSON ─────────────┐ │
-│  │ "dimensions": {    │ │  ← Highlighted JSON
-│  │   "width": 4448,   │ │
-│  │   "height": 1862   │ │
-│  │ },                 │ │
-│  │ "anchor_point": {  │ │
-│  │   "x": 0, "y": 617│ │
-│  │ }                  │ │
-│  └────────────────────┘ │
-│                         │
-│  [ NEXT → ]             │  ← Advance button
-│                         │
 ```
 
 ### Micro-Animations (CSS only, keep it fast)
 
-- **Frame snapping:** When within 8% tolerance of correct position, the frame magnetically snaps with a `0.25s ease-out` transition and a brief scale pulse (1.0 → 1.02 → 1.0)
-- **Correct answer:** The canvas border flashes green once. A single ✓ fades in with text-shadow glow. The JSON reveal slides up with a `0.35s ease-out` and slight scale (0.98 → 1.0) for organic feel.
-- **Wrong answer:** Brief red shake on the canvas (CSS `translateX` keyframe, 3 cycles, 0.3s total). No harsh penalties — just a gentle "try again" nudge.
-- **Zone completion:** Glass card with bounce-in animation. Zone card progress bar fills to 100% and the "Complete" badge appears. Badge text fades in.
+- **Frame snapping:** When within 8% tolerance of correct position, the frame magnetically snaps with a `0.25s ease-out` transition
+- **Correct answer:** Canvas border flashes green. ✓ fades in with text-shadow glow. JSON reveal slides up.
+- **Wrong answer:** Brief red shake on the canvas or option pill.
+- **Zone completion:** Glass card with bounce-in animation.
 - **Streak counter:** Numbers tick up with a slight scale bounce and amber text-shadow glow.
 - **Progress bar:** Smooth width transition between levels with glow on the leading edge.
-- **Glass card appearance:** Combines opacity fade, `backdrop-filter` blur transition, and slight upward translate for a premium reveal effect.
-- **Active elements:** Subtle `glow-pulse` keyframe animation (pulsing box-shadow) on interactive elements.
 
 ### Key UI Elements
 
 **Zone Dots (always visible at top):**
-Six dots in a row. Filled green = completed zone (with subtle green glow). Amber = partially completed or current zone (with amber drop-shadow glow on active dot). Dark gray = untouched. Tapping the dots opens the Star Map overlay. The zone name in the header is also tappable to open the overlay.
+Four dots in a row. Filled green = completed zone. Amber = partially completed or current. Dark gray = untouched. Tapping opens the zone picker overlay.
 
-**Star Map (Landing Screen / Overlay):**
-A full-screen constellation-style map rendered as an SVG with star-field background, nebula glow gradients behind each zone cluster, and level nodes arranged in organic cluster patterns connected by curved Bezier paths. On first launch, it serves as the landing screen (no close button, title + subtitle + "Tap any level to begin" prompt). After the player selects their first level, it becomes a standard overlay with a close button and "Star Map" header. Each level node is always tappable regardless of completion state. Completed nodes glow green; the current node pulses amber. Tapping any node jumps directly to it.
+**Zone Picker (Landing Screen / Overlay):**
+A full-screen constellation-style map with 4 zone clusters (one per role), connected by dashed "PRODUCTION WORKFLOW" lines. Each zone has 6 level nodes in organic cluster patterns connected by curved Bezier paths. Completed nodes glow green; current node pulses amber.
 
 **Streak Counter (top right):**
-"🔥 7" — counts consecutive correct answers with amber text-shadow glow when active. Resets on wrong answer. Purely motivational.
+"🔥 7" — counts consecutive correct answers. Resets on wrong answer.
 
-**Hint Button (bottom left, small):**
-"💡" — Tapping shows a one-line hint below the brief. Available after 10 seconds on a level. No penalty.
+**Hint Button:**
+"💡 Need a hint?" — appears after 10 seconds on a level. No penalty.
 
 **JSON Reveal Panel:**
-After every correct answer, shows ONLY the 2-6 lines of JSON relevant to what the player just learned. NOT the full FDL file. Keep it bite-sized. Newly introduced properties are highlighted with a subtle amber background. Previously seen properties are normal.
+After every correct answer, shows ONLY the relevant JSON or workflow insight. Keep it bite-sized.
 
 ---
 
@@ -395,35 +343,38 @@ After every correct answer, shows ONLY the 2-6 lines of JSON relevant to what th
 ### "Frame It" (Type A) Interactions
 
 **Dragging a frame:**
-- The frame line is a `<div>` with a colored border, absolutely positioned inside the canvas container
-- Touch/mouse drag moves or resizes it
-- For levels where only one axis matters (e.g., "set the height"), lock the other axis
-- Show live pixel values updating as the player drags (positioned below the canvas)
+- Absolutely positioned div with colored border inside a canvas container
+- Touch/mouse drag via `onPointerDown` / `onPointerMove` / `onPointerUp`
 - Snap threshold: 8% of canvas dimension on each edge
-- On snap: transition to exact correct position, play success state
+- Live pixel value readout below the canvas
 
-**Filling in a value:**
-- A single input field, styled to look like it's part of the JSON
-- Numeric keyboard hint on mobile (`inputMode="numeric"`)
-- Accept values within ±2 pixels of correct (rounding tolerance)
-
-**Connecting / wiring (Level 18, 25, 29):**
+**Connecting / wiring:**
 - Cards with labels. Player taps a card, then taps the slot it goes into.
-- NOT drag lines — just tap-to-place. Much simpler on mobile.
-- Correct placement: card slides into slot with a satisfying click animation
-- Wrong placement: card bounces back
+- Tap-to-place (not drag lines). Correct placement: card slides into slot. Wrong: card bounces back.
+
+**Pipeline configuration:**
+- Two groups of options (fit_source and preserve_from_source_canvas)
+- Player selects one from each group
+- Both must be correct to complete
+
+**Anamorphic:**
+- Slider from 1.0× to 2.0× with live desqueeze visualization
+- Snap to correct value
+
+**Scale factor, rounding, alignment:**
+- Specialized picker UIs for each calculation step
 
 ### "Fix It" (Type B) Interactions
 
-- 2-4 tappable option pills below the canvas
-- Only ONE is correct
-- Tap correct → green highlight, brief explanation, advance
-- Tap wrong → red flash on that pill, try again (pill becomes disabled)
+- Shows broken JSON or misconfigured canvas
+- 2-4 tappable option pills
+- Tap correct → green highlight, advance
+- Tap wrong → red flash, pill disabled
 
 ### "Pick It" (Type C) Interactions
 
-- Same as Fix It but without a canvas visual. Just the question + 4 option pills.
-- Can also be a simple true/false (2 pills)
+- Question + 4 option pills (no canvas visual)
+- Same interaction as Fix It options
 
 ---
 
@@ -432,16 +383,16 @@ After every correct answer, shows ONLY the 2-6 lines of JSON relevant to what th
 Use React `useState`. Keep it dead simple.
 
 ```javascript
-const [currentLevel, setCurrentLevel] = useState(1);          // 1-36
+const [currentLevel, setCurrentLevel] = useState(1);          // 1-24
 const [streak, setStreak] = useState(0);                      // consecutive correct
 const [completedLevels, setCompletedLevels] = useState(new Set());
 const [showReveal, setShowReveal] = useState(false);          // JSON reveal visible
 const [hintVisible, setHintVisible] = useState(false);
-const [showZonePicker, setShowZonePicker] = useState(true);   // star map open on launch
+const [showZonePicker, setShowZonePicker] = useState(true);   // zone picker open on launch
 const [hasStarted, setHasStarted] = useState(false);          // true after first level selected
 ```
 
-All 6 zones and 36 levels are always accessible via the zone picker overlay. Per-zone progress is derived from `completedLevels`. No stars, no scores, no XP systems. Just: which levels are done, and what's your current streak. Streaks are the only dopamine number. Game completion triggers when all 36 levels are in `completedLevels`, regardless of order.
+All 4 zones and 24 levels are always accessible via the zone picker overlay. Per-zone progress is derived from `completedLevels`. Game completion triggers when all 24 levels are in `completedLevels`, regardless of order.
 
 **No localStorage, no sessionStorage.** State lives in React memory only.
 
@@ -449,52 +400,29 @@ All 6 zones and 36 levels are always accessible via the zone picker overlay. Per
 
 ## LEVEL DATA STRUCTURE
 
-Every level is a compact object. The coding agent should define all 36 in a single `LEVELS` array.
+Every level is a compact object. All 24 are defined in a `LEVELS` array in `src/levels.js`.
 
 ```javascript
 const LEVELS = [
   {
     id: 1,
     zone: 1,
-    type: "frame",            // "frame" | "fix" | "pick"
-    brief: "This is a camera sensor. It's 4448 pixels wide.",
-    concept: "canvas_width",  // tag for what's being taught
-    newConcept: "Canvas",     // shown as a chip if it's new, or null
-    
-    // Type-specific:
-    canvas: { width: 4448, height: 3096 },
-    draggable: "width",       // "width" | "height" | "position" | "both" | "frame"
-    target: { width: 4448 },  // what the player needs to match
-    tolerance: 0.08,          // 8% snap tolerance
-    
-    hint: "The width matches the sensor's horizontal pixel count.",
-    
-    reveal: {                 // JSON to show on success
-      lines: `"dimensions": {\n  "width": 4448\n}`,
-      highlightKeys: ["width"]
-    }
-  },
-  {
-    id: 13,
-    zone: 3,
-    type: "fix",
-    brief: "Something's wrong with this frame.",
-    canvas: { width: 4448, height: 3096 },
-    shownFrame: { width: 4448, height: 1862, x: 0, y: 0 },  // the broken state
-    correctFrame: { width: 4448, height: 1862, x: 0, y: 617 },
+    type: "pick",
+    brief: "No FDL was provided to MPS. What framing does it deliver?",
+    concept: "rule_of_defaults",
+    newConcept: "Rule of Defaults",
     options: [
-      { text: "Anchor Y is wrong", correct: true },
-      { text: "Width is wrong", correct: false },
-      { text: "Aspect ratio is wrong", correct: false },
-      { text: "Canvas is too small", correct: false },
+      { text: "Full source dimensions, scaled to the delivery container", correct: true },
+      { text: "A 2.39:1 extraction matching the DP's intended framing", correct: false },
+      // ...
     ],
-    hint: "The frame should be vertically centered.",
+    hint: "Without an FDL, MPS assumes the full source resolution IS the framing intent.",
     reveal: {
-      lines: `"anchor_point": {\n  "x": 0,\n  "y": 617  ← fixed!\n}`,
-      highlightKeys: ["y"]
+      lines: "// MPS Rule of Defaults:\n// No FDL → full source dimensions\n// scaled into delivery container.",
+      highlightKeys: []
     }
   },
-  // ... etc for all 36 levels
+  // ... etc for all 24 levels
 ];
 ```
 
@@ -504,59 +432,59 @@ const LEVELS = [
 
 ### Tech
 
-- **Single React .jsx file** using Tailwind CSS utility classes
+- **React** with component-per-level-type architecture
+- **Vite** for build
+- **Tailwind CSS** for styling
 - Load `IBM Plex Sans` and `JetBrains Mono` from Google Fonts CDN
-- All 36 levels defined as data in a constant array
-- Total file should be manageable — the game logic is simple because there are only 3 level types
-- Default export a single component
+- Level data in `src/levels.js`, components in `src/components/`
+
+### Component Structure
+
+```
+src/
+  App.jsx              — Main game state and routing
+  levels.js            — All 24 levels + zone metadata + utility functions
+  components/
+    Canvas.jsx         — Canvas/geometry visualization
+    FrameLevel.jsx     — All frame subtypes (drag, connect, fillHeader, etc.)
+    FixLevel.jsx       — Fix/bug-finding levels
+    PickLevel.jsx      — Multiple-choice levels
+    ZonePicker.jsx     — Constellation-style zone/level selector
+    ZoneComplete.jsx   — Zone completion overlay
+    GameComplete.jsx   — Game completion overlay
+    AboutOverlay.jsx   — About + resource links
+    JsonReveal.jsx     — JSON reveal after correct answer
+```
 
 ### Canvas Rendering
 
 Use HTML `<div>` elements, NOT `<canvas>`:
-- Outer div: the canvas, with `aspect-ratio` CSS matching the camera's ratio and a dark background
-- Inner div(s): frame lines as absolutely positioned elements with colored borders
-- The draggable frame uses `onPointerDown` / `onPointerMove` / `onPointerUp` (works for both mouse and touch)
-- Convert pointer position to percentage of canvas, then to pixel values based on the level's canvas dimensions
-- Display pixel values in a readout below the canvas using JetBrains Mono
-
-### Snapping
-
-When the player's frame edge is within `tolerance` (default 8%) of the target edge on ALL active axes:
-1. Set frame to exact target position via state update
-2. CSS `transition: all 0.25s ease-out` handles the visual snap
-3. Trigger success state
-
-### JSON Reveal
-
-- Pre-formatted string with syntax highlighting via `<span>` elements with color classes
-- Newly learned keys get a subtle amber background highlight
-- The reveal panel slides in from below using CSS transform + opacity transition
-- Keep it SHORT — never more than 8 lines of JSON per reveal
+- Outer div with `aspect-ratio` CSS matching the camera's ratio
+- Inner divs as absolutely positioned frame lines with colored borders
+- Pointer events for drag interactions
+- Pixel value readout below the canvas
 
 ### Responsive
 
 - Works on phone (360px+), tablet, desktop
-- Canvas visualization scales to fit container width with correct aspect ratio
+- Canvas visualization scales to fit container width
 - Touch targets minimum 44×44px
-- JSON reveal text at minimum 14px
 
 ---
 
 ## WHAT SUCCESS LOOKS LIKE
 
-A DIT or post supervisor picks up the game on their phone during a coffee break. They pick whichever zone interests them first via the zone picker, jump around between zones, and in 18-22 minutes they've completed all 36 levels. They now understand:
+A filmmaker picks up the game and selects the zone that matches their role:
 
-- What a Canvas is and how it maps to a camera sensor
-- What a Framing Intent is and how aspect ratios work
-- How Framing Decisions are calculated (the actual math)
-- What protection percentages do
-- How Contexts wire it all together
-- How the same intent works across different cameras
-- What a complete FDL JSON file looks like
-- How to spot and fix common FDL errors
-- How delivery canvases extend the pipeline
+- **Post Supervisor** plays Zone 1 and understands when to request an FDL, what happens without one (MPS Rule of Defaults), how Camera Formats work, and who's responsible for each part of the workflow.
 
-They didn't read a spec. They didn't watch a presentation. They played a game for 20 minutes, and now they GET IT.
+- **DIT** plays Zone 2 and can set up a canvas from real camera specs, create framing decisions from the DP's intent, add protection, build multi-camera FDLs, handle anamorphic lenses, and fill in FDL metadata.
+
+- **VFX Supervisor** plays Zone 3 and understands Canvas Templates, fit_source configuration, fit_all vs fill for VFX plates, preserve_from_source_canvas for extra compositing pixels, scale factor calculation, and how to diagnose cropped plate issues.
+
+- **FDL Expert** plays Zone 4 and can validate FDL reference integrity, understands the 8-phase template pipeline, knows the rounding and alignment rules, and can troubleshoot sacred rules like protection never being auto-filled.
+
+They didn't read a spec. They played a game for 15 minutes, and now they GET IT — from their specific perspective.
 
 ---
 
@@ -565,9 +493,11 @@ They didn't read a spec. They didn't watch a presentation. They played a game fo
 Include these in an "About" overlay accessible from a small "ℹ️" button:
 
 - **ASC FDL Spec & Docs:** https://github.com/ascmitc/fdl
+- **FDL Template Implementer Guide:** https://ascmitc.github.io/fdl/dev/FDL_Template_Implementer_Guide/
 - **ASC FDL Official Page:** https://theasc.com/society/ascmitc/asc-framing-decision-list
+- **Netflix MPS Technical Specifications:** https://partnerhelp.netflixstudios.com/hc/en-us/articles/48547314676115
+- **Netflix Framing & Resolution Calculator:** https://production-technology-tools.netflixstudios.com/calculators
 - **pyfdl Python Toolkit:** https://apetrynet.github.io/pyfdl/
-- **Netflix Framing Calculator:** Search "Netflix Framing Working Resolution Calculator"
 
 ---
 
