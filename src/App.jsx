@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   SCENES,
   CHAPTER_NAMES,
@@ -16,14 +16,18 @@ import {
 } from './scenes.js';
 import SceneBackground from './components/SceneBackground.jsx';
 import DialogueBox from './components/DialogueBox.jsx';
-import CharacterPortrait, { CHARACTER_NAMES } from './components/CharacterPortrait.jsx';
+import CharacterPortrait, { CHARACTER_NAMES, CHARACTER_COLORS } from './components/CharacterPortrait.jsx';
 import FrameLevel from './components/FrameLevel.jsx';
 import FixLevel from './components/FixLevel.jsx';
 import PickLevel from './components/PickLevel.jsx';
 import ZoneComplete from './components/ZoneComplete.jsx';
 import GameComplete from './components/GameComplete.jsx';
 import ChapterSelect from './components/ChapterSelect.jsx';
+import StageIntro from './components/StageIntro.jsx';
+import PipelineBar from './components/PipelineBar.jsx';
+import RoleContext from './components/RoleContext.jsx';
 
+const PHASE_STAGE_INTRO = 'stage_intro';
 const PHASE_DIALOGUE = 'dialogue';
 const PHASE_CHALLENGE = 'challenge';
 const PHASE_SUCCESS = 'success';
@@ -57,7 +61,7 @@ function writeSave(completedScenes, bestStreak, currentScene) {
       })
     );
   } catch {
-    // Storage unavailable — silently degrade
+    // Storage unavailable
   }
 }
 
@@ -87,24 +91,47 @@ export default function App() {
   const [hasStarted, setHasStarted] = useState(false);
   const [streakBump, setStreakBump] = useState(false);
   const [sceneTransition, setSceneTransition] = useState(false);
+  const [lastChapterIntroShown, setLastChapterIntroShown] = useState(-1);
   const hintTimerRef = useRef(null);
 
   const scene = SCENES.find((s) => s.id === currentScene);
   const chapterIndex = getChapterForScene(currentScene);
   const totalScenes = SCENES.length;
 
+  const completedChapters = useMemo(() => {
+    const done = [];
+    for (let i = 0; i < CHAPTER_RANGES.length; i++) {
+      if (isChapterComplete(i, completedScenes)) done.push(i);
+    }
+    return done;
+  }, [completedScenes]);
+
+  const isFirstSceneInChapter = useMemo(() => {
+    const [start] = CHAPTER_RANGES[chapterIndex];
+    return currentScene === start;
+  }, [currentScene, chapterIndex]);
+
   useEffect(() => {
     setShowReveal(false);
     setHintVisible(false);
     setShowHintText(false);
-    setPhase(PHASE_DIALOGUE);
+
+    if (isFirstSceneInChapter && lastChapterIntroShown !== chapterIndex) {
+      setPhase(PHASE_STAGE_INTRO);
+    } else {
+      setPhase(PHASE_DIALOGUE);
+    }
 
     if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
-
     return () => {
       if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
     };
-  }, [currentScene]);
+  }, [currentScene, isFirstSceneInChapter, lastChapterIntroShown, chapterIndex]);
+
+  const handleStageIntroContinue = useCallback(() => {
+    setLastChapterIntroShown(chapterIndex);
+    setPhase(PHASE_DIALOGUE);
+  }, [chapterIndex]);
 
   const handleDialogueComplete = useCallback(() => {
     setPhase(PHASE_CHALLENGE);
@@ -187,6 +214,7 @@ export default function App() {
     setCompletedScenes(new Set());
     setStreak(0);
     setBestStreak(0);
+    setLastChapterIntroShown(-1);
   }, []);
 
   const handleResetProgress = useCallback(() => {
@@ -195,6 +223,7 @@ export default function App() {
     setStreak(0);
     setBestStreak(0);
     setCurrentScene(1);
+    setLastChapterIntroShown(-1);
   }, []);
 
   const handleSelectScene = useCallback((sceneId) => {
@@ -220,6 +249,7 @@ export default function App() {
   const chapterCompleted = getChapterCompletedCount(chapterIndex, completedScenes);
   const chapterProgressPct = (chapterCompleted / chapterSceneCount) * 100;
   const background = CHAPTER_BACKGROUNDS[chapterIndex];
+  const characterColors = CHARACTER_COLORS[scene.character];
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -228,9 +258,12 @@ export default function App() {
 
       {/* Content layer */}
       <div className="relative z-10 min-h-screen flex flex-col">
-        {/* Top bar */}
-        <header className="px-4 pt-4 pb-2">
-          <div className="flex items-center justify-between mb-3">
+        {/* Top bar with pipeline */}
+        <header className="px-4 pt-3 pb-1">
+          {/* Pipeline bar */}
+          <PipelineBar activeChapter={chapterIndex} completedChapters={completedChapters} />
+
+          <div className="flex items-center justify-between mt-2 mb-2">
             {/* Chapter dots */}
             <button
               className="flex items-center gap-1 py-2 -my-2 px-1 -mx-1"
@@ -245,7 +278,7 @@ export default function App() {
                 const dotColor = complete
                   ? '#4CAF50'
                   : partial || isCurrent
-                    ? '#E8A946'
+                    ? CHARACTER_COLORS[CHAPTER_CHARACTERS[ci]].primary
                     : '#5D3A1A';
                 return (
                   <span
@@ -290,13 +323,43 @@ export default function App() {
           <div className="pixel-progress">
             <div
               className="pixel-progress-fill"
-              style={{ width: `${chapterProgressPct}%` }}
+              style={{
+                width: `${chapterProgressPct}%`,
+                background: `linear-gradient(180deg, ${characterColors.primary} 0%, ${characterColors.bg} 100%)`,
+              }}
             />
           </div>
         </header>
 
+        {/* Character-in-environment header */}
+        {phase !== PHASE_STAGE_INTRO && (
+          <div className="px-4 pt-2">
+            <RoleContext
+              character={scene.character}
+              taskContext={scene.brief}
+            />
+          </div>
+        )}
+
         {/* Main content */}
-        <main className="flex-1 px-4 py-4 max-w-lg mx-auto w-full flex flex-col">
+        <main className="flex-1 px-4 py-3 max-w-lg mx-auto w-full flex flex-col">
+
+          {/* Character portrait in environment */}
+          {phase === PHASE_DIALOGUE && (
+            <div className="flex justify-center mb-3 animate-env-portrait">
+              <div
+                className="p-1.5"
+                style={{
+                  border: `2px solid ${characterColors.primary}80`,
+                  background: `${characterColors.bg}80`,
+                  boxShadow: `0 0 16px ${characterColors.primary}20`,
+                }}
+              >
+                <CharacterPortrait character={scene.character} expression="neutral" size="xl" />
+              </div>
+            </div>
+          )}
+
           {/* Scene card */}
           <div className={`pixel-panel p-5 mb-4 flex-1 ${sceneTransition ? 'animate-scene-transition' : 'animate-pixel-fade'}`}>
             {/* Scene header */}
@@ -308,11 +371,11 @@ export default function App() {
                 >
                   Scene {currentScene} of {totalScenes}
                 </span>
-                <span style={{ color: '#D7CCC8' }}>•</span>
+                <span style={{ color: '#D7CCC8' }}>|</span>
                 <button
                   onClick={() => setShowChapterSelect(true)}
                   className="pixel-header hover:opacity-80 transition-opacity"
-                  style={{ color: '#8D6E63', cursor: 'pointer', fontSize: '8px' }}
+                  style={{ color: characterColors.primary, cursor: 'pointer', fontSize: '8px' }}
                 >
                   {CHAPTER_NAMES[chapterIndex]}
                 </button>
@@ -324,7 +387,7 @@ export default function App() {
                   style={{
                     background: '#FFF3E0',
                     color: '#E65100',
-                    border: '2px solid #E8A946',
+                    border: `2px solid ${characterColors.primary}`,
                   }}
                 >
                   NEW: {scene.newConcept}
@@ -340,6 +403,7 @@ export default function App() {
                   expression="neutral"
                   lines={scene.dialogue}
                   onComplete={handleDialogueComplete}
+                  compact
                 />
                 {completedScenes.has(currentScene) && (
                   <button
@@ -405,6 +469,7 @@ export default function App() {
                 expression={scene.successDialogue.expression}
                 lines={[scene.successDialogue]}
                 onComplete={() => setPhase(PHASE_REVEAL)}
+                compact
               />
             </div>
           )}
@@ -470,6 +535,15 @@ export default function App() {
           )}
         </main>
       </div>
+
+      {/* Stage Intro overlay */}
+      {phase === PHASE_STAGE_INTRO && (
+        <StageIntro
+          chapterIndex={chapterIndex}
+          onContinue={handleStageIntroContinue}
+          completedChapters={completedChapters}
+        />
+      )}
 
       {/* Overlays */}
       {showChapterComplete !== null && (

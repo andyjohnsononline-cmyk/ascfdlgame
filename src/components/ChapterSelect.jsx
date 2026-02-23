@@ -1,4 +1,5 @@
 import CharacterPortrait, { CHARACTER_NAMES, CHARACTER_ROLES, CHARACTER_COLORS } from './CharacterPortrait.jsx';
+import SceneBackground from './SceneBackground.jsx';
 import {
   CHAPTER_NAMES,
   CHAPTER_CHARACTERS,
@@ -21,6 +22,22 @@ const LOCATION_LABELS = {
   control_room: 'Control Room',
 };
 
+const ROLE_MISSIONS = {
+  robin: 'Aligns every department and ensures all cameras are accounted for',
+  morgan: 'The bridge between set and post — every frame runs through the DIT cart',
+  quinn: 'Makes sure VFX plates are correct and the Nuke pipeline works',
+  sage: 'Understands every byte of the spec and finds where pipelines break',
+};
+
+const ROLE_TOOLS_SHORT = {
+  robin: ['MPS Portal', 'Delivery Specs'],
+  morgan: ['Silverstack', 'FDL Creator'],
+  quinn: ['Nuke', 'Resolve'],
+  sage: ['pyfdl', 'FDL Spec'],
+};
+
+const PIPELINE_LABELS = ['Config', 'Create', 'Consume', 'Validate'];
+
 const RESOURCE_CHARACTER_MAP = (() => {
   const map = {};
   CHAPTER_RESOURCES.forEach((ch, ci) => {
@@ -37,7 +54,7 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
     <div
       className="fixed inset-0 z-50 animate-fade-in overflow-y-auto"
       style={{
-        background: 'linear-gradient(180deg, #87CEEB 0%, #4A7C59 30%, #3B5E3A 60%, #2D4A2C 100%)',
+        background: 'linear-gradient(180deg, #0a0a14 0%, #14141e 30%, #1a1a28 60%, #0e0e18 100%)',
       }}
     >
       {/* Header */}
@@ -46,21 +63,51 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
           <div className="animate-pixel-fade">
             <h1
               className="pixel-header-lg mb-2"
-              style={{ color: '#FFF8E7', textShadow: '3px 3px 0 #5D3A1A' }}
+              style={{ color: '#FFF8E7', textShadow: '3px 3px 0 rgba(0,0,0,0.5)' }}
             >
               Frame It
             </h1>
-            <p className="text-sm" style={{ color: '#B5D8A0' }}>
+            <p className="text-sm mb-4" style={{ color: 'rgba(255,248,231,0.5)' }}>
               The ASC FDL Learning Game
             </p>
+
+            {/* Pipeline overview */}
+            <div className="flex items-center justify-center gap-1 mb-2">
+              {CHAPTER_CHARACTERS.map((char, i) => {
+                const color = CHARACTER_COLORS[char].primary;
+                const done = isChapterComplete(i, completedScenes);
+                return (
+                  <div key={char} className="flex items-center">
+                    <div
+                      className="flex items-center gap-1 px-2 py-1"
+                      style={{
+                        border: `1px solid ${done ? color : `${color}40`}`,
+                        background: done ? `${color}20` : 'transparent',
+                        opacity: done ? 1 : 0.6,
+                      }}
+                    >
+                      <span className="text-[9px] font-pixel" style={{ color }}>
+                        {done ? '✓' : PIPELINE_LABELS[i]}
+                      </span>
+                    </div>
+                    {i < 3 && (
+                      <div
+                        className="w-3 h-px"
+                        style={{ background: done ? color : 'rgba(255,255,255,0.15)' }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         ) : (
           <div className="flex items-center justify-between">
             <h2
               className="pixel-header"
-              style={{ color: '#FFF8E7', textShadow: '2px 2px 0 #5D3A1A' }}
+              style={{ color: '#FFF8E7', textShadow: '2px 2px 0 rgba(0,0,0,0.5)' }}
             >
-              Choose a Chapter
+              Select Stage
             </h2>
             <button
               onClick={onClose}
@@ -73,7 +120,7 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
         )}
       </div>
 
-      {/* Chapter grid */}
+      {/* Chapter cards */}
       <div className="px-4 pb-8 max-w-lg mx-auto space-y-4">
         {CHAPTER_RANGES.map((_, ci) => {
           const character = CHAPTER_CHARACTERS[ci];
@@ -82,87 +129,147 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
           const done = isChapterComplete(ci, completedScenes);
           const nextScene = getFirstIncompleteSceneInChapter(ci, completedScenes);
           const progressPct = (completed / total) * 100;
+          const colors = CHARACTER_COLORS[character];
+          const bg = CHAPTER_BACKGROUNDS[ci];
 
           return (
             <button
               key={ci}
               onClick={() => onSelectScene(nextScene)}
-              className={`pixel-panel w-full text-left p-4 transition-all ${done ? '' : 'animate-chapter-pulse'}`}
+              className="w-full text-left transition-all relative overflow-hidden"
               style={{
-                borderColor: done ? '#4CAF50' : '#5D3A1A',
+                border: `2px solid ${done ? '#4CAF50' : colors.primary}60`,
+                background: colors.bg,
+                boxShadow: done
+                  ? '0 0 12px rgba(76, 175, 80, 0.2)'
+                  : `0 0 12px ${colors.primary}15`,
               }}
             >
-              <div className="flex gap-3 items-start">
-                <CharacterPortrait character={character} expression={done ? 'happy' : 'neutral'} size={56} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className="pixel-header"
+              {/* Environment backdrop */}
+              <div className="absolute inset-0 opacity-20 pointer-events-none">
+                <SceneBackground scene={bg} />
+              </div>
+
+              <div className="relative z-10 p-4">
+                <div className="flex gap-3 items-start">
+                  {/* Character portrait */}
+                  <div className="flex-shrink-0">
+                    <div
+                      className="p-1"
                       style={{
-                        color: done ? '#4CAF50' : '#3E2723',
-                        fontSize: '9px',
+                        border: `2px solid ${done ? '#4CAF50' : colors.primary}60`,
+                        background: `${colors.bg}CC`,
                       }}
                     >
-                      Ch.{ci + 1}
-                    </span>
-                    <span className="text-xs font-semibold" style={{ color: '#6D4C41' }}>
-                      {LOCATION_LABELS[CHAPTER_BACKGROUNDS[ci]]}
-                    </span>
+                      <CharacterPortrait character={character} expression={done ? 'happy' : 'neutral'} size="xl" />
+                    </div>
                   </div>
 
-                  <p className="text-sm font-bold mb-1" style={{ color: '#3E2723' }}>
-                    {CHARACTER_NAMES[character]} — {CHARACTER_ROLES[character]}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    {/* Stage number and location */}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span
+                        className="pixel-header"
+                        style={{
+                          color: done ? '#4CAF50' : colors.primary,
+                          fontSize: '9px',
+                        }}
+                      >
+                        Stage {ci + 1}
+                      </span>
+                      <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                        {LOCATION_LABELS[bg]}
+                      </span>
+                    </div>
 
-                  <p className="text-xs mb-2" style={{ color: '#6D4C41' }}>
-                    {CHAPTER_DESCRIPTIONS[ci]}
-                  </p>
+                    {/* Name and role */}
+                    <p className="text-sm font-bold mb-0.5" style={{ color: '#FFF8E7' }}>
+                      {CHARACTER_NAMES[character]} — {CHARACTER_ROLES[character]}
+                    </p>
 
-                  <div className="flex flex-wrap gap-1 mb-2">
-                    {CHAPTER_RESOURCES[ci].primary.map((resId) => {
-                      const res = getResourceById(resId);
-                      if (!res) return null;
-                      return (
-                        <a
-                          key={resId}
-                          href={res.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 transition-opacity hover:opacity-80"
+                    {/* Mission statement */}
+                    <p className="text-[11px] mb-2 italic" style={{ color: 'rgba(255,248,231,0.5)' }}>
+                      {ROLE_MISSIONS[character]}
+                    </p>
+
+                    {/* Tools */}
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {ROLE_TOOLS_SHORT[character].map((tool) => (
+                        <span
+                          key={tool}
+                          className="text-[9px] px-1.5 py-0.5 font-mono"
                           style={{
-                            color: CHARACTER_COLORS[character].primary,
-                            border: `1px solid ${CHARACTER_COLORS[character].primary}40`,
-                            background: `${CHARACTER_COLORS[character].primary}10`,
+                            color: `${colors.primary}CC`,
+                            border: `1px solid ${colors.primary}30`,
+                            background: `${colors.primary}10`,
                           }}
                         >
-                          <span style={{ fontSize: '10px' }}>&#x1F4D6;</span>
-                          {res.label}
-                        </a>
-                      );
-                    })}
-                  </div>
+                          {tool}
+                        </span>
+                      ))}
+                      {CHAPTER_RESOURCES[ci].primary.map((resId) => {
+                        const res = getResourceById(resId);
+                        if (!res) return null;
+                        return (
+                          <a
+                            key={resId}
+                            href={res.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-[9px] px-1.5 py-0.5 font-mono transition-opacity hover:opacity-80"
+                            style={{
+                              color: `${colors.primary}AA`,
+                              border: `1px solid ${colors.primary}20`,
+                              background: `${colors.primary}08`,
+                            }}
+                          >
+                            {res.label}
+                          </a>
+                        );
+                      })}
+                    </div>
 
-                  {/* Progress bar */}
-                  <div className="pixel-progress">
-                    <div
-                      className="pixel-progress-fill"
-                      style={{
-                        width: `${progressPct}%`,
-                        background: done
-                          ? 'linear-gradient(180deg, #4CAF50 0%, #388E3C 100%)'
-                          : 'linear-gradient(180deg, #E8A946 0%, #C48A2A 100%)',
-                      }}
-                    />
+                    {/* Description */}
+                    <p className="text-[11px] mb-2" style={{ color: 'rgba(255,248,231,0.4)' }}>
+                      {CHAPTER_DESCRIPTIONS[ci]}
+                    </p>
+
+                    {/* Progress bar */}
+                    <div className="pixel-progress" style={{ borderColor: `${colors.primary}40` }}>
+                      <div
+                        className="pixel-progress-fill"
+                        style={{
+                          width: `${progressPct}%`,
+                          background: done
+                            ? 'linear-gradient(180deg, #4CAF50 0%, #388E3C 100%)'
+                            : `linear-gradient(180deg, ${colors.primary} 0%, ${colors.bg} 100%)`,
+                        }}
+                      />
+                    </div>
+                    <p
+                      className="text-[10px] font-mono mt-1"
+                      style={{ color: done ? '#4CAF50' : colors.primary }}
+                    >
+                      {completed}/{total} {done ? '✓ COMPLETE' : ''}
+                    </p>
                   </div>
-                  <p
-                    className="text-xs font-mono mt-1"
-                    style={{ color: done ? '#4CAF50' : '#8B6914' }}
-                  >
-                    {completed}/{total} {done ? '✓ COMPLETE' : ''}
-                  </p>
                 </div>
               </div>
+
+              {/* Pipeline connector arrow */}
+              {ci < 3 && (
+                <div className="flex justify-center -mb-2 relative z-10">
+                  <div
+                    className="w-px h-4"
+                    style={{
+                      background: done
+                        ? `linear-gradient(180deg, ${colors.primary}60, ${CHARACTER_COLORS[CHAPTER_CHARACTERS[ci + 1]].primary}60)`
+                        : 'rgba(255,255,255,0.1)',
+                    }}
+                  />
+                </div>
+              )}
             </button>
           );
         })}
@@ -170,17 +277,17 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
         {isLanding && (
           <p
             className="text-center text-sm mt-4 animate-fade-in"
-            style={{ color: '#B5D8A0', animationDelay: '0.5s', animationFillMode: 'backwards' }}
+            style={{ color: 'rgba(255,248,231,0.4)', animationDelay: '0.5s', animationFillMode: 'backwards' }}
           >
-            Tap any chapter to begin
+            Tap any stage to begin
           </p>
         )}
 
         {/* Resources */}
-        <div className="mt-8 pt-6" style={{ borderTop: '2px solid rgba(255,255,255,0.1)' }}>
+        <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           <h3
             className="pixel-header text-center mb-3"
-            style={{ color: '#B5D8A0', fontSize: '8px' }}
+            style={{ color: 'rgba(255,248,231,0.3)', fontSize: '8px' }}
           >
             Resources
           </h3>
@@ -195,8 +302,8 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-xs px-3 py-2 transition-opacity hover:opacity-80"
                   style={{
-                    color: '#B5D8A0',
-                    border: '1px solid rgba(181, 216, 160, 0.2)',
+                    color: 'rgba(255,248,231,0.5)',
+                    border: '1px solid rgba(255,255,255,0.06)',
                   }}
                 >
                   <span className="flex-1">{link.label}</span>
@@ -207,7 +314,7 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
                         className="inline-block w-3 h-3"
                         style={{
                           backgroundColor: CHARACTER_COLORS[char].primary,
-                          border: '1px solid rgba(255,255,255,0.3)',
+                          border: '1px solid rgba(255,255,255,0.2)',
                         }}
                         title={CHARACTER_NAMES[char]}
                       />
@@ -217,7 +324,7 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
               );
             })}
           </div>
-          <p className="text-[10px] mt-2 text-center" style={{ color: 'rgba(181, 216, 160, 0.5)' }}>
+          <p className="text-[10px] mt-2 text-center" style={{ color: 'rgba(255,248,231,0.25)' }}>
             Colored squares show which character uses each resource
           </p>
         </div>
@@ -232,7 +339,7 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
                 }
               }}
               className="text-xs px-4 py-2 transition-opacity hover:opacity-80"
-              style={{ color: 'rgba(181, 216, 160, 0.5)' }}
+              style={{ color: 'rgba(255,248,231,0.3)' }}
             >
               Reset Progress
             </button>
