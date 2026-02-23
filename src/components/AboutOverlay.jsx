@@ -2,15 +2,11 @@ export default function AboutOverlay({ onClose }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(13, 17, 23, 0.92)' }}
+      style={{ backgroundColor: 'rgba(8, 10, 15, 0.88)' }}
       onClick={onClose}
     >
       <div
-        className="rounded-xl p-6 max-w-md w-full animate-slide-up"
-        style={{
-          backgroundColor: '#1C2333',
-          border: '1px solid #2D3748',
-        }}
+        className="glass-card p-6 max-w-md w-full animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
@@ -19,20 +15,20 @@ export default function AboutOverlay({ onClose }) {
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-lg transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-lg transition-all hover:scale-110"
             style={{ color: '#A0AEC0' }}
           >
             ✕
           </button>
         </div>
 
-        <p className="text-sm mb-4" style={{ color: '#A0AEC0' }}>
+        <p className="text-sm mb-4 leading-relaxed" style={{ color: '#A0AEC0' }}>
           An interactive game to learn the ASC Framing Decision List —
           the industry standard for communicating creative framing from set to screen,
           including the Canvas Template application pipeline.
         </p>
 
-        <h3 className="font-semibold mb-2 text-sm" style={{ color: '#4FD1C5' }}>
+        <h3 className="font-semibold mb-2 text-sm tracking-wide" style={{ color: '#4FD1C5' }}>
           Resources
         </h3>
         <ul className="space-y-2 text-sm">
@@ -41,7 +37,7 @@ export default function AboutOverlay({ onClose }) {
               href="https://github.com/ascmitc/fdl"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#F6AD55' }}
+              style={{ color: '#EDAB68' }}
               className="hover:underline"
             >
               ASC FDL Spec & Docs
@@ -52,7 +48,7 @@ export default function AboutOverlay({ onClose }) {
               href="https://ascmitc.github.io/fdl/dev/FDL_Template_Implementer_Guide/"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#F6AD55' }}
+              style={{ color: '#EDAB68' }}
               className="hover:underline"
             >
               FDL Template Implementer Guide
@@ -63,7 +59,7 @@ export default function AboutOverlay({ onClose }) {
               href="https://theasc.com/society/ascmitc/asc-framing-decision-list"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#F6AD55' }}
+              style={{ color: '#EDAB68' }}
               className="hover:underline"
             >
               ASC FDL Official Page
@@ -74,7 +70,7 @@ export default function AboutOverlay({ onClose }) {
               href="https://apetrynet.github.io/pyfdl/"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#F6AD55' }}
+              style={{ color: '#EDAB68' }}
               className="hover:underline"
             >
               pyfdl Python Toolkit

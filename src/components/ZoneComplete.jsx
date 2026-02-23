@@ -11,10 +11,10 @@ export default function ZoneComplete({ reward, onContinue }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(13, 17, 23, 0.92)' }}
+      style={{ backgroundColor: 'rgba(8, 10, 15, 0.88)' }}
     >
       <div
-        className={`text-center px-8 py-10 max-w-sm ${show ? 'animate-bounce-in' : 'opacity-0'}`}
+        className={`text-center px-8 py-10 max-w-sm glass-card ${show ? 'animate-bounce-in' : 'opacity-0'}`}
       >
         <div className="text-6xl mb-4">{reward.emoji}</div>
         <h2
@@ -25,11 +25,7 @@ export default function ZoneComplete({ reward, onContinue }) {
         </h2>
         <button
           onClick={onContinue}
-          className="px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 active:scale-95"
-          style={{
-            backgroundColor: '#F6AD55',
-            color: '#0D1117',
-          }}
+          className="btn-primary px-8 py-3 text-lg"
         >
           Continue
         </button>

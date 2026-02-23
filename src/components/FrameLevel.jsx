@@ -44,21 +44,22 @@ function ConnectLevel({ level, onCorrect }) {
               key={card.id}
               onClick={() => handleCardTap(card.id)}
               disabled={isPlaced}
-              className="px-4 py-3 rounded-lg text-sm font-medium transition-all whitespace-pre-line text-center"
+              className="glass-pill px-4 py-3 rounded-xl text-sm font-medium whitespace-pre-line text-center"
               style={{
-                backgroundColor: isPlaced
+                background: isPlaced
                   ? '#2D3748'
                   : selectedCard === card.id
-                    ? '#F6AD55'
-                    : '#1C2333',
+                    ? '#EDAB68'
+                    : undefined,
                 color: isPlaced
                   ? '#4A5568'
                   : selectedCard === card.id
                     ? '#0D1117'
                     : '#E2E8F0',
-                border: `2px solid ${selectedCard === card.id ? '#F6AD55' : '#2D3748'}`,
+                borderColor: selectedCard === card.id ? '#EDAB68' : undefined,
                 opacity: isPlaced ? 0.5 : 1,
                 minWidth: '100px',
+                boxShadow: selectedCard === card.id ? '0 0 16px rgba(237, 171, 104, 0.2)' : 'none',
               }}
             >
               {card.label}
@@ -67,7 +68,7 @@ function ConnectLevel({ level, onCorrect }) {
         })}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {level.slots.map((slot) => {
           const filledCard = placed[slot.id]
             ? level.cards.find((c) => c.id === placed[slot.id])
@@ -77,17 +78,17 @@ function ConnectLevel({ level, onCorrect }) {
             <button
               key={slot.id}
               onClick={() => handleSlotTap(slot)}
-              className={`w-full px-4 py-3 rounded-lg text-left font-mono text-sm transition-all ${isWrong ? 'animate-shake' : ''}`}
+              className={`glass-pill w-full px-4 py-3.5 rounded-xl text-left font-mono text-sm ${isWrong ? 'animate-shake' : ''}`}
               style={{
-                backgroundColor: filledCard ? 'rgba(104, 211, 145, 0.1)' : 'rgba(28, 35, 51, 0.6)',
+                background: filledCard ? 'rgba(104, 211, 145, 0.08)' : undefined,
                 border: `2px dashed ${
                   filledCard
                     ? '#68D391'
                     : isWrong
                       ? '#FC8181'
                       : selectedCard
-                        ? '#F6AD55'
-                        : '#2D3748'
+                        ? '#EDAB68'
+                        : 'rgba(255, 255, 255, 0.06)'
                 }`,
                 color: filledCard ? '#68D391' : '#A0AEC0',
               }}
@@ -135,12 +136,10 @@ function FillHeaderLevel({ level, onCorrect }) {
           {field.auto ? (
             <button
               onClick={() => setValues({ ...values, [field.key]: true })}
-              className="px-4 py-2 rounded text-left font-mono text-sm transition-all"
+              className="glass-pill px-4 py-2.5 rounded-xl text-left font-mono text-sm"
               style={{
-                backgroundColor: values[field.key]
-                  ? 'rgba(104, 211, 145, 0.1)'
-                  : '#1C2333',
-                border: `1px solid ${values[field.key] ? '#68D391' : '#2D3748'}`,
+                background: values[field.key] ? 'rgba(104, 211, 145, 0.08)' : undefined,
+                borderColor: values[field.key] ? 'rgba(104, 211, 145, 0.3)' : undefined,
                 color: values[field.key] ? '#68D391' : '#A0AEC0',
               }}
             >
@@ -152,21 +151,20 @@ function FillHeaderLevel({ level, onCorrect }) {
                 <button
                   key={opt}
                   onClick={() => setValues({ ...values, [field.key]: opt })}
-                  className="px-4 py-2 rounded font-mono text-sm transition-all"
+                  className="glass-pill px-4 py-2.5 rounded-xl font-mono text-sm"
                   style={{
-                    backgroundColor:
+                    background:
                       values[field.key] === opt
                         ? opt === field.correct
-                          ? 'rgba(104, 211, 145, 0.15)'
-                          : 'rgba(252, 129, 129, 0.15)'
-                        : '#1C2333',
-                    border: `1px solid ${
+                          ? 'rgba(104, 211, 145, 0.12)'
+                          : 'rgba(252, 129, 129, 0.1)'
+                        : undefined,
+                    borderColor:
                       values[field.key] === opt
                         ? opt === field.correct
-                          ? '#68D391'
-                          : '#FC8181'
-                        : '#2D3748'
-                    }`,
+                          ? 'rgba(104, 211, 145, 0.4)'
+                          : 'rgba(252, 129, 129, 0.3)'
+                        : undefined,
                     color:
                       values[field.key] === opt
                         ? opt === field.correct
@@ -185,10 +183,8 @@ function FillHeaderLevel({ level, onCorrect }) {
               placeholder={field.placeholder}
               value={values[field.key] || ''}
               onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
-              className="px-4 py-2 rounded font-mono text-sm outline-none"
+              className="glass-pill px-4 py-2.5 rounded-xl font-mono text-sm outline-none w-full"
               style={{
-                backgroundColor: '#1C2333',
-                border: '1px solid #2D3748',
                 color: '#E2E8F0',
               }}
             />
@@ -227,16 +223,16 @@ function PickDefaultLevel({ level, onCorrect }) {
           <button
             key={opt.id}
             onClick={() => handlePick(opt.id)}
-            className="w-full px-4 py-3 rounded-lg text-left font-mono text-sm transition-all"
+            className="glass-pill w-full px-4 py-3.5 rounded-xl text-left font-mono text-sm"
             style={{
-              backgroundColor: isSelected
+              background: isSelected
                 ? isCorrect
-                  ? 'rgba(104, 211, 145, 0.15)'
-                  : 'rgba(252, 129, 129, 0.15)'
-                : '#1C2333',
-              border: `1px solid ${
-                isSelected ? (isCorrect ? '#68D391' : '#FC8181') : '#2D3748'
-              }`,
+                  ? 'rgba(104, 211, 145, 0.12)'
+                  : 'rgba(252, 129, 129, 0.08)'
+                : undefined,
+              borderColor: isSelected
+                ? isCorrect ? 'rgba(104, 211, 145, 0.4)' : 'rgba(252, 129, 129, 0.3)'
+                : undefined,
               color: isSelected ? (isCorrect ? '#68D391' : '#FC8181') : '#E2E8F0',
             }}
           >
@@ -298,12 +294,7 @@ function LayerSelectLevel({ level, onCorrect }) {
       <button
         onClick={handleCheck}
         disabled={!selectedLayer}
-        className={`w-full py-3 rounded-lg font-semibold text-base transition-all ${wrong ? 'animate-shake' : ''}`}
-        style={{
-          backgroundColor: selectedLayer ? '#F6AD55' : '#2D3748',
-          color: selectedLayer ? '#0D1117' : '#4A5568',
-          cursor: selectedLayer ? 'pointer' : 'not-allowed',
-        }}
+        className={`btn-primary w-full py-3 text-base ${wrong ? 'animate-shake' : ''}`}
       >
         CHECK
       </button>
@@ -346,10 +337,9 @@ function SideBySideLevel({ level, onCorrect }) {
             <button
               onClick={() => handleTargetComplete(idx)}
               disabled={isComplete}
-              className="w-full rounded-lg overflow-hidden transition-all"
+              className="glass-pill w-full rounded-xl overflow-hidden"
               style={{
-                border: `2px solid ${isComplete ? '#68D391' : '#2D3748'}`,
-                backgroundColor: '#1C2333',
+                borderColor: isComplete ? 'rgba(104, 211, 145, 0.4)' : undefined,
               }}
             >
               <div
@@ -372,7 +362,7 @@ function SideBySideLevel({ level, onCorrect }) {
                     top: `${(Math.max(0, frameY) / targetDims.height) * 100}%`,
                     width: `${(Math.min(resultFrame.width, targetDims.width) / targetDims.width) * 100}%`,
                     height: `${(Math.min(resultFrame.height, targetDims.height) / targetDims.height) * 100}%`,
-                    border: `2px solid ${isComplete ? '#68D391' : '#F6AD55'}`,
+                    border: `2px solid ${isComplete ? '#68D391' : '#EDAB68'}`,
                     transition: 'all 0.3s ease-out',
                   }}
                 />
@@ -414,26 +404,23 @@ function ScaleFactorLevel({ level, onCorrect }) {
 
   return (
     <div>
-      <div
-        className="rounded-lg p-4 mb-4"
-        style={{ backgroundColor: '#1C2333', border: '1px solid #2D3748' }}
-      >
+      <div className="glass-card-subtle p-4 mb-4">
         <div className="flex justify-between mb-3">
           <div className="text-sm" style={{ color: '#A0AEC0' }}>
             <span className="font-mono" style={{ color: '#4FD1C5' }}>Source:</span>{' '}
-            <span className="font-mono" style={{ color: '#F6AD55' }}>{source.width} × {source.height}</span>
+            <span className="font-mono" style={{ color: '#EDAB68' }}>{source.width} × {source.height}</span>
           </div>
           <div className="text-sm" style={{ color: '#A0AEC0' }}>
             <span className="font-mono" style={{ color: '#4FD1C5' }}>Target:</span>{' '}
-            <span className="font-mono" style={{ color: '#F6AD55' }}>{target.width} × {target.height}</span>
+            <span className="font-mono" style={{ color: '#EDAB68' }}>{target.width} × {target.height}</span>
           </div>
         </div>
         <p className="text-xs mb-1" style={{ color: '#A0AEC0' }}>
-          Fit method: <span className="font-mono" style={{ color: '#F6AD55' }}>{level.fitMethod}</span> = pick the <strong>{level.fitMethod === 'fit_all' ? 'smaller' : 'larger'}</strong> ratio
+          Fit method: <span className="font-mono" style={{ color: '#EDAB68' }}>{level.fitMethod}</span> = pick the <strong>{level.fitMethod === 'fit_all' ? 'smaller' : 'larger'}</strong> ratio
         </p>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {level.scaleOptions.map((opt, idx) => {
           const isSelected = selected === idx;
           const isWrong = wrong === idx;
@@ -443,16 +430,18 @@ function ScaleFactorLevel({ level, onCorrect }) {
               key={idx}
               onClick={() => handlePick(idx)}
               disabled={done || isWrong}
-              className={`w-full px-4 py-3 rounded-lg text-left font-mono text-sm transition-all ${isWrong ? 'animate-shake' : ''}`}
+              className={`glass-pill w-full px-4 py-3.5 rounded-xl text-left font-mono text-sm ${isWrong ? 'animate-shake' : ''}`}
               style={{
-                backgroundColor: isCorrectPick
-                  ? 'rgba(104, 211, 145, 0.15)'
+                background: isCorrectPick
+                  ? 'rgba(104, 211, 145, 0.12)'
                   : isWrong
-                    ? 'rgba(252, 129, 129, 0.08)'
-                    : '#1C2333',
-                border: `2px solid ${
-                  isCorrectPick ? '#68D391' : isWrong ? '#FC8181' : '#2D3748'
-                }`,
+                    ? 'rgba(252, 129, 129, 0.06)'
+                    : undefined,
+                borderColor: isCorrectPick
+                  ? 'rgba(104, 211, 145, 0.4)'
+                  : isWrong
+                    ? 'rgba(252, 129, 129, 0.3)'
+                    : undefined,
                 color: isCorrectPick ? '#68D391' : isWrong ? '#FC8181' : '#E2E8F0',
                 opacity: isWrong ? 0.5 : 1,
               }}
@@ -496,15 +485,12 @@ function RoundingPickLevel({ level, onCorrect }) {
 
   return (
     <div>
-      <div
-        className="rounded-lg p-4 mb-4 font-mono text-sm"
-        style={{ backgroundColor: '#1C2333', border: '1px solid #2D3748', color: '#E2E8F0' }}
-      >
+      <div className="glass-card-subtle p-4 mb-4 font-mono text-sm" style={{ color: '#E2E8F0' }}>
         <p style={{ color: '#A0AEC0' }}>{level.calculation}</p>
         <p className="mt-1" style={{ color: '#4FD1C5' }}>Round to even, up →</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2.5">
         {level.roundOptions.map((opt, idx) => {
           const isSelected = selected === idx;
           const isDisabled = disabledOpts.has(idx);
@@ -515,16 +501,18 @@ function RoundingPickLevel({ level, onCorrect }) {
               key={idx}
               onClick={() => handlePick(idx)}
               disabled={isDisabled || done}
-              className="px-4 py-3 rounded-lg font-mono text-lg font-bold transition-all"
+              className="glass-pill px-4 py-3.5 rounded-xl font-mono text-lg font-bold"
               style={{
-                backgroundColor: isCorrectPick
-                  ? 'rgba(104, 211, 145, 0.15)'
+                background: isCorrectPick
+                  ? 'rgba(104, 211, 145, 0.12)'
                   : isWrong
-                    ? 'rgba(252, 129, 129, 0.08)'
-                    : '#1C2333',
-                border: `2px solid ${
-                  isCorrectPick ? '#68D391' : isWrong ? '#FC8181' : '#2D3748'
-                }`,
+                    ? 'rgba(252, 129, 129, 0.06)'
+                    : undefined,
+                borderColor: isCorrectPick
+                  ? 'rgba(104, 211, 145, 0.4)'
+                  : isWrong
+                    ? 'rgba(252, 129, 129, 0.3)'
+                    : undefined,
                 color: isCorrectPick ? '#68D391' : isWrong ? '#FC8181' : '#E2E8F0',
                 opacity: isDisabled ? 0.5 : 1,
                 cursor: isDisabled || done ? 'not-allowed' : 'pointer',
@@ -580,11 +568,12 @@ function AlignmentLevel({ level, onCorrect }) {
   return (
     <div>
       <div
-        className="relative w-full mx-auto rounded"
+        className="relative w-full mx-auto rounded-lg"
         style={{
           aspectRatio: `${target.width}/${target.height}`,
           backgroundColor: '#0D1117',
-          border: isPad ? '2px dotted #2D3748' : '1px solid #2D3748',
+          border: isPad ? '2px dotted #2D3748' : '1px solid rgba(255, 255, 255, 0.06)',
+          boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3)',
           maxWidth: '100%',
         }}
       >
@@ -596,7 +585,7 @@ function AlignmentLevel({ level, onCorrect }) {
             width: `${(frame.width / target.width) * 100}%`,
             height: `${(frame.height / target.height) * 100}%`,
             backgroundColor: '#1C2333',
-            border: `2px solid ${snapped.has(currentMode) ? '#68D391' : '#F6AD55'}`,
+            border: `2px solid ${snapped.has(currentMode) ? '#68D391' : '#EDAB68'}`,
           }}
         />
       </div>
@@ -611,8 +600,7 @@ function AlignmentLevel({ level, onCorrect }) {
       {!snapped.has(currentMode) && (
         <button
           onClick={handleSnap}
-          className="w-full py-3 rounded-lg font-semibold text-base transition-all"
-          style={{ backgroundColor: '#F6AD55', color: '#0D1117' }}
+          className="btn-primary w-full py-3 text-base"
         >
           {isPad ? 'Confirm Alignment' : `Align: ${mode.label}`}
         </button>
@@ -654,11 +642,13 @@ function AnamorphicLevel({ level, onCorrect }) {
   return (
     <div>
       <div
-        className="relative w-full mx-auto rounded select-none"
+        className="relative w-full mx-auto rounded-lg select-none"
         style={{
           aspectRatio: `${displayAR}`,
           backgroundColor: '#1C2333',
-          border: `1px solid ${done ? '#68D391' : '#2D3748'}`,
+          border: `1px solid ${done ? '#68D391' : 'rgba(255, 255, 255, 0.06)'}`,
+          borderBottom: `1px solid ${done ? '#68D391' : 'rgba(255, 255, 255, 0.1)'}`,
+          boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3)',
           maxWidth: '100%',
           overflow: 'hidden',
         }}
@@ -670,7 +660,7 @@ function AnamorphicLevel({ level, onCorrect }) {
             height: `${(framing.height / canvasDims.height) * 100}%`,
             width: `${((desqueezedWidth / canvasDims.width) * 100)}%`,
             left: `${((canvasDims.width - desqueezedWidth) / 2 / canvasDims.width) * 100}%`,
-            border: `2px solid ${done ? '#68D391' : '#F6AD55'}`,
+            border: `2px solid ${done ? '#68D391' : '#EDAB68'}`,
           }}
         />
       </div>
@@ -678,7 +668,7 @@ function AnamorphicLevel({ level, onCorrect }) {
       <div className="mt-4">
         <label className="text-sm font-mono block mb-2" style={{ color: '#A0AEC0' }}>
           anamorphic_squeeze:
-          <span className="ml-2 font-bold" style={{ color: '#F6AD55' }}>
+          <span className="ml-2 font-bold" style={{ color: '#EDAB68' }}>
             {squeeze.toFixed(1)}
           </span>
         </label>
@@ -691,7 +681,7 @@ function AnamorphicLevel({ level, onCorrect }) {
           onChange={(e) => !done && setSqueeze(parseFloat(e.target.value))}
           disabled={done}
           className="w-full accent-amber-400"
-          style={{ accentColor: '#F6AD55' }}
+          style={{ accentColor: '#EDAB68' }}
         />
         <div className="flex justify-between text-xs font-mono" style={{ color: '#4A5568' }}>
           <span>1.0×</span>
@@ -701,7 +691,7 @@ function AnamorphicLevel({ level, onCorrect }) {
       </div>
 
       <div className="mt-3 font-mono text-sm text-center" style={{ color: '#A0AEC0' }}>
-        Normalized width: <span style={{ color: '#F6AD55' }}>{Math.round(desqueezedWidth)}</span> px
+        Normalized width: <span style={{ color: '#EDAB68' }}>{Math.round(desqueezedWidth)}</span> px
       </div>
     </div>
   );
@@ -730,7 +720,7 @@ function PipelineConfigLevel({ level, onCorrect }) {
       <p className="font-mono text-sm mb-2" style={{ color: '#4FD1C5' }}>
         "{label}":
       </p>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         {options.map((opt) => {
           const isSelected = selected === opt.id;
           const isCorrectOpt = opt.correct && isSelected;
@@ -739,18 +729,22 @@ function PipelineConfigLevel({ level, onCorrect }) {
             <button
               key={opt.id}
               onClick={() => !done && onSelect(opt.id)}
-              className="w-full px-4 py-2 rounded-lg text-left font-mono text-sm transition-all"
+              className="glass-pill w-full px-4 py-2.5 rounded-xl text-left font-mono text-sm"
               style={{
-                backgroundColor: isCorrectOpt
-                  ? 'rgba(104, 211, 145, 0.15)'
+                background: isCorrectOpt
+                  ? 'rgba(104, 211, 145, 0.12)'
                   : isWrongOpt
-                    ? 'rgba(252, 129, 129, 0.08)'
+                    ? 'rgba(252, 129, 129, 0.06)'
                     : isSelected
-                      ? 'rgba(246, 173, 85, 0.1)'
-                      : '#1C2333',
-                border: `1px solid ${
-                  isCorrectOpt ? '#68D391' : isWrongOpt ? '#FC8181' : isSelected ? '#F6AD55' : '#2D3748'
-                }`,
+                      ? 'rgba(237, 171, 104, 0.08)'
+                      : undefined,
+                borderColor: isCorrectOpt
+                  ? 'rgba(104, 211, 145, 0.4)'
+                  : isWrongOpt
+                    ? 'rgba(252, 129, 129, 0.3)'
+                    : isSelected
+                      ? 'rgba(237, 171, 104, 0.3)'
+                      : undefined,
                 color: isCorrectOpt ? '#68D391' : isWrongOpt ? '#FC8181' : '#E2E8F0',
               }}
             >
@@ -768,7 +762,7 @@ function PipelineConfigLevel({ level, onCorrect }) {
       {renderOptions(level.preserveOptions, preserve, setPreserve, 'preserve_from_source_canvas')}
 
       {done && (
-        <div className="mt-3 rounded-lg p-3 animate-fade-in" style={{ backgroundColor: 'rgba(104,211,145,0.08)', border: '1px solid rgba(104,211,145,0.2)' }}>
+        <div className="glass-card-subtle mt-3 p-3 animate-fade-in" style={{ borderColor: 'rgba(104,211,145,0.2)' }}>
           <p className="text-xs font-mono" style={{ color: '#68D391' }}>
             Phase 2: Populate source geometry ✓
           </p>
@@ -1092,20 +1086,20 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
             {(level.draggable === 'position' || level.draggable === 'anchorMarker') && (
               <>
                 <span>
-                  x: <span style={{ color: '#F6AD55' }}>{Math.round(readoutFrame.x)}</span>
+                  x: <span style={{ color: '#EDAB68' }}>{Math.round(readoutFrame.x)}</span>
                 </span>
                 <span>
-                  y: <span style={{ color: '#F6AD55' }}>{Math.round(readoutFrame.y)}</span>
+                  y: <span style={{ color: '#EDAB68' }}>{Math.round(readoutFrame.y)}</span>
                 </span>
               </>
             )}
             {level.draggable !== 'anchorMarker' && (
               <>
                 <span>
-                  w: <span style={{ color: '#F6AD55' }}>{Math.round(readoutFrame.width)}</span>
+                  w: <span style={{ color: '#EDAB68' }}>{Math.round(readoutFrame.width)}</span>
                 </span>
                 <span>
-                  h: <span style={{ color: '#F6AD55' }}>{Math.round(readoutFrame.height)}</span>
+                  h: <span style={{ color: '#EDAB68' }}>{Math.round(readoutFrame.height)}</span>
                 </span>
               </>
             )}

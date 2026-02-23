@@ -19,7 +19,7 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
             className={isHighlighted ? 'rounded px-0.5' : ''}
             style={{
               color: '#4FD1C5',
-              backgroundColor: isHighlighted ? 'rgba(246, 173, 85, 0.15)' : 'transparent',
+              backgroundColor: isHighlighted ? 'rgba(237, 171, 104, 0.15)' : 'transparent',
             }}
           >
             {key}
@@ -46,7 +46,7 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
       const numMatch = remaining.match(/^(\d+\.?\d*)/);
       if (numMatch) {
         parts.push(
-          <span key={idx++} style={{ color: '#F6AD55' }}>
+          <span key={idx++} style={{ color: '#EDAB68' }}>
             {numMatch[1]}
           </span>
         );
@@ -107,15 +107,16 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
   return (
     <div className="animate-slide-up mt-4">
       <div
-        className="rounded-lg p-4 font-mono text-sm leading-relaxed"
+        className="glass-card p-4 font-mono text-sm leading-relaxed"
         style={{
-          backgroundColor: 'rgba(28, 35, 51, 0.8)',
-          border: '1px solid #2D3748',
           minHeight: '40px',
           fontSize: '14px',
         }}
       >
-        <div className="text-xs font-sans font-medium mb-2" style={{ color: '#4FD1C5' }}>
+        <div
+          className="text-xs font-sans font-semibold mb-2 tracking-wider uppercase"
+          style={{ color: '#4FD1C5' }}
+        >
           JSON
         </div>
         {codeLines.map((line, i) => (

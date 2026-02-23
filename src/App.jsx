@@ -30,7 +30,8 @@ export default function App() {
   const [showZoneComplete, setShowZoneComplete] = useState(null);
   const [showGameComplete, setShowGameComplete] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
-  const [showZonePicker, setShowZonePicker] = useState(false);
+  const [showZonePicker, setShowZonePicker] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
   const [streakBump, setStreakBump] = useState(false);
   const [showHintText, setShowHintText] = useState(false);
   const hintTimerRef = useRef(null);
@@ -114,6 +115,7 @@ export default function App() {
     setCurrentLevel(levelId);
     setShowReveal(false);
     setShowZonePicker(false);
+    setHasStarted(true);
   }, []);
 
   if (!level) return null;
@@ -124,16 +126,13 @@ export default function App() {
   const zoneProgressPct = (zoneCompleted / zoneLevelCount) * 100;
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: '#0D1117' }}
-    >
+    <div className="min-h-screen flex flex-col">
       {/* Top bar */}
       <header className="px-4 pt-4 pb-2">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-3">
           {/* Zone dots */}
           <button
-            className="flex items-center gap-2"
+            className="flex items-center gap-2.5"
             onClick={() => setShowZonePicker(true)}
             title="Choose a level"
           >
@@ -141,6 +140,11 @@ export default function App() {
               const complete = isZoneComplete(zi, completedLevels);
               const partial = !complete && getZoneCompletedCount(zi, completedLevels) > 0;
               const isCurrent = zi === zoneIndex;
+              const dotColor = complete
+                ? '#68D391'
+                : partial || isCurrent
+                  ? '#EDAB68'
+                  : '#2D3748';
               return (
                 <span
                   key={zi}
@@ -148,16 +152,15 @@ export default function App() {
                     isCurrent ? 'animate-zone-pulse' : ''
                   }`}
                   style={{
-                    backgroundColor: complete
-                      ? '#68D391'
-                      : partial
-                        ? '#F6AD55'
-                        : isCurrent
-                          ? '#F6AD55'
-                          : '#2D3748',
+                    backgroundColor: dotColor,
                     cursor: 'pointer',
                     transform: isCurrent ? 'scale(1.2)' : 'scale(1)',
-                    opacity: !complete && !partial && !isCurrent ? 0.5 : 1,
+                    opacity: !complete && !partial && !isCurrent ? 0.4 : 1,
+                    boxShadow: isCurrent
+                      ? `0 0 10px ${dotColor}, 0 0 4px ${dotColor}`
+                      : complete
+                        ? `0 0 6px ${dotColor}40`
+                        : 'none',
                   }}
                   title={ZONE_NAMES[zi]}
                 />
@@ -168,7 +171,10 @@ export default function App() {
           <div className="flex items-center gap-3">
             <div
               className={`font-mono font-bold text-sm ${streakBump ? 'animate-streak-bump' : ''}`}
-              style={{ color: streak > 0 ? '#F6AD55' : '#4A5568' }}
+              style={{
+                color: streak > 0 ? '#EDAB68' : '#4A5568',
+                textShadow: streak > 0 ? '0 0 12px rgba(237, 171, 104, 0.4)' : 'none',
+              }}
             >
               🔥 {streak}
             </div>
@@ -184,14 +190,15 @@ export default function App() {
 
         {/* Per-zone progress bar */}
         <div
-          className="w-full h-1 rounded-full overflow-hidden"
-          style={{ backgroundColor: '#2D3748' }}
+          className="w-full h-1.5 rounded-full overflow-hidden"
+          style={{ backgroundColor: 'rgba(45, 55, 72, 0.5)' }}
         >
           <div
-            className="h-full rounded-full transition-all duration-500"
+            className="h-full rounded-full transition-all duration-500 relative"
             style={{
               width: `${zoneProgressPct}%`,
-              backgroundColor: '#F6AD55',
+              background: 'linear-gradient(90deg, #EDAB68 0%, #F0C78E 100%)',
+              boxShadow: zoneProgressPct > 0 ? '4px 0 12px rgba(237, 171, 104, 0.5)' : 'none',
             }}
           />
         </div>
@@ -199,98 +206,98 @@ export default function App() {
 
       {/* Main content */}
       <main className="flex-1 px-4 py-4 max-w-lg mx-auto w-full">
-        {/* Level header */}
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-1">
-            <span
-              className="text-xs font-medium"
-              style={{ color: '#4A5568' }}
+        {/* Level card */}
+        <div className="glass-card p-5 mb-4 animate-glass-appear">
+          {/* Level header */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span
+                className="text-xs font-medium tracking-wide"
+                style={{ color: '#4A5568' }}
+              >
+                Level {currentLevel} of {totalLevels}
+              </span>
+              <span
+                className="text-xs"
+                style={{ color: '#2D3748' }}
+              >
+                •
+              </span>
+              <button
+                onClick={() => setShowZonePicker(true)}
+                className="text-xs font-medium hover:opacity-80 transition-opacity tracking-wide"
+                style={{ color: '#4A5568', cursor: 'pointer' }}
+              >
+                {ZONE_NAMES[zoneIndex]}
+              </button>
+            </div>
+
+            {level.newConcept && (
+              <span
+                className="inline-block text-xs font-semibold px-2.5 py-1 rounded-full mb-2"
+                style={{
+                  background: 'rgba(237, 171, 104, 0.12)',
+                  color: '#EDAB68',
+                  border: '1px solid rgba(237, 171, 104, 0.2)',
+                }}
+              >
+                NEW: {level.newConcept}
+              </span>
+            )}
+
+            <p
+              className="text-lg font-medium leading-snug"
+              style={{ color: '#E2E8F0' }}
             >
-              Level {currentLevel} of {totalLevels}
-            </span>
-            <span
-              className="text-xs"
-              style={{ color: '#2D3748' }}
-            >
-              •
-            </span>
-            <button
-              onClick={() => setShowZonePicker(true)}
-              className="text-xs font-medium hover:opacity-80 transition-opacity"
-              style={{ color: '#4A5568', cursor: 'pointer' }}
-            >
-              {ZONE_NAMES[zoneIndex]}
-            </button>
+              {level.brief}
+            </p>
           </div>
 
-          {level.newConcept && (
-            <span
-              className="inline-block text-xs font-semibold px-2 py-0.5 rounded mb-2"
-              style={{
-                backgroundColor: 'rgba(246, 173, 85, 0.15)',
-                color: '#F6AD55',
-              }}
-            >
-              NEW: {level.newConcept}
-            </span>
-          )}
-
-          <p
-            className="text-lg font-medium leading-snug"
-            style={{ color: '#E2E8F0' }}
-          >
-            {level.brief}
-          </p>
-        </div>
-
-        {/* Level content */}
-        <div>
-          {level.type === 'frame' && (
-            <FrameLevel
-              key={level.id}
-              level={level}
-              onCorrect={handleCorrect}
-              showReveal={showReveal}
-            />
-          )}
-          {level.type === 'fix' && (
-            <FixLevel
-              key={level.id}
-              level={level}
-              onCorrect={handleCorrect}
-              onWrong={handleWrong}
-              showReveal={showReveal}
-            />
-          )}
-          {level.type === 'pick' && (
-            <PickLevel
-              key={level.id}
-              level={level}
-              onCorrect={handleCorrect}
-              onWrong={handleWrong}
-              showReveal={showReveal}
-            />
-          )}
+          {/* Level content */}
+          <div>
+            {level.type === 'frame' && (
+              <FrameLevel
+                key={level.id}
+                level={level}
+                onCorrect={handleCorrect}
+                showReveal={showReveal}
+              />
+            )}
+            {level.type === 'fix' && (
+              <FixLevel
+                key={level.id}
+                level={level}
+                onCorrect={handleCorrect}
+                onWrong={handleWrong}
+                showReveal={showReveal}
+              />
+            )}
+            {level.type === 'pick' && (
+              <PickLevel
+                key={level.id}
+                level={level}
+                onCorrect={handleCorrect}
+                onWrong={handleWrong}
+                showReveal={showReveal}
+              />
+            )}
+          </div>
         </div>
 
         {/* Correct indicator + Next button */}
         {showReveal && (
-          <div className="mt-6 animate-fade-in">
+          <div className="mt-5 animate-slide-up">
             <div className="flex items-center gap-2 mb-4">
               <span
                 className="text-lg font-bold"
-                style={{ color: '#68D391' }}
+                style={{ color: '#68D391', textShadow: '0 0 12px rgba(104, 211, 145, 0.3)' }}
               >
                 ✓ Correct
               </span>
             </div>
             <button
               onClick={handleNext}
-              className="w-full py-3 rounded-lg font-semibold text-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
-              style={{
-                backgroundColor: '#F6AD55',
-                color: '#0D1117',
-              }}
+              className="btn-primary w-full py-3.5 text-lg"
             >
               {level.isGameEnd
                 ? 'Finish'
@@ -303,15 +310,14 @@ export default function App() {
 
         {/* Hint */}
         {!showReveal && (
-          <div className="mt-6">
+          <div className="mt-5">
             {hintVisible ? (
               showHintText ? (
                 <div
-                  className="text-sm px-3 py-2 rounded-lg animate-fade-in"
+                  className="glass-card-subtle text-sm px-4 py-3 animate-fade-in"
                   style={{
-                    backgroundColor: 'rgba(246, 173, 85, 0.08)',
-                    border: '1px solid rgba(246, 173, 85, 0.2)',
-                    color: '#F6AD55',
+                    borderColor: 'rgba(237, 171, 104, 0.15)',
+                    color: '#EDAB68',
                   }}
                 >
                   💡 {level.hint}
@@ -352,6 +358,7 @@ export default function App() {
           currentLevel={currentLevel}
           onSelectLevel={handleSelectLevel}
           onClose={() => setShowZonePicker(false)}
+          isLanding={!hasStarted}
         />
       )}
 
