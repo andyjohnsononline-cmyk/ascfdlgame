@@ -1,10 +1,13 @@
-import CharacterPortrait, { CHARACTER_NAMES, CHARACTER_ROLES } from './CharacterPortrait.jsx';
+import CharacterPortrait, { CHARACTER_NAMES, CHARACTER_ROLES, CHARACTER_COLORS } from './CharacterPortrait.jsx';
 import {
   CHAPTER_NAMES,
   CHAPTER_CHARACTERS,
   CHAPTER_BACKGROUNDS,
   CHAPTER_DESCRIPTIONS,
   CHAPTER_RANGES,
+  CHAPTER_RESOURCES,
+  RESOURCE_LINKS,
+  getResourceById,
   getChapterCompletedCount,
   getChapterSceneCount,
   isChapterComplete,
@@ -18,14 +21,16 @@ const LOCATION_LABELS = {
   control_room: 'Control Room',
 };
 
-const RESOURCE_LINKS = [
-  { label: 'ASC FDL Spec & Docs', url: 'https://github.com/ascmitc/fdl' },
-  { label: 'FDL Implementer Guide', url: 'https://ascmitc.github.io/fdl/dev/FDL_Template_Implementer_Guide/' },
-  { label: 'ASC FDL Official Page', url: 'https://theasc.com/society/ascmitc/asc-framing-decision-list' },
-  { label: 'Netflix MPS Tech Specs', url: 'https://partnerhelp.netflixstudios.com/hc/en-us/articles/48547314676115' },
-  { label: 'Netflix Framing Calculator', url: 'https://production-technology-tools.netflixstudios.com/calculators' },
-  { label: 'pyfdl Python Toolkit', url: 'https://apetrynet.github.io/pyfdl/' },
-];
+const RESOURCE_CHARACTER_MAP = (() => {
+  const map = {};
+  CHAPTER_RESOURCES.forEach((ch, ci) => {
+    ch.primary.forEach((resId) => {
+      if (!map[resId]) map[resId] = [];
+      map[resId].push(CHAPTER_CHARACTERS[ci]);
+    });
+  });
+  return map;
+})();
 
 export default function ChapterSelect({ completedScenes, onSelectScene, onClose, onResetProgress, isLanding = false }) {
   return (
@@ -113,6 +118,31 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
                     {CHAPTER_DESCRIPTIONS[ci]}
                   </p>
 
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {CHAPTER_RESOURCES[ci].primary.map((resId) => {
+                      const res = getResourceById(resId);
+                      if (!res) return null;
+                      return (
+                        <a
+                          key={resId}
+                          href={res.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 transition-opacity hover:opacity-80"
+                          style={{
+                            color: CHARACTER_COLORS[character].primary,
+                            border: `1px solid ${CHARACTER_COLORS[character].primary}40`,
+                            background: `${CHARACTER_COLORS[character].primary}10`,
+                          }}
+                        >
+                          <span style={{ fontSize: '10px' }}>&#x1F4D6;</span>
+                          {res.label}
+                        </a>
+                      );
+                    })}
+                  </div>
+
                   {/* Progress bar */}
                   <div className="pixel-progress">
                     <div
@@ -154,24 +184,42 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
           >
             Resources
           </h3>
-          <div className="flex flex-wrap justify-center gap-2">
-            {RESOURCE_LINKS.map((link) => (
-              <a
-                key={link.url}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs px-3 py-1.5 transition-opacity hover:opacity-80"
-                style={{
-                  color: '#B5D8A0',
-                  border: '1px solid rgba(181, 216, 160, 0.3)',
-                  borderRadius: '0',
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
+          <div className="space-y-2">
+            {RESOURCE_LINKS.map((link) => {
+              const characters = RESOURCE_CHARACTER_MAP[link.id] || [];
+              return (
+                <a
+                  key={link.url}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-xs px-3 py-2 transition-opacity hover:opacity-80"
+                  style={{
+                    color: '#B5D8A0',
+                    border: '1px solid rgba(181, 216, 160, 0.2)',
+                  }}
+                >
+                  <span className="flex-1">{link.label}</span>
+                  <span className="flex gap-1">
+                    {characters.map((char) => (
+                      <span
+                        key={char}
+                        className="inline-block w-3 h-3"
+                        style={{
+                          backgroundColor: CHARACTER_COLORS[char].primary,
+                          border: '1px solid rgba(255,255,255,0.3)',
+                        }}
+                        title={CHARACTER_NAMES[char]}
+                      />
+                    ))}
+                  </span>
+                </a>
+              );
+            })}
           </div>
+          <p className="text-[10px] mt-2 text-center" style={{ color: 'rgba(181, 216, 160, 0.5)' }}>
+            Colored squares show which character uses each resource
+          </p>
         </div>
 
         {/* Reset progress */}

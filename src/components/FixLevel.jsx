@@ -108,6 +108,7 @@ export default function FixLevel({ level, onCorrect, onWrong, showReveal }) {
         lines={level.reveal.lines}
         highlightKeys={level.reveal.highlightKeys}
         visible={showReveal}
+        docRef={level.docRef}
       />
     </div>
   );
