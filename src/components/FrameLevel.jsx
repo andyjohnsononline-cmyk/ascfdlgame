@@ -2,9 +2,6 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import Canvas from './Canvas.jsx';
 import JsonReveal from './JsonReveal.jsx';
 
-// ═══════════════════════════════════════
-// Connect: tap cards into slots
-// ═══════════════════════════════════════
 function ConnectLevel({ level, onCorrect }) {
   const [placed, setPlaced] = useState({});
   const [selectedCard, setSelectedCard] = useState(null);
@@ -44,22 +41,22 @@ function ConnectLevel({ level, onCorrect }) {
               key={card.id}
               onClick={() => handleCardTap(card.id)}
               disabled={isPlaced}
-              className="glass-pill px-4 py-3 rounded-xl text-sm font-medium whitespace-pre-line text-center"
+              className="pixel-pill px-4 py-3 text-sm font-medium whitespace-pre-line text-center"
               style={{
                 background: isPlaced
-                  ? '#2D3748'
+                  ? '#c8b89a'
                   : selectedCard === card.id
-                    ? '#EDAB68'
+                    ? '#e8a94f'
                     : undefined,
                 color: isPlaced
-                  ? '#4A5568'
+                  ? '#8a7a6a'
                   : selectedCard === card.id
-                    ? '#0D1117'
-                    : '#E2E8F0',
-                borderColor: selectedCard === card.id ? '#EDAB68' : undefined,
+                    ? '#3d2b1f'
+                    : '#3d2b1f',
+                borderColor: selectedCard === card.id ? '#8b6914' : undefined,
                 opacity: isPlaced ? 0.5 : 1,
                 minWidth: '100px',
-                boxShadow: selectedCard === card.id ? '0 0 16px rgba(237, 171, 104, 0.2)' : 'none',
+                boxShadow: selectedCard === card.id ? '3px 3px 0 rgba(139,105,20,0.3)' : undefined,
               }}
             >
               {card.label}
@@ -78,24 +75,24 @@ function ConnectLevel({ level, onCorrect }) {
             <button
               key={slot.id}
               onClick={() => handleSlotTap(slot)}
-              className={`glass-pill w-full px-4 py-3.5 rounded-xl text-left font-mono text-sm ${isWrong ? 'animate-shake' : ''}`}
+              className={`pixel-pill w-full px-4 py-3.5 text-left font-mono text-sm ${isWrong ? 'animate-shake' : ''}`}
               style={{
-                background: filledCard ? 'rgba(104, 211, 145, 0.08)' : undefined,
-                border: `2px dashed ${
+                background: filledCard ? '#d4e8c4' : undefined,
+                border: `3px dashed ${
                   filledCard
-                    ? '#68D391'
+                    ? '#5b8c3e'
                     : isWrong
-                      ? '#FC8181'
+                      ? '#c85a5a'
                       : selectedCard
-                        ? '#EDAB68'
-                        : 'rgba(255, 255, 255, 0.06)'
+                        ? '#e8a94f'
+                        : '#8b5e3c'
                 }`,
-                color: filledCard ? '#68D391' : '#A0AEC0',
+                color: filledCard ? '#2a5a1e' : '#7a6350',
               }}
             >
-              <span style={{ color: '#4FD1C5' }}>{slot.label}</span>
+              <span style={{ color: '#3c7a3c' }}>{slot.label}</span>
               {filledCard && (
-                <span style={{ color: '#68D391' }}> ← {filledCard.label.split('\n')[0]}</span>
+                <span style={{ color: '#2a5a1e' }}> \u2190 {filledCard.label.split('\n')[0]}</span>
               )}
             </button>
           );
@@ -105,9 +102,6 @@ function ConnectLevel({ level, onCorrect }) {
   );
 }
 
-// ═══════════════════════════════════════
-// FillHeader: fill in FDL header fields
-// ═══════════════════════════════════════
 function FillHeaderLevel({ level, onCorrect }) {
   const [values, setValues] = useState({});
   const [done, setDone] = useState(false);
@@ -130,20 +124,20 @@ function FillHeaderLevel({ level, onCorrect }) {
     <div className="space-y-3">
       {level.fields.map((field) => (
         <div key={field.key} className="flex flex-col gap-1">
-          <label className="font-mono text-sm" style={{ color: '#4FD1C5' }}>
+          <label className="font-mono text-sm font-medium" style={{ color: '#3c7a3c' }}>
             "{field.key}":
           </label>
           {field.auto ? (
             <button
               onClick={() => setValues({ ...values, [field.key]: true })}
-              className="glass-pill px-4 py-2.5 rounded-xl text-left font-mono text-sm"
+              className="pixel-pill px-4 py-2.5 text-left font-mono text-sm"
               style={{
-                background: values[field.key] ? 'rgba(104, 211, 145, 0.08)' : undefined,
-                borderColor: values[field.key] ? 'rgba(104, 211, 145, 0.3)' : undefined,
-                color: values[field.key] ? '#68D391' : '#A0AEC0',
+                background: values[field.key] ? '#d4e8c4' : undefined,
+                borderColor: values[field.key] ? '#5b8c3e' : undefined,
+                color: values[field.key] ? '#2a5a1e' : '#7a6350',
               }}
             >
-              {values[field.key] ? '✓ urn:uuid:a1b2c3d4-e5f6-...' : field.prefill + ' (tap to generate)'}
+              {values[field.key] ? '\u2713 urn:uuid:a1b2c3d4-e5f6-...' : field.prefill + ' (tap to generate)'}
             </button>
           ) : field.options ? (
             <div className="flex gap-2 flex-wrap">
@@ -151,26 +145,26 @@ function FillHeaderLevel({ level, onCorrect }) {
                 <button
                   key={opt}
                   onClick={() => setValues({ ...values, [field.key]: opt })}
-                  className="glass-pill px-4 py-2.5 rounded-xl font-mono text-sm"
+                  className="pixel-pill px-4 py-2.5 font-mono text-sm"
                   style={{
                     background:
                       values[field.key] === opt
                         ? opt === field.correct
-                          ? 'rgba(104, 211, 145, 0.12)'
-                          : 'rgba(252, 129, 129, 0.1)'
+                          ? '#d4e8c4'
+                          : '#e8c4c4'
                         : undefined,
                     borderColor:
                       values[field.key] === opt
                         ? opt === field.correct
-                          ? 'rgba(104, 211, 145, 0.4)'
-                          : 'rgba(252, 129, 129, 0.3)'
+                          ? '#5b8c3e'
+                          : '#c85a5a'
                         : undefined,
                     color:
                       values[field.key] === opt
                         ? opt === field.correct
-                          ? '#68D391'
-                          : '#FC8181'
-                        : '#E2E8F0',
+                          ? '#2a5a1e'
+                          : '#8a3a3a'
+                        : '#3d2b1f',
                   }}
                 >
                   {opt}
@@ -183,10 +177,8 @@ function FillHeaderLevel({ level, onCorrect }) {
               placeholder={field.placeholder}
               value={values[field.key] || ''}
               onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
-              className="glass-pill px-4 py-2.5 rounded-xl font-mono text-sm outline-none w-full"
-              style={{
-                color: '#E2E8F0',
-              }}
+              className="pixel-pill px-4 py-2.5 font-mono text-sm outline-none w-full"
+              style={{ color: '#3d2b1f' }}
             />
           )}
         </div>
@@ -195,9 +187,6 @@ function FillHeaderLevel({ level, onCorrect }) {
   );
 }
 
-// ═══════════════════════════════════════
-// PickDefault: pick default framing intent
-// ═══════════════════════════════════════
 function PickDefaultLevel({ level, onCorrect }) {
   const [selected, setSelected] = useState(null);
   const [done, setDone] = useState(false);
@@ -213,7 +202,7 @@ function PickDefaultLevel({ level, onCorrect }) {
 
   return (
     <div className="space-y-2">
-      <p className="font-mono text-sm mb-3" style={{ color: '#4FD1C5' }}>
+      <p className="font-mono text-sm mb-3" style={{ color: '#3c7a3c' }}>
         "default_framing_intent": ?
       </p>
       {level.intentOptions.map((opt) => {
@@ -223,20 +212,18 @@ function PickDefaultLevel({ level, onCorrect }) {
           <button
             key={opt.id}
             onClick={() => handlePick(opt.id)}
-            className="glass-pill w-full px-4 py-3.5 rounded-xl text-left font-mono text-sm"
+            className="pixel-pill w-full px-4 py-3.5 text-left font-mono text-sm"
             style={{
               background: isSelected
-                ? isCorrect
-                  ? 'rgba(104, 211, 145, 0.12)'
-                  : 'rgba(252, 129, 129, 0.08)'
+                ? isCorrect ? '#d4e8c4' : '#e8c4c4'
                 : undefined,
               borderColor: isSelected
-                ? isCorrect ? 'rgba(104, 211, 145, 0.4)' : 'rgba(252, 129, 129, 0.3)'
+                ? isCorrect ? '#5b8c3e' : '#c85a5a'
                 : undefined,
-              color: isSelected ? (isCorrect ? '#68D391' : '#FC8181') : '#E2E8F0',
+              color: isSelected ? (isCorrect ? '#2a5a1e' : '#8a3a3a') : '#3d2b1f',
             }}
           >
-            "{opt.id}" — {opt.label}
+            "{opt.id}" \u2014 {opt.label}
           </button>
         );
       })}
@@ -244,9 +231,6 @@ function PickDefaultLevel({ level, onCorrect }) {
   );
 }
 
-// ═══════════════════════════════════════
-// LayerSelect: tap a hierarchy layer
-// ═══════════════════════════════════════
 function LayerSelectLevel({ level, onCorrect }) {
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [done, setDone] = useState(false);
@@ -286,15 +270,13 @@ function LayerSelectLevel({ level, onCorrect }) {
         isCorrect={done}
         isShaking={wrong}
       />
-
-      <p className="text-sm mt-3 mb-3 text-center" style={{ color: '#A0AEC0' }}>
-        Tap a layer to select it as <span className="font-mono" style={{ color: '#4FD1C5' }}>{level.correctLabel || 'fit_source'}</span>
+      <p className="text-sm mt-3 mb-3 text-center" style={{ color: '#b8a080' }}>
+        Tap a layer to select it as <span className="font-mono" style={{ color: '#3c7a3c' }}>{level.correctLabel || 'fit_source'}</span>
       </p>
-
       <button
         onClick={handleCheck}
         disabled={!selectedLayer}
-        className={`btn-primary w-full py-3 text-base ${wrong ? 'animate-shake' : ''}`}
+        className={`btn-primary w-full py-3 text-base font-pixel text-[10px] ${wrong ? 'animate-shake' : ''}`}
       >
         CHECK
       </button>
@@ -302,9 +284,6 @@ function LayerSelectLevel({ level, onCorrect }) {
   );
 }
 
-// ═══════════════════════════════════════
-// SideBySide: compare fit_all vs fill
-// ═══════════════════════════════════════
 function SideBySideLevel({ level, onCorrect }) {
   const [completed, setCompleted] = useState(new Set());
   const [done, setDone] = useState(false);
@@ -331,15 +310,15 @@ function SideBySideLevel({ level, onCorrect }) {
 
         return (
           <div key={idx}>
-            <p className="text-xs font-mono text-center mb-1" style={{ color: '#A0AEC0' }}>
+            <p className="font-pixel text-[7px] text-center mb-1" style={{ color: '#b8a080' }}>
               {t.label}
             </p>
             <button
               onClick={() => handleTargetComplete(idx)}
               disabled={isComplete}
-              className="glass-pill w-full rounded-xl overflow-hidden"
+              className="pixel-pill w-full overflow-hidden"
               style={{
-                borderColor: isComplete ? 'rgba(104, 211, 145, 0.4)' : undefined,
+                borderColor: isComplete ? '#5b8c3e' : undefined,
               }}
             >
               <div
@@ -347,13 +326,7 @@ function SideBySideLevel({ level, onCorrect }) {
                 style={{ aspectRatio: `${targetDims.width}/${targetDims.height}` }}
               >
                 {t.fitMethod === 'fill' && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(252,129,129,0.15) 4px, rgba(252,129,129,0.15) 8px)',
-                    }}
-                  />
+                  <div className="absolute inset-0 crop-hatching" />
                 )}
                 <div
                   style={{
@@ -362,14 +335,14 @@ function SideBySideLevel({ level, onCorrect }) {
                     top: `${(Math.max(0, frameY) / targetDims.height) * 100}%`,
                     width: `${(Math.min(resultFrame.width, targetDims.width) / targetDims.width) * 100}%`,
                     height: `${(Math.min(resultFrame.height, targetDims.height) / targetDims.height) * 100}%`,
-                    border: `2px solid ${isComplete ? '#68D391' : '#EDAB68'}`,
+                    border: `2px solid ${isComplete ? '#5b8c3e' : '#e8a94f'}`,
                     transition: 'all 0.3s ease-out',
                   }}
                 />
               </div>
             </button>
             {isComplete && (
-              <p className="text-xs font-mono text-center mt-1" style={{ color: '#68D391' }}>✓</p>
+              <p className="font-pixel text-[7px] text-center mt-1" style={{ color: '#5b8c3e' }}>\u2713</p>
             )}
           </div>
         );
@@ -378,9 +351,6 @@ function SideBySideLevel({ level, onCorrect }) {
   );
 }
 
-// ═══════════════════════════════════════
-// ScaleFactor: pick the correct ratio
-// ═══════════════════════════════════════
 function ScaleFactorLevel({ level, onCorrect }) {
   const [selected, setSelected] = useState(null);
   const [done, setDone] = useState(false);
@@ -404,19 +374,19 @@ function ScaleFactorLevel({ level, onCorrect }) {
 
   return (
     <div>
-      <div className="glass-card-subtle p-4 mb-4">
+      <div className="pixel-panel-dark p-4 mb-4">
         <div className="flex justify-between mb-3">
-          <div className="text-sm" style={{ color: '#A0AEC0' }}>
-            <span className="font-mono" style={{ color: '#4FD1C5' }}>Source:</span>{' '}
-            <span className="font-mono" style={{ color: '#EDAB68' }}>{source.width} × {source.height}</span>
+          <div className="text-sm" style={{ color: '#b8a080' }}>
+            <span className="font-mono" style={{ color: '#3c7a3c' }}>Source:</span>{' '}
+            <span className="font-mono" style={{ color: '#e8a94f' }}>{source.width} \u00d7 {source.height}</span>
           </div>
-          <div className="text-sm" style={{ color: '#A0AEC0' }}>
-            <span className="font-mono" style={{ color: '#4FD1C5' }}>Target:</span>{' '}
-            <span className="font-mono" style={{ color: '#EDAB68' }}>{target.width} × {target.height}</span>
+          <div className="text-sm" style={{ color: '#b8a080' }}>
+            <span className="font-mono" style={{ color: '#3c7a3c' }}>Target:</span>{' '}
+            <span className="font-mono" style={{ color: '#e8a94f' }}>{target.width} \u00d7 {target.height}</span>
           </div>
         </div>
-        <p className="text-xs mb-1" style={{ color: '#A0AEC0' }}>
-          Fit method: <span className="font-mono" style={{ color: '#EDAB68' }}>{level.fitMethod}</span> = pick the <strong>{level.fitMethod === 'fit_all' ? 'smaller' : 'larger'}</strong> ratio
+        <p className="text-xs mb-1" style={{ color: '#b8a080' }}>
+          Fit method: <span className="font-mono" style={{ color: '#e8a94f' }}>{level.fitMethod}</span> = pick the <strong>{level.fitMethod === 'fit_all' ? 'smaller' : 'larger'}</strong> ratio
         </p>
       </div>
 
@@ -430,19 +400,11 @@ function ScaleFactorLevel({ level, onCorrect }) {
               key={idx}
               onClick={() => handlePick(idx)}
               disabled={done || isWrong}
-              className={`glass-pill w-full px-4 py-3.5 rounded-xl text-left font-mono text-sm ${isWrong ? 'animate-shake' : ''}`}
+              className={`pixel-pill w-full px-4 py-3.5 text-left font-mono text-sm ${isWrong ? 'animate-shake' : ''}`}
               style={{
-                background: isCorrectPick
-                  ? 'rgba(104, 211, 145, 0.12)'
-                  : isWrong
-                    ? 'rgba(252, 129, 129, 0.06)'
-                    : undefined,
-                borderColor: isCorrectPick
-                  ? 'rgba(104, 211, 145, 0.4)'
-                  : isWrong
-                    ? 'rgba(252, 129, 129, 0.3)'
-                    : undefined,
-                color: isCorrectPick ? '#68D391' : isWrong ? '#FC8181' : '#E2E8F0',
+                background: isCorrectPick ? '#d4e8c4' : isWrong ? '#e8c4c4' : undefined,
+                borderColor: isCorrectPick ? '#5b8c3e' : isWrong ? '#c85a5a' : undefined,
+                color: isCorrectPick ? '#2a5a1e' : isWrong ? '#8a3a3a' : '#3d2b1f',
                 opacity: isWrong ? 0.5 : 1,
               }}
             >
@@ -454,7 +416,7 @@ function ScaleFactorLevel({ level, onCorrect }) {
 
       {done && (
         <div className="mt-3 text-center animate-fade-in">
-          <p className="text-sm font-mono" style={{ color: '#68D391' }}>
+          <p className="text-sm font-mono" style={{ color: '#5b8c3e' }}>
             Scale factor = {level.scaleOptions.find((o) => o.correct).value}
           </p>
         </div>
@@ -463,9 +425,6 @@ function ScaleFactorLevel({ level, onCorrect }) {
   );
 }
 
-// ═══════════════════════════════════════
-// RoundingPick: pick correctly rounded value
-// ═══════════════════════════════════════
 function RoundingPickLevel({ level, onCorrect }) {
   const [selected, setSelected] = useState(null);
   const [done, setDone] = useState(false);
@@ -485,9 +444,9 @@ function RoundingPickLevel({ level, onCorrect }) {
 
   return (
     <div>
-      <div className="glass-card-subtle p-4 mb-4 font-mono text-sm" style={{ color: '#E2E8F0' }}>
-        <p style={{ color: '#A0AEC0' }}>{level.calculation}</p>
-        <p className="mt-1" style={{ color: '#4FD1C5' }}>Round to even, up →</p>
+      <div className="pixel-panel-dark p-4 mb-4 font-mono text-sm" style={{ color: '#f5f0e1' }}>
+        <p style={{ color: '#b8a080' }}>{level.calculation}</p>
+        <p className="mt-1" style={{ color: '#e8a94f' }}>Round to even, up \u2192</p>
       </div>
 
       <div className="grid grid-cols-2 gap-2.5">
@@ -501,19 +460,11 @@ function RoundingPickLevel({ level, onCorrect }) {
               key={idx}
               onClick={() => handlePick(idx)}
               disabled={isDisabled || done}
-              className="glass-pill px-4 py-3.5 rounded-xl font-mono text-lg font-bold"
+              className="pixel-pill px-4 py-3.5 font-mono text-lg font-bold"
               style={{
-                background: isCorrectPick
-                  ? 'rgba(104, 211, 145, 0.12)'
-                  : isWrong
-                    ? 'rgba(252, 129, 129, 0.06)'
-                    : undefined,
-                borderColor: isCorrectPick
-                  ? 'rgba(104, 211, 145, 0.4)'
-                  : isWrong
-                    ? 'rgba(252, 129, 129, 0.3)'
-                    : undefined,
-                color: isCorrectPick ? '#68D391' : isWrong ? '#FC8181' : '#E2E8F0',
+                background: isCorrectPick ? '#d4e8c4' : isWrong ? '#e8c4c4' : undefined,
+                borderColor: isCorrectPick ? '#5b8c3e' : isWrong ? '#c85a5a' : undefined,
+                color: isCorrectPick ? '#2a5a1e' : isWrong ? '#8a3a3a' : '#3d2b1f',
                 opacity: isDisabled ? 0.5 : 1,
                 cursor: isDisabled || done ? 'not-allowed' : 'pointer',
               }}
@@ -527,9 +478,6 @@ function RoundingPickLevel({ level, onCorrect }) {
   );
 }
 
-// ═══════════════════════════════════════
-// Alignment: drag frame to alignment position
-// ═══════════════════════════════════════
 function AlignmentLevel({ level, onCorrect }) {
   const [currentMode, setCurrentMode] = useState(0);
   const [done, setDone] = useState(false);
@@ -568,12 +516,12 @@ function AlignmentLevel({ level, onCorrect }) {
   return (
     <div>
       <div
-        className="relative w-full mx-auto rounded-lg"
+        className="relative w-full mx-auto"
         style={{
           aspectRatio: `${target.width}/${target.height}`,
-          backgroundColor: '#0D1117',
-          border: isPad ? '2px dotted #2D3748' : '1px solid rgba(255, 255, 255, 0.06)',
-          boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3)',
+          backgroundColor: '#1a1008',
+          border: isPad ? '3px dotted #5a4432' : '3px solid #5a4432',
+          boxShadow: 'inset 2px 2px 0 #2a1f14, 3px 3px 0 rgba(0,0,0,0.2)',
           maxWidth: '100%',
         }}
       >
@@ -584,15 +532,15 @@ function AlignmentLevel({ level, onCorrect }) {
             top: `${(pos.y / target.height) * 100}%`,
             width: `${(frame.width / target.width) * 100}%`,
             height: `${(frame.height / target.height) * 100}%`,
-            backgroundColor: '#1C2333',
-            border: `2px solid ${snapped.has(currentMode) ? '#68D391' : '#EDAB68'}`,
+            backgroundColor: '#3d3225',
+            border: `2px solid ${snapped.has(currentMode) ? '#5b8c3e' : '#e8a94f'}`,
           }}
         />
       </div>
 
-      <p className="text-sm mt-3 mb-3 text-center font-mono" style={{ color: '#A0AEC0' }}>
+      <p className="text-sm mt-3 mb-3 text-center font-mono" style={{ color: '#b8a080' }}>
         {mode.label}
-        <span className="ml-2" style={{ color: '#4FD1C5' }}>
+        <span className="ml-2" style={{ color: '#e8a94f' }}>
           ({pos.x}, {pos.y})
         </span>
       </p>
@@ -600,24 +548,21 @@ function AlignmentLevel({ level, onCorrect }) {
       {!snapped.has(currentMode) && (
         <button
           onClick={handleSnap}
-          className="btn-primary w-full py-3 text-base"
+          className="btn-primary w-full py-3 text-base font-pixel text-[10px]"
         >
-          {isPad ? 'Confirm Alignment' : `Align: ${mode.label}`}
+          {isPad ? 'CONFIRM' : `ALIGN: ${mode.label}`}
         </button>
       )}
 
       {snapped.has(currentMode) && !done && (
-        <p className="text-sm text-center mt-2 animate-fade-in" style={{ color: '#68D391' }}>
-          ✓ Now try the next alignment...
+        <p className="text-sm text-center mt-2 animate-fade-in" style={{ color: '#5b8c3e' }}>
+          Now try the next alignment...
         </p>
       )}
     </div>
   );
 }
 
-// ═══════════════════════════════════════
-// Anamorphic: set squeeze value
-// ═══════════════════════════════════════
 function AnamorphicLevel({ level, onCorrect }) {
   const [squeeze, setSqueeze] = useState(1.0);
   const [done, setDone] = useState(false);
@@ -642,13 +587,12 @@ function AnamorphicLevel({ level, onCorrect }) {
   return (
     <div>
       <div
-        className="relative w-full mx-auto rounded-lg select-none"
+        className="relative w-full mx-auto select-none"
         style={{
           aspectRatio: `${displayAR}`,
-          backgroundColor: '#1C2333',
-          border: `1px solid ${done ? '#68D391' : 'rgba(255, 255, 255, 0.06)'}`,
-          borderBottom: `1px solid ${done ? '#68D391' : 'rgba(255, 255, 255, 0.1)'}`,
-          boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3)',
+          backgroundColor: '#3d3225',
+          border: `3px solid ${done ? '#5b8c3e' : '#5a4432'}`,
+          boxShadow: 'inset 2px 2px 0 #4d3c2a, 3px 3px 0 rgba(0,0,0,0.2)',
           maxWidth: '100%',
           overflow: 'hidden',
         }}
@@ -660,15 +604,15 @@ function AnamorphicLevel({ level, onCorrect }) {
             height: `${(framing.height / canvasDims.height) * 100}%`,
             width: `${((desqueezedWidth / canvasDims.width) * 100)}%`,
             left: `${((canvasDims.width - desqueezedWidth) / 2 / canvasDims.width) * 100}%`,
-            border: `2px solid ${done ? '#68D391' : '#EDAB68'}`,
+            border: `2px solid ${done ? '#5b8c3e' : '#e8a94f'}`,
           }}
         />
       </div>
 
       <div className="mt-4">
-        <label className="text-sm font-mono block mb-2" style={{ color: '#A0AEC0' }}>
+        <label className="text-sm font-mono block mb-2" style={{ color: '#b8a080' }}>
           anamorphic_squeeze:
-          <span className="ml-2 font-bold" style={{ color: '#EDAB68' }}>
+          <span className="ml-2 font-bold" style={{ color: '#e8a94f' }}>
             {squeeze.toFixed(1)}
           </span>
         </label>
@@ -680,26 +624,22 @@ function AnamorphicLevel({ level, onCorrect }) {
           value={squeeze}
           onChange={(e) => !done && setSqueeze(parseFloat(e.target.value))}
           disabled={done}
-          className="w-full accent-amber-400"
-          style={{ accentColor: '#EDAB68' }}
+          className="w-full"
         />
-        <div className="flex justify-between text-xs font-mono" style={{ color: '#4A5568' }}>
-          <span>1.0×</span>
-          <span>1.5×</span>
-          <span>2.0×</span>
+        <div className="flex justify-between font-pixel text-[7px]" style={{ color: '#6b5a4e' }}>
+          <span>1.0x</span>
+          <span>1.5x</span>
+          <span>2.0x</span>
         </div>
       </div>
 
-      <div className="mt-3 font-mono text-sm text-center" style={{ color: '#A0AEC0' }}>
-        Normalized width: <span style={{ color: '#EDAB68' }}>{Math.round(desqueezedWidth)}</span> px
+      <div className="mt-3 font-mono text-sm text-center" style={{ color: '#b8a080' }}>
+        Normalized width: <span style={{ color: '#e8a94f' }}>{Math.round(desqueezedWidth)}</span> px
       </div>
     </div>
   );
 }
 
-// ═══════════════════════════════════════
-// PipelineConfig: select fit_source & preserve
-// ═══════════════════════════════════════
 function PipelineConfigLevel({ level, onCorrect }) {
   const [fitSource, setFitSource] = useState(null);
   const [preserve, setPreserve] = useState(null);
@@ -717,7 +657,7 @@ function PipelineConfigLevel({ level, onCorrect }) {
 
   const renderOptions = (options, selected, onSelect, label) => (
     <div className="mb-4">
-      <p className="font-mono text-sm mb-2" style={{ color: '#4FD1C5' }}>
+      <p className="font-mono text-sm mb-2 font-medium" style={{ color: '#3c7a3c' }}>
         "{label}":
       </p>
       <div className="space-y-1.5">
@@ -729,23 +669,11 @@ function PipelineConfigLevel({ level, onCorrect }) {
             <button
               key={opt.id}
               onClick={() => !done && onSelect(opt.id)}
-              className="glass-pill w-full px-4 py-2.5 rounded-xl text-left font-mono text-sm"
+              className="pixel-pill w-full px-4 py-2.5 text-left font-mono text-sm"
               style={{
-                background: isCorrectOpt
-                  ? 'rgba(104, 211, 145, 0.12)'
-                  : isWrongOpt
-                    ? 'rgba(252, 129, 129, 0.06)'
-                    : isSelected
-                      ? 'rgba(237, 171, 104, 0.08)'
-                      : undefined,
-                borderColor: isCorrectOpt
-                  ? 'rgba(104, 211, 145, 0.4)'
-                  : isWrongOpt
-                    ? 'rgba(252, 129, 129, 0.3)'
-                    : isSelected
-                      ? 'rgba(237, 171, 104, 0.3)'
-                      : undefined,
-                color: isCorrectOpt ? '#68D391' : isWrongOpt ? '#FC8181' : '#E2E8F0',
+                background: isCorrectOpt ? '#d4e8c4' : isWrongOpt ? '#e8c4c4' : isSelected ? '#e8dcc8' : undefined,
+                borderColor: isCorrectOpt ? '#5b8c3e' : isWrongOpt ? '#c85a5a' : isSelected ? '#b8a080' : undefined,
+                color: isCorrectOpt ? '#2a5a1e' : isWrongOpt ? '#8a3a3a' : '#3d2b1f',
               }}
             >
               {opt.label}
@@ -762,12 +690,12 @@ function PipelineConfigLevel({ level, onCorrect }) {
       {renderOptions(level.preserveOptions, preserve, setPreserve, 'preserve_from_source_canvas')}
 
       {done && (
-        <div className="glass-card-subtle mt-3 p-3 animate-fade-in" style={{ borderColor: 'rgba(104,211,145,0.2)' }}>
-          <p className="text-xs font-mono" style={{ color: '#68D391' }}>
-            Phase 2: Populate source geometry ✓
+        <div className="pixel-panel-dark mt-3 p-3 animate-fade-in" style={{ borderColor: '#5b8c3e' }}>
+          <p className="font-pixel text-[7px]" style={{ color: '#5b8c3e' }}>
+            Phase 2: Populate source geometry
           </p>
-          <p className="text-xs font-mono" style={{ color: '#68D391' }}>
-            Phase 3: Fill hierarchy gaps ✓
+          <p className="font-pixel text-[7px]" style={{ color: '#5b8c3e' }}>
+            Phase 3: Fill hierarchy gaps
           </p>
         </div>
       )}
@@ -775,9 +703,6 @@ function PipelineConfigLevel({ level, onCorrect }) {
   );
 }
 
-// ═══════════════════════════════════════
-// Main FrameLevel component
-// ═══════════════════════════════════════
 export default function FrameLevel({ level, onCorrect, showReveal }) {
   const [frame, setFrame] = useState(null);
   const [protection, setProtection] = useState(null);
@@ -788,19 +713,12 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
   const frameAtDragStart = useRef(null);
 
   useEffect(() => {
-    if (level.startFrame) {
-      setFrame({ ...level.startFrame });
-    }
-    if (level.startProtection) {
-      setProtection({ ...level.startProtection });
-    }
-    if (level.anchorStart) {
-      setAnchorPos({ ...level.anchorStart });
-    }
+    if (level.startFrame) setFrame({ ...level.startFrame });
+    if (level.startProtection) setProtection({ ...level.startProtection });
+    if (level.anchorStart) setAnchorPos({ ...level.anchorStart });
     setIsCorrect(false);
   }, [level.id]);
 
-  // Route to subtypes
   if (level.subtype === 'connect') {
     return (
       <div>
@@ -891,7 +809,6 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
     );
   }
 
-  // Default: canvas drag/resize
   const canvasDims = level.canvas;
   const target = level.target;
 
@@ -1080,26 +997,26 @@ export default function FrameLevel({ level, onCorrect, showReveal }) {
         onPointerUp={handlePointerUp}
       />
 
-      <div className="flex justify-center gap-4 mt-3 font-mono text-sm" style={{ color: '#A0AEC0' }}>
+      <div className="flex justify-center gap-4 mt-3 font-mono text-sm" style={{ color: '#b8a080' }}>
         {readoutFrame && (
           <>
             {(level.draggable === 'position' || level.draggable === 'anchorMarker') && (
               <>
                 <span>
-                  x: <span style={{ color: '#EDAB68' }}>{Math.round(readoutFrame.x)}</span>
+                  x: <span style={{ color: '#e8a94f' }}>{Math.round(readoutFrame.x)}</span>
                 </span>
                 <span>
-                  y: <span style={{ color: '#EDAB68' }}>{Math.round(readoutFrame.y)}</span>
+                  y: <span style={{ color: '#e8a94f' }}>{Math.round(readoutFrame.y)}</span>
                 </span>
               </>
             )}
             {level.draggable !== 'anchorMarker' && (
               <>
                 <span>
-                  w: <span style={{ color: '#EDAB68' }}>{Math.round(readoutFrame.width)}</span>
+                  w: <span style={{ color: '#e8a94f' }}>{Math.round(readoutFrame.width)}</span>
                 </span>
                 <span>
-                  h: <span style={{ color: '#EDAB68' }}>{Math.round(readoutFrame.height)}</span>
+                  h: <span style={{ color: '#e8a94f' }}>{Math.round(readoutFrame.height)}</span>
                 </span>
               </>
             )}

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
+import CharacterPortrait, { CHARACTER_NAMES } from './CharacterPortrait.jsx';
 
-export default function GameComplete({ totalLevels, streak, onRestart }) {
+const ALL_CHARACTERS = ['robin', 'morgan', 'quinn', 'sage'];
+
+export default function GameComplete({ totalScenes, streak, onRestart }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -10,85 +13,95 @@ export default function GameComplete({ totalLevels, streak, onRestart }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto"
-      style={{ backgroundColor: 'rgba(8, 10, 15, 0.92)' }}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4"
+      style={{ backgroundColor: 'rgba(26, 48, 18, 0.95)' }}
     >
       <div
-        className={`text-center px-8 py-10 max-w-md glass-card ${show ? 'animate-bounce-in' : 'opacity-0'}`}
+        className={`text-center px-6 py-8 max-w-md pixel-panel ${show ? 'animate-bounce-in' : 'opacity-0'}`}
       >
-        <div className="text-7xl mb-4">🏆</div>
         <h1
-          className="text-3xl font-bold mb-2"
-          style={{ color: '#EDAB68', textShadow: '0 0 24px rgba(237, 171, 104, 0.3)' }}
+          className="font-pixel text-sm mb-2"
+          style={{ color: '#8b6914', textShadow: '2px 2px 0 rgba(139,105,20,0.3)' }}
         >
-          FDL CERTIFIED
+          PRODUCTION SAVED
         </h1>
-        <p
-          className="text-lg mb-6 leading-relaxed"
-          style={{ color: '#E2E8F0' }}
-        >
-          You understand the ASC Framing Decision List and the Template Application Pipeline!
+        <p className="text-sm mb-6 leading-relaxed" style={{ color: '#3d2b1f' }}>
+          Thanks to the whole team, the FDL pipeline is fixed
+          and every frame is being delivered exactly as the DP intended.
         </p>
 
-        <div
-          className="glass-card-subtle p-4 mb-6 flex justify-around"
-        >
+        <div className="flex justify-center gap-3 mb-6">
+          {ALL_CHARACTERS.map((char) => (
+            <div key={char} className="text-center">
+              <div
+                className="p-1 mb-1"
+                style={{
+                  border: '2px solid #8b5e3c',
+                  background: '#2a1f14',
+                }}
+              >
+                <CharacterPortrait character={char} expression="happy" size="lg" />
+              </div>
+              <p className="font-pixel text-[6px]" style={{ color: '#5a4432' }}>
+                {CHARACTER_NAMES[char]}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="pixel-panel-dark p-4 mb-6 flex justify-around" style={{ background: '#e8dcc8', borderColor: '#8b5e3c' }}>
           <div className="text-center">
-            <p className="text-2xl font-bold font-mono" style={{ color: '#68D391' }}>{totalLevels}</p>
-            <p className="text-xs tracking-wide" style={{ color: '#A0AEC0' }}>Levels</p>
+            <p className="text-xl font-bold font-mono" style={{ color: '#5b8c3e' }}>{totalScenes}</p>
+            <p className="font-pixel text-[6px]" style={{ color: '#7a6350' }}>Scenes</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold font-mono" style={{ color: '#EDAB68' }}>🔥 {streak}</p>
-            <p className="text-xs tracking-wide" style={{ color: '#A0AEC0' }}>Best Streak</p>
+            <p className="text-xl font-bold font-mono" style={{ color: '#e8a94f' }}>{streak}x</p>
+            <p className="font-pixel text-[6px]" style={{ color: '#7a6350' }}>Best Streak</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold font-mono" style={{ color: '#4FD1C5' }}>6</p>
-            <p className="text-xs tracking-wide" style={{ color: '#A0AEC0' }}>Zones</p>
+            <p className="text-xl font-bold font-mono" style={{ color: '#5ba3c9' }}>4</p>
+            <p className="font-pixel text-[6px]" style={{ color: '#7a6350' }}>Chapters</p>
           </div>
         </div>
 
-        <div
-          className="glass-card-subtle p-6 mb-8 text-left"
-        >
+        <div className="pixel-panel p-4 mb-6 text-left" style={{ background: '#e8dcc8' }}>
           <h3
-            className="font-semibold mb-4 text-center tracking-wide"
-            style={{ color: '#4FD1C5' }}
+            className="font-pixel text-[8px] mb-3 text-center"
+            style={{ color: '#8b6914' }}
           >
-            What you learned
+            WHAT YOU LEARNED
           </h3>
-          <ul className="space-y-2 text-sm" style={{ color: '#A0AEC0' }}>
+          <ul className="space-y-1.5 text-xs" style={{ color: '#5a4432' }}>
             {[
-              'The four-level geometry hierarchy',
-              'What anchor points are and how they position each layer',
-              'Framing Intents and how aspect ratios work',
-              'How Framing Decisions are calculated',
-              'Protection dimensions — and that they\'re never auto-filled',
-              'How Contexts wire canvases to framing decisions',
-              'What a complete FDL JSON file looks like',
-              'Canvas Templates and what they control',
-              'How fit_source determines which layer drives scaling',
-              'The four fit methods and when to use each',
-              'Scale factors, rounding strategies, and alignment',
-              'PAD, CROP, and FIT output modes',
-              'How anamorphic squeeze affects the pipeline',
-              'The 8-phase template application pipeline',
+              'When and why to use FDL (Rule of Defaults)',
+              'Camera Formats and MPS workflow',
+              'Canvas setup from real camera sensors',
+              'Framing Decisions from DP intent',
+              'Protection zones for stabilization',
+              'Multi-camera Contexts with shared intents',
+              'Anamorphic squeeze and desqueeze',
+              'FDL file metadata and structure',
+              'Canvas Templates for VFX pulls',
+              'fit_all vs fill for plate delivery',
+              'Scale factors and rounding rules',
+              'Alignment methods and the 8-phase pipeline',
+              'Reference integrity and validation',
+              'Protection is sacred — never auto-filled',
             ].map((item, i) => (
               <li key={i} className="flex gap-2">
-                <span style={{ color: '#68D391' }}>✓</span>
+                <span style={{ color: '#5b8c3e' }}>\u2713</span>
                 <span>{item}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={onRestart}
-            className="btn-primary px-8 py-3 text-lg"
-          >
-            Play Again
-          </button>
-        </div>
+        <button
+          onClick={onRestart}
+          className="btn-primary w-full py-3 font-pixel text-[10px]"
+        >
+          PLAY AGAIN
+        </button>
       </div>
     </div>
   );

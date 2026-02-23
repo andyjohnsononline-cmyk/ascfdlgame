@@ -1,5 +1,5 @@
 export default function JsonReveal({ lines, highlightKeys = [], visible }) {
-  if (!visible) return null;
+  if (!visible || !lines) return null;
 
   const highlightLine = (line) => {
     const parts = [];
@@ -7,7 +7,6 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
     let idx = 0;
 
     while (remaining.length > 0) {
-      // Match JSON key: "key"
       const keyMatch = remaining.match(/^("[\w_.]+")\s*:/);
       if (keyMatch) {
         const key = keyMatch[1];
@@ -16,25 +15,25 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
         parts.push(
           <span
             key={idx++}
-            className={isHighlighted ? 'rounded px-0.5' : ''}
+            className={isHighlighted ? 'px-0.5' : ''}
             style={{
-              color: '#4FD1C5',
-              backgroundColor: isHighlighted ? 'rgba(237, 171, 104, 0.15)' : 'transparent',
+              color: '#2E7D32',
+              backgroundColor: isHighlighted ? 'rgba(232, 169, 70, 0.2)' : 'transparent',
+              fontWeight: isHighlighted ? 700 : 400,
             }}
           >
             {key}
           </span>
         );
-        parts.push(<span key={idx++} style={{ color: '#718096' }}>: </span>);
+        parts.push(<span key={idx++} style={{ color: '#795548' }}>: </span>);
         remaining = remaining.slice(keyMatch[0].length);
         continue;
       }
 
-      // Match string value: "value"
       const strMatch = remaining.match(/^"([^"]*)"/);
       if (strMatch) {
         parts.push(
-          <span key={idx++} style={{ color: '#68D391' }}>
+          <span key={idx++} style={{ color: '#E65100' }}>
             "{strMatch[1]}"
           </span>
         );
@@ -42,11 +41,10 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
         continue;
       }
 
-      // Match number
       const numMatch = remaining.match(/^(\d+\.?\d*)/);
       if (numMatch) {
         parts.push(
-          <span key={idx++} style={{ color: '#EDAB68' }}>
+          <span key={idx++} style={{ color: '#1565C0' }}>
             {numMatch[1]}
           </span>
         );
@@ -54,11 +52,10 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
         continue;
       }
 
-      // Match brackets / braces
       const bracketMatch = remaining.match(/^([{}[\],])/);
       if (bracketMatch) {
         parts.push(
-          <span key={idx++} style={{ color: '#718096' }}>
+          <span key={idx++} style={{ color: '#795548' }}>
             {bracketMatch[1]}
           </span>
         );
@@ -66,11 +63,10 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
         continue;
       }
 
-      // Match comment: // ...
       const commentMatch = remaining.match(/^(\/\/.*)/);
       if (commentMatch) {
         parts.push(
-          <span key={idx++} style={{ color: '#A0AEC0', fontStyle: 'italic' }}>
+          <span key={idx++} style={{ color: '#8D6E63', fontStyle: 'italic' }}>
             {commentMatch[1]}
           </span>
         );
@@ -78,11 +74,10 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
         continue;
       }
 
-      // Match arrow or special chars
       const arrowMatch = remaining.match(/^(←[^"]*)/);
       if (arrowMatch) {
         parts.push(
-          <span key={idx++} style={{ color: '#68D391', fontStyle: 'italic' }}>
+          <span key={idx++} style={{ color: '#E57373', fontStyle: 'italic', fontWeight: 700 }}>
             {arrowMatch[1]}
           </span>
         );
@@ -90,9 +85,8 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
         continue;
       }
 
-      // Default: take one character
       parts.push(
-        <span key={idx++} style={{ color: '#E2E8F0' }}>
+        <span key={idx++} style={{ color: '#3E2723' }}>
           {remaining[0]}
         </span>
       );
@@ -106,18 +100,12 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
 
   return (
     <div className="animate-slide-up mt-4">
-      <div
-        className="glass-card p-4 font-mono text-sm leading-relaxed"
-        style={{
-          minHeight: '40px',
-          fontSize: '14px',
-        }}
-      >
+      <div className="pixel-panel p-4 font-mono text-sm leading-relaxed" style={{ minHeight: '40px', fontSize: '13px' }}>
         <div
-          className="text-xs font-sans font-semibold mb-2 tracking-wider uppercase"
-          style={{ color: '#4FD1C5' }}
+          className="pixel-header mb-2"
+          style={{ color: '#2E7D32', fontSize: '8px' }}
         >
-          JSON
+          FDL
         </div>
         {codeLines.map((line, i) => (
           <div key={i} className="whitespace-pre">
