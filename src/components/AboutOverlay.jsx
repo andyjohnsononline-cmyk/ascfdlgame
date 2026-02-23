@@ -28,7 +28,8 @@ export default function AboutOverlay({ onClose }) {
 
         <p className="text-sm mb-4" style={{ color: '#A0AEC0' }}>
           An interactive game to learn the ASC Framing Decision List —
-          the industry standard for communicating creative framing from set to screen.
+          the industry standard for communicating creative framing from set to screen,
+          including the Canvas Template application pipeline.
         </p>
 
         <h3 className="font-semibold mb-2 text-sm" style={{ color: '#4FD1C5' }}>
@@ -44,6 +45,17 @@ export default function AboutOverlay({ onClose }) {
               className="hover:underline"
             >
               ASC FDL Spec & Docs
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://ascmitc.github.io/fdl/dev/FDL_Template_Implementer_Guide/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#F6AD55' }}
+              className="hover:underline"
+            >
+              FDL Template Implementer Guide
             </a>
           </li>
           <li>
@@ -67,6 +79,11 @@ export default function AboutOverlay({ onClose }) {
             >
               pyfdl Python Toolkit
             </a>
+          </li>
+          <li>
+            <span style={{ color: '#A0AEC0' }}>
+              Netflix Framing Working Resolution Calculator — search online
+            </span>
           </li>
         </ul>
       </div>
