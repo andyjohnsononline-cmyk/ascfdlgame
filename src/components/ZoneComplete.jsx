@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import CharacterPortrait, { CHARACTER_NAMES } from './CharacterPortrait.jsx';
 
-export default function ZoneComplete({ reward, onContinue }) {
+export default function ZoneComplete({ chapterIndex, reward, character, onContinue }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -10,24 +11,43 @@ export default function ZoneComplete({ reward, onContinue }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(8, 10, 15, 0.88)' }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: 'rgba(26, 48, 18, 0.92)' }}
     >
       <div
-        className={`text-center px-8 py-10 max-w-sm glass-card ${show ? 'animate-bounce-in' : 'opacity-0'}`}
+        className={`text-center px-6 py-8 max-w-sm pixel-panel ${show ? 'animate-bounce-in' : 'opacity-0'}`}
       >
-        <div className="text-6xl mb-4">{reward.emoji}</div>
+        <div className="flex justify-center mb-4">
+          <div
+            className="p-1.5"
+            style={{
+              border: '3px solid #8b5e3c',
+              background: '#2a1f14',
+            }}
+          >
+            <CharacterPortrait character={character} expression="happy" size="xl" />
+          </div>
+        </div>
+
         <h2
-          className="text-2xl font-bold mb-6 leading-tight"
-          style={{ color: '#E2E8F0' }}
+          className="font-pixel text-[10px] leading-relaxed mb-2"
+          style={{ color: '#8b6914' }}
+        >
+          CHAPTER COMPLETE
+        </h2>
+
+        <p
+          className="text-sm leading-relaxed mb-6"
+          style={{ color: '#3d2b1f' }}
         >
           {reward.text}
-        </h2>
+        </p>
+
         <button
           onClick={onContinue}
-          className="btn-primary px-8 py-3 text-lg"
+          className="btn-primary px-8 py-3 font-pixel text-[10px]"
         >
-          Continue
+          CONTINUE
         </button>
       </div>
     </div>

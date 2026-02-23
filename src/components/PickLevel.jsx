@@ -40,28 +40,30 @@ export default function PickLevel({ level, onCorrect, onWrong, showReveal }) {
               key={i}
               onClick={() => handleOption(option, i)}
               disabled={isDisabled}
-              className="glass-pill w-full px-4 py-3.5 rounded-xl text-left text-sm font-medium"
+              className={`pixel-pill w-full px-4 py-3.5 text-left text-sm font-medium ${
+                showWrong ? 'animate-shake' : ''
+              }`}
               style={{
                 background: showCorrect
-                  ? 'rgba(104, 211, 145, 0.12)'
+                  ? '#d4e8c4'
                   : showWrong
-                    ? 'rgba(252, 129, 129, 0.06)'
+                    ? '#e8c4c4'
                     : undefined,
                 borderColor: showCorrect
-                  ? 'rgba(104, 211, 145, 0.4)'
+                  ? '#5b8c3e'
                   : showWrong
-                    ? 'rgba(252, 129, 129, 0.3)'
+                    ? '#c85a5a'
                     : undefined,
                 color: showCorrect
-                  ? '#68D391'
+                  ? '#2a5a1e'
                   : showWrong
-                    ? '#FC8181'
+                    ? '#8a3a3a'
                     : isDisabled
-                      ? '#4A5568'
-                      : '#E2E8F0',
+                      ? '#a09080'
+                      : '#3d2b1f',
                 opacity: isDisabled && !showCorrect ? 0.5 : 1,
                 cursor: isDisabled ? 'not-allowed' : 'pointer',
-                boxShadow: showCorrect ? '0 0 16px rgba(104, 211, 145, 0.15)' : 'none',
+                boxShadow: showCorrect ? '3px 3px 0 rgba(91,140,62,0.3)' : undefined,
               }}
             >
               {option.text}
