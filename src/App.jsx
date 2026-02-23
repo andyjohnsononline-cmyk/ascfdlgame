@@ -233,7 +233,7 @@ export default function App() {
                 </button>
               </div>
 
-              {scene.challenge.newConcept && (
+              {scene.newConcept && (
                 <span
                   className="inline-block text-xs font-bold px-2.5 py-1 mb-2"
                   style={{
@@ -242,7 +242,7 @@ export default function App() {
                     border: '2px solid #E8A946',
                   }}
                 >
-                  NEW: {scene.challenge.newConcept}
+                  NEW: {scene.newConcept}
                 </span>
               )}
             </div>
@@ -272,27 +272,27 @@ export default function App() {
 
                 {/* Challenge content */}
                 <div>
-                  {scene.challenge.type === 'frame' && (
+                  {scene.type === 'frame' && (
                     <FrameLevel
                       key={scene.id}
-                      level={scene.challenge}
+                      level={scene}
                       onCorrect={handleCorrect}
                       showReveal={showReveal}
                     />
                   )}
-                  {scene.challenge.type === 'fix' && (
+                  {scene.type === 'fix' && (
                     <FixLevel
                       key={scene.id}
-                      level={scene.challenge}
+                      level={scene}
                       onCorrect={handleCorrect}
                       onWrong={handleWrong}
                       showReveal={showReveal}
                     />
                   )}
-                  {scene.challenge.type === 'pick' && (
+                  {scene.type === 'pick' && (
                     <PickLevel
                       key={scene.id}
-                      level={scene.challenge}
+                      level={scene}
                       onCorrect={handleCorrect}
                       onWrong={handleWrong}
                       showReveal={showReveal}
