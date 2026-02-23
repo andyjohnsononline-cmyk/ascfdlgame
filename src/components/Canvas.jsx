@@ -138,7 +138,7 @@ export default function Canvas({
         {
           key: 'framing',
           frame: layers.framing,
-          color: '#F6AD55',
+          color: '#EDAB68',
           label: 'FRAMING',
           pathLabel: 'framing_decision.dimensions',
         },
@@ -153,8 +153,10 @@ export default function Canvas({
         aspectRatio: `${aspectRatio}`,
         maxWidth: '100%',
         backgroundColor: '#1C2333',
-        border: '1px solid #2D3748',
-        borderRadius: '4px',
+        border: '1px solid rgba(255, 255, 255, 0.06)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRadius: '8px',
+        boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)',
         cursor: onPointerDown ? 'grab' : 'default',
         overflow: allowOverflow ? 'visible' : 'hidden',
       }}
@@ -226,7 +228,7 @@ export default function Canvas({
       {playerFrame && !isLayerSelectMode && (
         <div
           style={{
-            ...frameStyle(playerFrame, isCorrect ? '#68D391' : '#F6AD55', false),
+            ...frameStyle(playerFrame, isCorrect ? '#68D391' : '#EDAB68', false),
             pointerEvents: 'none',
             zIndex: 2,
           }}
@@ -234,7 +236,7 @@ export default function Canvas({
           {labels?.frame && (
             <span
               style={{
-                ...labelStyle(isCorrect ? '#68D391' : '#F6AD55'),
+                ...labelStyle(isCorrect ? '#68D391' : '#EDAB68'),
                 bottom: -16,
                 left: 0,
               }}
@@ -286,7 +288,7 @@ export default function Canvas({
                     left: 4,
                     fontSize: '10px',
                     fontFamily: 'var(--font-mono)',
-                    color: '#F6AD55',
+                    color: '#EDAB68',
                     opacity: 0.9,
                   }}
                 >
@@ -311,9 +313,9 @@ export default function Canvas({
           }}
         >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <line x1="14" y1="0" x2="14" y2="28" stroke={isCorrect ? '#68D391' : '#F6AD55'} strokeWidth="2" />
-            <line x1="0" y1="14" x2="28" y2="14" stroke={isCorrect ? '#68D391' : '#F6AD55'} strokeWidth="2" />
-            <circle cx="14" cy="14" r="6" stroke={isCorrect ? '#68D391' : '#F6AD55'} strokeWidth="2" fill="none" />
+            <line x1="14" y1="0" x2="14" y2="28" stroke={isCorrect ? '#68D391' : '#EDAB68'} strokeWidth="2" />
+            <line x1="0" y1="14" x2="28" y2="14" stroke={isCorrect ? '#68D391' : '#EDAB68'} strokeWidth="2" />
+            <circle cx="14" cy="14" r="6" stroke={isCorrect ? '#68D391' : '#EDAB68'} strokeWidth="2" fill="none" />
           </svg>
         </div>
       )}

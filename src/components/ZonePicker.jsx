@@ -103,7 +103,7 @@ function bezierPath(x1, y1, x2, y2, curveFactor = 0.25) {
   return `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
 }
 
-export default function ZonePicker({ completedLevels, currentLevel, onSelectLevel, onClose }) {
+export default function ZonePicker({ completedLevels, currentLevel, onSelectLevel, onClose, isLanding = false }) {
   const stars = useMemo(() => {
     const result = [];
     let seed = 42;
@@ -126,24 +126,51 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
     <div
       className="fixed inset-0 z-50 animate-fade-in"
       style={{ backgroundColor: 'rgba(8, 10, 15, 0.98)' }}
-      onClick={onClose}
+      onClick={isLanding ? undefined : onClose}
     >
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all hover:scale-110"
-        style={{ color: '#A0AEC0', backgroundColor: 'rgba(45, 55, 72, 0.5)' }}
-      >
-        ✕
-      </button>
+      {!isLanding && (
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all hover:scale-110"
+          style={{ color: '#A0AEC0', backgroundColor: 'rgba(45, 55, 72, 0.5)' }}
+        >
+          ✕
+        </button>
+      )}
 
       <div className="absolute top-4 left-4 z-10">
-        <h2
-          className="text-sm font-bold tracking-wide uppercase"
-          style={{ color: '#4A5568' }}
-        >
-          Star Map
-        </h2>
+        {isLanding ? (
+          <div className="animate-fade-in">
+            <h1
+              className="text-lg font-bold tracking-wide"
+              style={{ color: '#E2E8F0', textShadow: '0 0 30px rgba(246, 173, 85, 0.3)' }}
+            >
+              Frame It
+            </h1>
+            <p className="text-xs mt-0.5" style={{ color: '#A0AEC0' }}>
+              The ASC FDL Learning Game
+            </p>
+          </div>
+        ) : (
+          <h2
+            className="text-sm font-bold tracking-wide uppercase"
+            style={{ color: '#4A5568' }}
+          >
+            Star Map
+          </h2>
+        )}
       </div>
+
+      {isLanding && (
+        <div
+          className="absolute bottom-6 left-0 right-0 text-center z-10 animate-fade-in"
+          style={{ animationDelay: '0.4s', animationFillMode: 'backwards' }}
+        >
+          <p className="text-sm font-medium" style={{ color: '#A0AEC0' }}>
+            Tap any level to begin
+          </p>
+        </div>
+      )}
 
       <svg
         viewBox="0 0 800 900"
@@ -153,18 +180,21 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
       >
         <defs>
           <filter id="glow-amber" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
           <filter id="glow-green" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
+          </filter>
+          <filter id="node-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000000" floodOpacity="0.4" />
           </filter>
 
           {ZONE_CENTERS.map((c, zi) => (
@@ -173,17 +203,22 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
               id={`nebula-${zi}`}
               cx={c.x}
               cy={c.y}
-              r="130"
+              r="160"
               gradientUnits="userSpaceOnUse"
             >
               <stop
                 offset="0%"
-                stopColor={isZoneComplete(zi, completedLevels) ? '#68D391' : '#F6AD55'}
-                stopOpacity="0.07"
+                stopColor={isZoneComplete(zi, completedLevels) ? '#68D391' : '#EDAB68'}
+                stopOpacity="0.1"
+              />
+              <stop
+                offset="50%"
+                stopColor={isZoneComplete(zi, completedLevels) ? '#68D391' : '#EDAB68'}
+                stopOpacity="0.04"
               />
               <stop
                 offset="100%"
-                stopColor={isZoneComplete(zi, completedLevels) ? '#68D391' : '#F6AD55'}
+                stopColor={isZoneComplete(zi, completedLevels) ? '#68D391' : '#EDAB68'}
                 stopOpacity="0"
               />
             </radialGradient>
@@ -197,7 +232,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
 
         {/* Nebula glow behind each zone */}
         {ZONE_CENTERS.map((c, zi) => (
-          <circle key={`neb${zi}`} cx={c.x} cy={c.y} r={130} fill={`url(#nebula-${zi})`} />
+          <circle key={`neb${zi}`} cx={c.x} cy={c.y} r={160} fill={`url(#nebula-${zi})`} />
         ))}
 
         {/* Inter-zone dashed connectors */}
@@ -225,7 +260,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
           const total = getZoneLevelCount(zi);
           const labelPos = ZONE_LABEL_POS[zi];
           const pathColor = zoneDone ? '#68D391' : '#4A5568';
-          const pathOpacity = zoneDone ? 0.5 : 0.25;
+          const pathOpacity = zoneDone ? 0.55 : 0.3;
 
           return (
             <g
@@ -296,13 +331,13 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                 const typeLabel =
                   level?.type === 'frame' ? 'A' : level?.type === 'fix' ? 'B' : 'C';
 
-                const fill = isCurrent ? '#F6AD55' : isDone ? '#68D391' : '#1C2333';
-                const stroke = isCurrent ? '#F6AD55' : isDone ? '#68D391' : '#4A5568';
+                const fill = isCurrent ? '#EDAB68' : isDone ? '#68D391' : '#161E2C';
+                const stroke = isCurrent ? '#EDAB68' : isDone ? '#68D391' : '#4A5568';
                 const filterAttr = isCurrent
                   ? 'url(#glow-amber)'
                   : isDone
                     ? 'url(#glow-green)'
-                    : undefined;
+                    : 'url(#node-shadow)';
                 const textFill = isCurrent || isDone ? '#0D1117' : '#A0AEC0';
 
                 return (
@@ -322,7 +357,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                         cy={node.y}
                         r={20}
                         fill="none"
-                        stroke="#F6AD55"
+                        stroke="#EDAB68"
                         strokeWidth="1.5"
                       >
                         <animate
@@ -375,7 +410,7 @@ export default function ZonePicker({ completedLevels, currentLevel, onSelectLeve
                       x={node.x}
                       y={node.y + 28}
                       textAnchor="middle"
-                      fill={isCurrent ? '#F6AD55' : isDone ? '#68D391' : '#4A5568'}
+                      fill={isCurrent ? '#EDAB68' : isDone ? '#68D391' : '#4A5568'}
                       fontSize="8"
                       fontFamily="'JetBrains Mono', monospace"
                       style={{ pointerEvents: 'none' }}

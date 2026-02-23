@@ -11,15 +11,15 @@ export default function GameComplete({ totalLevels, streak, onRestart }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto"
-      style={{ backgroundColor: 'rgba(13, 17, 23, 0.96)' }}
+      style={{ backgroundColor: 'rgba(8, 10, 15, 0.92)' }}
     >
       <div
-        className={`text-center px-8 py-10 max-w-md ${show ? 'animate-bounce-in' : 'opacity-0'}`}
+        className={`text-center px-8 py-10 max-w-md glass-card ${show ? 'animate-bounce-in' : 'opacity-0'}`}
       >
         <div className="text-7xl mb-4">🏆</div>
         <h1
           className="text-3xl font-bold mb-2"
-          style={{ color: '#F6AD55' }}
+          style={{ color: '#EDAB68', textShadow: '0 0 24px rgba(237, 171, 104, 0.3)' }}
         >
           FDL CERTIFIED
         </h1>
@@ -31,29 +31,27 @@ export default function GameComplete({ totalLevels, streak, onRestart }) {
         </p>
 
         <div
-          className="rounded-lg p-4 mb-6 flex justify-around"
-          style={{ backgroundColor: '#1C2333', border: '1px solid #2D3748' }}
+          className="glass-card-subtle p-4 mb-6 flex justify-around"
         >
           <div className="text-center">
             <p className="text-2xl font-bold font-mono" style={{ color: '#68D391' }}>{totalLevels}</p>
-            <p className="text-xs" style={{ color: '#A0AEC0' }}>Levels</p>
+            <p className="text-xs tracking-wide" style={{ color: '#A0AEC0' }}>Levels</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold font-mono" style={{ color: '#F6AD55' }}>🔥 {streak}</p>
-            <p className="text-xs" style={{ color: '#A0AEC0' }}>Best Streak</p>
+            <p className="text-2xl font-bold font-mono" style={{ color: '#EDAB68' }}>🔥 {streak}</p>
+            <p className="text-xs tracking-wide" style={{ color: '#A0AEC0' }}>Best Streak</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold font-mono" style={{ color: '#4FD1C5' }}>6</p>
-            <p className="text-xs" style={{ color: '#A0AEC0' }}>Zones</p>
+            <p className="text-xs tracking-wide" style={{ color: '#A0AEC0' }}>Zones</p>
           </div>
         </div>
 
         <div
-          className="rounded-lg p-6 mb-8 text-left"
-          style={{ backgroundColor: '#1C2333', border: '1px solid #2D3748' }}
+          className="glass-card-subtle p-6 mb-8 text-left"
         >
           <h3
-            className="font-semibold mb-4 text-center"
+            className="font-semibold mb-4 text-center tracking-wide"
             style={{ color: '#4FD1C5' }}
           >
             What you learned
@@ -86,11 +84,7 @@ export default function GameComplete({ totalLevels, streak, onRestart }) {
         <div className="flex flex-col gap-3">
           <button
             onClick={onRestart}
-            className="px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 active:scale-95"
-            style={{
-              backgroundColor: '#F6AD55',
-              color: '#0D1117',
-            }}
+            className="btn-primary px-8 py-3 text-lg"
           >
             Play Again
           </button>

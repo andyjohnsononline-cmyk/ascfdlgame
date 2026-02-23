@@ -160,7 +160,9 @@ A quick multiple-choice or match question. Never more than 4 options. Used spari
 
 ## PROGRESSION: 36 LEVELS, 6 ZONES — NON-LINEAR
 
-The game uses a **zone picker overlay** accessible from the zone dots or zone name in the header. All 6 zones and all 36 levels are visible and tappable from the start — no gating, no prerequisites. Players can jump to any level in any zone at any time. The default "Next" flow advances sequentially within a zone, but the picker lets the player break out at will. Progress is tracked per-level independently.
+The game opens to a **Star Map landing screen** — a full-screen constellation-style zone picker showing all 6 zones and 36 levels. The player's first action is choosing where to begin. There is no close button on the landing screen; the player must tap a level to start. Once they've selected their first level, the Star Map becomes a standard overlay (with a close button) accessible from the zone dots or zone name in the header.
+
+All 6 zones and all 36 levels are visible and tappable from the start — no gating, no prerequisites. Players can jump to any level in any zone at any time. The default "Next" flow advances sequentially within a zone, but the picker lets the player break out at will. Progress is tracked per-level independently.
 
 Each zone introduces ONE big concept. Six levels per zone. Every level should be completable in under 45 seconds. Total game time: ~18-22 minutes for a focused player who completes all zones.
 
@@ -252,21 +254,24 @@ Each zone introduces ONE big concept. Six levels per zone. Every level should be
 
 ## VISUAL DESIGN
 
-### Aesthetic: "Dark Cinema Monitor"
+### Aesthetic: "Elevated Cinema Monitor"
 
-This should feel like a sleek, professional film tool — not a toy, not a textbook.
+This should feel like a sleek, premium cinema tool — not a toy, not a textbook. The design uses glassmorphism (frosted glass panels with `backdrop-filter: blur`), rich gradients, and subtle depth cues to create a refined, immersive atmosphere.
 
-- **Background:** Near-black with a very subtle blue undertone (`#0D1117`)
-- **Canvas areas:** Dark charcoal (`#1C2333`) with a 1px border (`#2D3748`)
+- **Background:** Radial gradient from dark blue-black center to deeper edges (`#131922` → `#0D1117` → `#080B10`), with a very subtle SVG noise texture overlay at 3% opacity for film-grain character
+- **Glass cards:** All content panels, option pills, and overlays use frosted glass treatment (`rgba(22, 30, 44, 0.65)` background, `backdrop-filter: blur(20px)`, subtle `rgba(255,255,255,0.06)` borders, 16px border-radius)
+- **Canvas areas:** Dark charcoal (`#1C2333`) with gradient borders (top edge subtler than bottom), inner shadow (`inset 0 2px 8px rgba(0,0,0,0.3)`), 8px border-radius
 - **Frame lines:**
   - Target/guide: dashed, dim (`#4A5568` at 40% opacity)
-  - Player's frame: solid, bright amber (`#F6AD55`)
+  - Player's frame: solid, warm amber (`#EDAB68`)
   - Protection: solid, cyan (`#4FD1C5`)
   - Correct/success: bright green (`#68D391`)
   - Error: warm red (`#FC8181`)
-- **Text:** Off-white (`#E2E8F0`), secondary (`#A0AEC0`)
-- **Accent / buttons:** Amber (`#F6AD55`)
-- **JSON syntax highlighting:** Keys in cyan, strings in green, numbers in amber, brackets in gray
+- **Text:** Off-white (`#E2E8F0`), secondary (`#A0AEC0`), with subtle text-shadow on active elements
+- **Accent / buttons:** Warm amber gradient (`#EDAB68` → `#D4944E`) with inner highlight and box-shadow glow
+- **JSON syntax highlighting:** Keys in cyan, strings in green, numbers in amber, brackets in gray — rendered in glass card panels
+- **Progress bar:** Amber gradient fill with a glow effect on the leading edge
+- **Zone dots:** Active dot has drop-shadow glow; completed dots have subtle green glow
 
 ### Typography
 
@@ -279,19 +284,33 @@ Load from Google Fonts CDN:
 
 The ENTIRE game fits in a single scrollable column. No side panels, no split views.
 
-**Zone Picker Overlay (opened by tapping zone dots or zone name):**
+**Star Map Landing Screen (first launch — no close button):**
 
 ```
 ┌─────────────────────────┐
-│  Choose a Level       ✕ │
+│  Frame It               │  ← Title with amber text-glow
+│  The ASC FDL Game       │  ← Subtitle
 │                         │
-│  🎬 The Geometry  4/6   │  ← Zone header + progress
-│  [1✓][2✓][3✓][4✓][5][6]│  ← Level buttons (all tappable)
+│    ╭─╮  ╭─╮            │
+│   ╭─╮╰──╯╭─╮  ╭─╮     │  ← Constellation nodes (zones)
+│   ╰─╯    ╰─╯──╯╭─╮    │     with nebula glow behind
+│          ╭─╮    ╰─╯    │
+│    ╭─╮──╯╭─╮           │
+│    ╰─╯   ╰─╯           │
 │                         │
-│  🎞️ Intents      0/6   │
-│  [1] [2] [3] [4] [5][6]│  ← Green=done, amber=current
+│    Tap any level        │  ← Bottom prompt (fades in)
+│    to begin             │
+└─────────────────────────┘
+```
+
+**Star Map Overlay (after first level selected — has close button):**
+
+```
+┌─────────────────────────┐
+│  Star Map             ✕ │
 │                         │
-│  (... 4 more zones ...) │
+│  (same constellation    │
+│   layout as landing)    │
 │                         │
 └─────────────────────────┘
 ```
@@ -300,26 +319,24 @@ The ENTIRE game fits in a single scrollable column. No side panels, no split vie
 
 ```
 ┌─────────────────────────┐
-│  ●●●●○○  Zone Name 🔥5 │  ← Zone dots (tappable → picker), streak
-│  ████████░░░░░░ 3/6     │  ← Per-zone progress bar
+│  ●●●●○○  Zone Name 🔥5 │  ← Zone dots (glow on active), streak
+│  ████████░░░░░░         │  ← Gradient progress bar with glow edge
 │                         │
-│  Level 3 of 36          │  ← Level number, zone name (tappable)
-│  "Which of these is..." │  ← Brief (big, readable)
+│ ┌─── glass card ──────┐ │
+│ │ Level 3 of 36       │ │  ← Level number, zone name (tappable)
+│ │ "Which of these..." │ │  ← Brief (big, readable)
+│ │                     │ │
+│ │ ┌─────────────────┐ │ │
+│ │ │                 │ │ │  ← Canvas (inner shadow, gradient border)
+│ │ │  ┌───────────┐  │ │ │  ← Target frame (dashed)
+│ │ │  │  ═══════  │  │ │ │  ← Player's frame (amber, draggable)
+│ │ │  └───────────┘  │ │ │
+│ │ └─────────────────┘ │ │
+│ │                     │ │
+│ │ ↕ y: 617  w: 4448   │ │  ← Live coordinate readout
+│ └─────────────────────┘ │
 │                         │
-│  ┌───────────────────┐  │
-│  │                   │  │  ← Canvas (aspect-ratio correct)
-│  │   ┌───────────┐   │  │  ← Target frame (dashed)
-│  │   │           │   │  │
-│  │   │  ═══════  │   │  │  ← Player's frame (bright, draggable)
-│  │   │           │   │  │
-│  │   └───────────┘   │  │
-│  │                   │  │
-│  └───────────────────┘  │
-│                         │
-│  ↕ y: 617  w: 4448      │  ← Live coordinate readout
-│         h: 1862         │
-│                         │
-│  [ CHECK ◉ ]            │  ← Big tappable button
+│  [ NEXT → ]  ← gradient │  ← Primary button (amber gradient + glow)
 │                         │
 └─────────────────────────┘
 ```
@@ -346,22 +363,24 @@ On success, the bottom half smoothly expands to reveal:
 ### Micro-Animations (CSS only, keep it fast)
 
 - **Frame snapping:** When within 8% tolerance of correct position, the frame magnetically snaps with a `0.25s ease-out` transition and a brief scale pulse (1.0 → 1.02 → 1.0)
-- **Correct answer:** The canvas border flashes green once. A single ✓ fades in. The JSON reveal slides up with a `0.3s ease-out`.
+- **Correct answer:** The canvas border flashes green once. A single ✓ fades in with text-shadow glow. The JSON reveal slides up with a `0.35s ease-out` and slight scale (0.98 → 1.0) for organic feel.
 - **Wrong answer:** Brief red shake on the canvas (CSS `translateX` keyframe, 3 cycles, 0.3s total). No harsh penalties — just a gentle "try again" nudge.
-- **Zone completion:** Zone card progress bar fills to 100% and the "Complete" badge appears. Badge text fades in.
-- **Streak counter:** Numbers tick up with a slight scale bounce.
-- **Progress bar:** Smooth width transition between levels.
+- **Zone completion:** Glass card with bounce-in animation. Zone card progress bar fills to 100% and the "Complete" badge appears. Badge text fades in.
+- **Streak counter:** Numbers tick up with a slight scale bounce and amber text-shadow glow.
+- **Progress bar:** Smooth width transition between levels with glow on the leading edge.
+- **Glass card appearance:** Combines opacity fade, `backdrop-filter` blur transition, and slight upward translate for a premium reveal effect.
+- **Active elements:** Subtle `glow-pulse` keyframe animation (pulsing box-shadow) on interactive elements.
 
 ### Key UI Elements
 
 **Zone Dots (always visible at top):**
-Six dots in a row. Filled green = completed zone. Amber = partially completed or current zone. Dark gray = untouched. Tapping the dots opens the Zone Picker overlay. The zone name in the header is also tappable to open the picker.
+Six dots in a row. Filled green = completed zone (with subtle green glow). Amber = partially completed or current zone (with amber drop-shadow glow on active dot). Dark gray = untouched. Tapping the dots opens the Star Map overlay. The zone name in the header is also tappable to open the overlay.
 
-**Zone Picker Overlay:**
-A scrollable overlay showing all 6 zones with their 6 level buttons. Each level is always tappable regardless of completion state. Completed levels show a green checkmark. The current level is highlighted amber. Tapping any level jumps directly to it.
+**Star Map (Landing Screen / Overlay):**
+A full-screen constellation-style map rendered as an SVG with star-field background, nebula glow gradients behind each zone cluster, and level nodes arranged in organic cluster patterns connected by curved Bezier paths. On first launch, it serves as the landing screen (no close button, title + subtitle + "Tap any level to begin" prompt). After the player selects their first level, it becomes a standard overlay with a close button and "Star Map" header. Each level node is always tappable regardless of completion state. Completed nodes glow green; the current node pulses amber. Tapping any node jumps directly to it.
 
 **Streak Counter (top right):**
-"🔥 7" — counts consecutive correct answers. Resets on wrong answer. Purely motivational.
+"🔥 7" — counts consecutive correct answers with amber text-shadow glow when active. Resets on wrong answer. Purely motivational.
 
 **Hint Button (bottom left, small):**
 "💡" — Tapping shows a one-line hint below the brief. Available after 10 seconds on a level. No penalty.
@@ -418,7 +437,8 @@ const [streak, setStreak] = useState(0);                      // consecutive cor
 const [completedLevels, setCompletedLevels] = useState(new Set());
 const [showReveal, setShowReveal] = useState(false);          // JSON reveal visible
 const [hintVisible, setHintVisible] = useState(false);
-const [showZonePicker, setShowZonePicker] = useState(false);  // zone picker overlay
+const [showZonePicker, setShowZonePicker] = useState(true);   // star map open on launch
+const [hasStarted, setHasStarted] = useState(false);          // true after first level selected
 ```
 
 All 6 zones and 36 levels are always accessible via the zone picker overlay. Per-zone progress is derived from `completedLevels`. No stars, no scores, no XP systems. Just: which levels are done, and what's your current streak. Streaks are the only dopamine number. Game completion triggers when all 36 levels are in `completedLevels`, regardless of order.
