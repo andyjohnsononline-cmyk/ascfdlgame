@@ -57,7 +57,7 @@ export default function Canvas({
       top: `${toPercent(frame.y || 0, 'y')}%`,
       width: `${toPercent(frame.width, 'x')}%`,
       height: `${toPercent(frame.height, 'y')}%`,
-      border: `2px ${dashed ? 'dashed' : 'solid'} ${color}`,
+      border: `3px ${dashed ? 'dashed' : 'solid'} ${color}`,
       boxSizing: 'border-box',
       transition: 'all 0.25s ease-out',
       pointerEvents: 'none',
@@ -68,12 +68,12 @@ export default function Canvas({
   const labelStyle = (color) => ({
     position: 'absolute',
     fontSize: '9px',
-    fontFamily: 'var(--font-mono)',
-    fontWeight: 600,
+    fontFamily: 'var(--font-pixel)',
+    fontWeight: 400,
     letterSpacing: '0.05em',
     textTransform: 'uppercase',
     color,
-    opacity: 0.7,
+    opacity: 0.85,
     pointerEvents: 'none',
     whiteSpace: 'nowrap',
   });
@@ -117,28 +117,28 @@ export default function Canvas({
         {
           key: 'canvas',
           frame: { width: canvasDims.width, height: canvasDims.height, x: 0, y: 0 },
-          color: 'rgba(74, 85, 104, 0.6)',
+          color: '#8D6E63',
           label: 'CANVAS',
           pathLabel: 'canvas.dimensions',
         },
         {
           key: 'effective',
           frame: layers.effective || effectiveFrame,
-          color: '#718096',
+          color: '#795548',
           label: 'EFFECTIVE',
           pathLabel: 'canvas.effective_dimensions',
         },
         {
           key: 'protection',
           frame: layers.protection || protectionFrame,
-          color: '#4FD1C5',
+          color: '#4DB6AC',
           label: 'PROTECTION',
           pathLabel: 'protection_dimensions',
         },
         {
           key: 'framing',
           frame: layers.framing,
-          color: '#EDAB68',
+          color: '#E8A946',
           label: 'FRAMING',
           pathLabel: 'framing_decision.dimensions',
         },
@@ -148,17 +148,13 @@ export default function Canvas({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full mx-auto select-none touch-none ${isShaking ? 'animate-shake' : ''} ${isCorrect ? 'animate-green-flash' : ''}`}
+      className={`pixel-canvas relative w-full mx-auto select-none touch-none ${isShaking ? 'animate-shake' : ''} ${isCorrect ? 'animate-green-flash' : ''}`}
       style={{
         aspectRatio: `${aspectRatio}`,
         maxWidth: '100%',
-        backgroundColor: '#1C2333',
-        border: '1px solid rgba(255, 255, 255, 0.06)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: '8px',
-        boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2)',
         cursor: onPointerDown ? 'grab' : 'default',
         overflow: allowOverflow ? 'visible' : 'hidden',
+        borderColor: isCorrect ? '#4CAF50' : '#5D3A1A',
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -166,21 +162,21 @@ export default function Canvas({
     >
       {/* Canvas label */}
       {labels?.canvas && (
-        <span style={{ ...labelStyle('rgba(74, 85, 104, 0.6)'), top: 4, left: 6, zIndex: 5 }}>
+        <span style={{ ...labelStyle('#8D6E63'), top: 4, left: 6, zIndex: 5, fontSize: '8px' }}>
           {labels.canvas}
         </span>
       )}
 
-      {/* Effective canvas (dotted gray) */}
+      {/* Effective canvas (dotted) */}
       {effectiveFrame && !isLayerSelectMode && (
         <div
           style={{
-            ...frameStyle(effectiveFrame, '#718096', true),
+            ...frameStyle(effectiveFrame, '#795548', true),
             opacity: staggerReady.includes(0) ? 1 : 0,
           }}
         >
           {labels?.effective && (
-            <span style={{ ...labelStyle('#718096'), top: 4, left: 4 }}>
+            <span style={{ ...labelStyle('#795548'), top: 4, left: 4, fontSize: '8px' }}>
               {labels.effective}
             </span>
           )}
@@ -189,46 +185,46 @@ export default function Canvas({
 
       {/* Target frame (dashed guide) */}
       {showTarget && targetFrame && (
-        <div style={frameStyle(targetFrame, 'rgba(74, 85, 104, 0.4)', true)} />
+        <div style={frameStyle(targetFrame, 'rgba(139, 105, 20, 0.4)', true)} />
       )}
 
-      {/* Protection target guide (dashed cyan) */}
+      {/* Protection target guide */}
       {protectionGuide && (
-        <div style={frameStyle(protectionGuide, 'rgba(79, 209, 197, 0.35)', true)} />
+        <div style={frameStyle(protectionGuide, 'rgba(77, 182, 172, 0.35)', true)} />
       )}
 
-      {/* Protection frame (cyan) */}
+      {/* Protection frame */}
       {protectionFrame && !isLayerSelectMode && (
         <div
           style={{
-            ...frameStyle(protectionFrame, isCorrect ? '#68D391' : '#4FD1C5', false),
+            ...frameStyle(protectionFrame, isCorrect ? '#4CAF50' : '#4DB6AC', false),
             opacity: staggerReady.includes(1) ? 1 : 0,
           }}
         >
           {labels?.protection && (
-            <span style={{ ...labelStyle(isCorrect ? '#68D391' : '#4FD1C5'), top: -16, left: 0 }}>
+            <span style={{ ...labelStyle(isCorrect ? '#4CAF50' : '#4DB6AC'), top: -16, left: 0, fontSize: '8px' }}>
               {labels.protection}
             </span>
           )}
         </div>
       )}
 
-      {/* Shown protection (for fix levels — wrong protection) */}
+      {/* Shown protection (fix levels) */}
       {shownProtection && (
-        <div style={frameStyle(shownProtection, '#FC8181', true)}>
+        <div style={frameStyle(shownProtection, '#E57373', true)}>
           {labels?.protection && (
-            <span style={{ ...labelStyle('#FC8181'), top: -16, left: 0 }}>
+            <span style={{ ...labelStyle('#E57373'), top: -16, left: 0, fontSize: '8px' }}>
               {labels.protection}
             </span>
           )}
         </div>
       )}
 
-      {/* Player's active frame / framing decision (amber) */}
+      {/* Player frame (amber) */}
       {playerFrame && !isLayerSelectMode && (
         <div
           style={{
-            ...frameStyle(playerFrame, isCorrect ? '#68D391' : '#EDAB68', false),
+            ...frameStyle(playerFrame, isCorrect ? '#4CAF50' : '#E8A946', false),
             pointerEvents: 'none',
             zIndex: 2,
           }}
@@ -236,9 +232,10 @@ export default function Canvas({
           {labels?.frame && (
             <span
               style={{
-                ...labelStyle(isCorrect ? '#68D391' : '#EDAB68'),
+                ...labelStyle(isCorrect ? '#4CAF50' : '#E8A946'),
                 bottom: -16,
                 left: 0,
+                fontSize: '8px',
               }}
             >
               {labels.frame}
@@ -247,12 +244,12 @@ export default function Canvas({
         </div>
       )}
 
-      {/* Layer-select mode: tappable layers */}
+      {/* Layer-select mode */}
       {isLayerSelectMode &&
         layerDefs.map((layer, idx) => {
           const isSelected = selectedLayer === layer.key;
-          const borderColor = isSelected ? '#FFFFFF' : layer.color;
-          const borderWidth = isSelected ? 3 : 2;
+          const borderColor = isSelected ? '#FFF8E7' : layer.color;
+          const borderWidth = isSelected ? 4 : 3;
           return (
             <div
               key={layer.key}
@@ -267,15 +264,16 @@ export default function Canvas({
                 cursor: 'pointer',
                 zIndex: idx + 1,
                 opacity: staggerReady.includes(idx) ? 1 : 0,
-                backgroundColor: isSelected ? `${layer.color}15` : 'transparent',
+                backgroundColor: isSelected ? `${layer.color}20` : 'transparent',
               }}
             >
               <span
                 style={{
-                  ...labelStyle(isSelected ? '#FFFFFF' : layer.color),
+                  ...labelStyle(isSelected ? '#FFF8E7' : layer.color),
                   top: 4,
                   left: 4,
                   opacity: 1,
+                  fontSize: '8px',
                 }}
               >
                 {layer.label}
@@ -286,10 +284,10 @@ export default function Canvas({
                     position: 'absolute',
                     bottom: 4,
                     left: 4,
-                    fontSize: '10px',
+                    fontSize: '8px',
                     fontFamily: 'var(--font-mono)',
-                    color: '#EDAB68',
-                    opacity: 0.9,
+                    color: '#E8A946',
+                    fontWeight: 700,
                   }}
                 >
                   {layer.pathLabel}
@@ -299,7 +297,7 @@ export default function Canvas({
           );
         })}
 
-      {/* Anchor marker (crosshair) */}
+      {/* Anchor marker */}
       {anchorMarker && (
         <div
           style={{
@@ -313,9 +311,9 @@ export default function Canvas({
           }}
         >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <line x1="14" y1="0" x2="14" y2="28" stroke={isCorrect ? '#68D391' : '#EDAB68'} strokeWidth="2" />
-            <line x1="0" y1="14" x2="28" y2="14" stroke={isCorrect ? '#68D391' : '#EDAB68'} strokeWidth="2" />
-            <circle cx="14" cy="14" r="6" stroke={isCorrect ? '#68D391' : '#EDAB68'} strokeWidth="2" fill="none" />
+            <line x1="14" y1="0" x2="14" y2="28" stroke={isCorrect ? '#4CAF50' : '#E8A946'} strokeWidth="3" />
+            <line x1="0" y1="14" x2="28" y2="14" stroke={isCorrect ? '#4CAF50' : '#E8A946'} strokeWidth="3" />
+            <rect x="8" y="8" width="12" height="12" stroke={isCorrect ? '#4CAF50' : '#E8A946'} strokeWidth="2" fill="none" />
           </svg>
         </div>
       )}
