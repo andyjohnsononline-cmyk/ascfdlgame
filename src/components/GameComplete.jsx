@@ -3,6 +3,15 @@ import CharacterPortrait, { CHARACTER_NAMES } from './CharacterPortrait.jsx';
 
 const ALL_CHARACTERS = ['robin', 'morgan', 'quinn', 'sage'];
 
+const RESOURCE_LINKS = [
+  { label: 'ASC FDL Spec', url: 'https://github.com/ascmitc/fdl' },
+  { label: 'Implementer Guide', url: 'https://ascmitc.github.io/fdl/dev/FDL_Template_Implementer_Guide/' },
+  { label: 'ASC FDL Page', url: 'https://theasc.com/society/ascmitc/asc-framing-decision-list' },
+  { label: 'Netflix MPS', url: 'https://partnerhelp.netflixstudios.com/hc/en-us/articles/48547314676115' },
+  { label: 'Framing Calculator', url: 'https://production-technology-tools.netflixstudios.com/calculators' },
+  { label: 'pyfdl', url: 'https://apetrynet.github.io/pyfdl/' },
+];
+
 export default function GameComplete({ totalScenes, streak, onRestart }) {
   const [show, setShow] = useState(false);
 
@@ -13,11 +22,12 @@ export default function GameComplete({ totalScenes, streak, onRestart }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4"
-      style={{ backgroundColor: 'rgba(26, 48, 18, 0.95)' }}
+      className="fixed inset-0 z-50 overflow-y-auto p-4"
+      style={{ backgroundColor: 'rgba(26, 48, 18, 0.95)', WebkitOverflowScrolling: 'touch' }}
     >
+      <div className="min-h-full flex items-center justify-center">
       <div
-        className={`text-center px-6 py-8 max-w-md pixel-panel ${show ? 'animate-bounce-in' : 'opacity-0'}`}
+        className={`text-center px-6 py-8 max-w-md w-full pixel-panel ${show ? 'animate-bounce-in' : 'opacity-0'}`}
       >
         <h1
           className="font-pixel text-sm mb-2"
@@ -96,12 +106,40 @@ export default function GameComplete({ totalScenes, streak, onRestart }) {
           </ul>
         </div>
 
+        <div className="mb-6">
+          <h3
+            className="font-pixel text-[8px] mb-3 text-center"
+            style={{ color: '#8b6914' }}
+          >
+            LEARN MORE
+          </h3>
+          <div className="flex flex-wrap justify-center gap-2">
+            {RESOURCE_LINKS.map((link) => (
+              <a
+                key={link.url}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs px-2.5 py-1 font-medium transition-opacity hover:opacity-80"
+                style={{
+                  color: '#8b6914',
+                  border: '2px solid #d4c09a',
+                  background: '#f5eed8',
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
         <button
           onClick={onRestart}
           className="btn-primary w-full py-3 font-pixel text-[10px]"
         >
           PLAY AGAIN
         </button>
+      </div>
       </div>
     </div>
   );

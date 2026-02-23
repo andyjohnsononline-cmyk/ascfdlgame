@@ -5,6 +5,7 @@ import {
   CHAPTER_REWARDS,
   CHAPTER_RANGES,
   CHAPTER_BACKGROUNDS,
+  CHAPTER_CHARACTERS,
   getChapterForScene,
   isLastSceneInChapter,
   getChapterSceneCount,
@@ -28,12 +29,55 @@ const PHASE_CHALLENGE = 'challenge';
 const PHASE_SUCCESS = 'success';
 const PHASE_REVEAL = 'reveal';
 
+const SAVE_KEY = 'frameit_save';
+
+function loadSave() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    return {
+      completedScenes: new Set(data.completedScenes || []),
+      bestStreak: data.bestStreak || 0,
+      currentScene: data.currentScene || 1,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function writeSave(completedScenes, bestStreak, currentScene) {
+  try {
+    localStorage.setItem(
+      SAVE_KEY,
+      JSON.stringify({
+        completedScenes: [...completedScenes],
+        bestStreak,
+        currentScene,
+      })
+    );
+  } catch {
+    // Storage unavailable — silently degrade
+  }
+}
+
+function clearSave() {
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch {
+    // noop
+  }
+}
+
 export default function App() {
-  const [currentScene, setCurrentScene] = useState(1);
+  const saved = useRef(loadSave());
+  const hasSave = saved.current && saved.current.completedScenes.size > 0;
+
+  const [currentScene, setCurrentScene] = useState(hasSave ? saved.current.currentScene : 1);
   const [phase, setPhase] = useState(PHASE_DIALOGUE);
   const [streak, setStreak] = useState(0);
-  const [bestStreak, setBestStreak] = useState(0);
-  const [completedScenes, setCompletedScenes] = useState(new Set());
+  const [bestStreak, setBestStreak] = useState(hasSave ? saved.current.bestStreak : 0);
+  const [completedScenes, setCompletedScenes] = useState(hasSave ? saved.current.completedScenes : new Set());
   const [showReveal, setShowReveal] = useState(false);
   const [hintVisible, setHintVisible] = useState(false);
   const [showHintText, setShowHintText] = useState(false);
@@ -42,6 +86,7 @@ export default function App() {
   const [showChapterSelect, setShowChapterSelect] = useState(true);
   const [hasStarted, setHasStarted] = useState(false);
   const [streakBump, setStreakBump] = useState(false);
+  const [sceneTransition, setSceneTransition] = useState(false);
   const hintTimerRef = useRef(null);
 
   const scene = SCENES.find((s) => s.id === currentScene);
@@ -55,9 +100,6 @@ export default function App() {
     setPhase(PHASE_DIALOGUE);
 
     if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
-    hintTimerRef.current = setTimeout(() => {
-      setHintVisible(true);
-    }, 12000);
 
     return () => {
       if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
@@ -66,34 +108,50 @@ export default function App() {
 
   const handleDialogueComplete = useCallback(() => {
     setPhase(PHASE_CHALLENGE);
+    if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+    hintTimerRef.current = setTimeout(() => {
+      setHintVisible(true);
+    }, 12000);
   }, []);
 
   const handleCorrect = useCallback(() => {
     setShowReveal(true);
     setPhase(PHASE_SUCCESS);
+    let newBest;
     setStreak((s) => {
       const next = s + 1;
-      setBestStreak((b) => Math.max(b, next));
+      setBestStreak((b) => {
+        newBest = Math.max(b, next);
+        return newBest;
+      });
       return next;
     });
     setStreakBump(true);
     setTimeout(() => setStreakBump(false), 300);
     setCompletedScenes((prev) => {
       const next = new Set([...prev, currentScene]);
+      writeSave(next, newBest ?? bestStreak, currentScene);
       if (next.size === totalScenes) {
         setTimeout(() => setShowGameComplete(true), 800);
       }
       return next;
     });
 
-    // Show success dialogue briefly, then reveal
     setTimeout(() => {
       setPhase(PHASE_REVEAL);
     }, 2000);
-  }, [currentScene, totalScenes]);
+  }, [currentScene, totalScenes, bestStreak]);
 
   const handleWrong = useCallback(() => {
     setStreak(0);
+  }, []);
+
+  const transitionToScene = useCallback((nextId) => {
+    setSceneTransition(true);
+    setTimeout(() => {
+      setCurrentScene(nextId);
+      setSceneTransition(false);
+    }, 200);
   }, []);
 
   const handleNext = useCallback(() => {
@@ -109,25 +167,34 @@ export default function App() {
 
     const nextId = currentScene + 1;
     if (nextId <= totalScenes) {
-      setCurrentScene(nextId);
+      transitionToScene(nextId);
     }
-  }, [currentScene, scene, chapterIndex, totalScenes]);
+  }, [currentScene, scene, chapterIndex, totalScenes, transitionToScene]);
 
   const handleChapterContinue = useCallback(() => {
     setShowChapterComplete(null);
     const nextChapter = chapterIndex + 1;
     if (nextChapter < CHAPTER_RANGES.length) {
       const nextSceneId = getFirstIncompleteSceneInChapter(nextChapter, completedScenes);
-      setCurrentScene(nextSceneId);
+      transitionToScene(nextSceneId);
     }
-  }, [chapterIndex, completedScenes]);
+  }, [chapterIndex, completedScenes, transitionToScene]);
 
   const handleRestart = useCallback(() => {
+    clearSave();
     setShowGameComplete(false);
     setCurrentScene(1);
     setCompletedScenes(new Set());
     setStreak(0);
     setBestStreak(0);
+  }, []);
+
+  const handleResetProgress = useCallback(() => {
+    clearSave();
+    setCompletedScenes(new Set());
+    setStreak(0);
+    setBestStreak(0);
+    setCurrentScene(1);
   }, []);
 
   const handleSelectScene = useCallback((sceneId) => {
@@ -136,6 +203,16 @@ export default function App() {
     setShowChapterSelect(false);
     setHasStarted(true);
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && !showChapterSelect) {
+        setShowChapterSelect(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showChapterSelect]);
 
   if (!scene) return null;
 
@@ -156,9 +233,10 @@ export default function App() {
           <div className="flex items-center justify-between mb-3">
             {/* Chapter dots */}
             <button
-              className="flex items-center gap-2.5"
+              className="flex items-center gap-1 py-2 -my-2 px-1 -mx-1"
               onClick={() => setShowChapterSelect(true)}
               title="Choose a chapter"
+              style={{ minHeight: '44px' }}
             >
               {CHAPTER_RANGES.map((_, ci) => {
                 const complete = isChapterComplete(ci, completedScenes);
@@ -213,7 +291,7 @@ export default function App() {
         {/* Main content */}
         <main className="flex-1 px-4 py-4 max-w-lg mx-auto w-full flex flex-col">
           {/* Scene card */}
-          <div className="pixel-panel p-5 mb-4 animate-pixel-fade flex-1">
+          <div className={`pixel-panel p-5 mb-4 flex-1 ${sceneTransition ? 'animate-scene-transition' : 'animate-pixel-fade'}`}>
             {/* Scene header */}
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-1.5">
@@ -374,6 +452,7 @@ export default function App() {
         <ZoneComplete
           reward={CHAPTER_REWARDS[showChapterComplete]}
           chapterIndex={showChapterComplete}
+          character={CHAPTER_CHARACTERS[showChapterComplete]}
           onContinue={handleChapterContinue}
         />
       )}
@@ -391,6 +470,7 @@ export default function App() {
           completedScenes={completedScenes}
           onSelectScene={handleSelectScene}
           onClose={() => setShowChapterSelect(false)}
+          onResetProgress={handleResetProgress}
           isLanding={!hasStarted}
         />
       )}

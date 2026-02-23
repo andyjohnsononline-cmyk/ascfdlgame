@@ -18,7 +18,16 @@ const LOCATION_LABELS = {
   control_room: 'Control Room',
 };
 
-export default function ChapterSelect({ completedScenes, onSelectScene, onClose, isLanding = false }) {
+const RESOURCE_LINKS = [
+  { label: 'ASC FDL Spec & Docs', url: 'https://github.com/ascmitc/fdl' },
+  { label: 'FDL Implementer Guide', url: 'https://ascmitc.github.io/fdl/dev/FDL_Template_Implementer_Guide/' },
+  { label: 'ASC FDL Official Page', url: 'https://theasc.com/society/ascmitc/asc-framing-decision-list' },
+  { label: 'Netflix MPS Tech Specs', url: 'https://partnerhelp.netflixstudios.com/hc/en-us/articles/48547314676115' },
+  { label: 'Netflix Framing Calculator', url: 'https://production-technology-tools.netflixstudios.com/calculators' },
+  { label: 'pyfdl Python Toolkit', url: 'https://apetrynet.github.io/pyfdl/' },
+];
+
+export default function ChapterSelect({ completedScenes, onSelectScene, onClose, onResetProgress, isLanding = false }) {
   return (
     <div
       className="fixed inset-0 z-50 animate-fade-in overflow-y-auto"
@@ -51,7 +60,7 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
             <button
               onClick={onClose}
               className="pixel-btn px-3 py-2 text-sm font-bold"
-              style={{ color: '#3E2723' }}
+              style={{ color: '#3E2723', minWidth: '44px', minHeight: '44px' }}
             >
               ✕
             </button>
@@ -135,6 +144,51 @@ export default function ChapterSelect({ completedScenes, onSelectScene, onClose,
           >
             Tap any chapter to begin
           </p>
+        )}
+
+        {/* Resources */}
+        <div className="mt-8 pt-6" style={{ borderTop: '2px solid rgba(255,255,255,0.1)' }}>
+          <h3
+            className="pixel-header text-center mb-3"
+            style={{ color: '#B5D8A0', fontSize: '8px' }}
+          >
+            Resources
+          </h3>
+          <div className="flex flex-wrap justify-center gap-2">
+            {RESOURCE_LINKS.map((link) => (
+              <a
+                key={link.url}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs px-3 py-1.5 transition-opacity hover:opacity-80"
+                style={{
+                  color: '#B5D8A0',
+                  border: '1px solid rgba(181, 216, 160, 0.3)',
+                  borderRadius: '0',
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Reset progress */}
+        {onResetProgress && completedScenes.size > 0 && (
+          <div className="mt-6 text-center pb-4">
+            <button
+              onClick={() => {
+                if (window.confirm('Reset all progress? This cannot be undone.')) {
+                  onResetProgress();
+                }
+              }}
+              className="text-xs px-4 py-2 transition-opacity hover:opacity-80"
+              style={{ color: 'rgba(181, 216, 160, 0.5)' }}
+            >
+              Reset Progress
+            </button>
+          </div>
         )}
       </div>
     </div>

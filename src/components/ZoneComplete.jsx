@@ -11,9 +11,10 @@ export default function ZoneComplete({ chapterIndex, reward, character, onContin
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(26, 48, 18, 0.92)' }}
+      className="fixed inset-0 z-50 overflow-y-auto p-4"
+      style={{ backgroundColor: 'rgba(26, 48, 18, 0.92)', WebkitOverflowScrolling: 'touch' }}
     >
+    <div className="min-h-full flex items-center justify-center">
       <div
         className={`text-center px-6 py-8 max-w-sm pixel-panel ${show ? 'animate-bounce-in' : 'opacity-0'}`}
       >
@@ -49,6 +50,7 @@ export default function ZoneComplete({ chapterIndex, reward, character, onContin
         >
           CONTINUE
         </button>
+      </div>
       </div>
     </div>
   );

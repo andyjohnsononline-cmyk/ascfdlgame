@@ -100,7 +100,7 @@ export default function JsonReveal({ lines, highlightKeys = [], visible }) {
 
   return (
     <div className="animate-slide-up mt-4">
-      <div className="pixel-panel p-4 font-mono text-sm leading-relaxed" style={{ minHeight: '40px', fontSize: '13px' }}>
+      <div className="pixel-panel p-4 font-mono text-sm leading-relaxed overflow-x-auto" style={{ minHeight: '40px', fontSize: '13px' }}>
         <div
           className="pixel-header mb-2"
           style={{ color: '#2E7D32', fontSize: '8px' }}
